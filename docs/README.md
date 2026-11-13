@@ -69,7 +69,7 @@ cd REPO
 | File | Schedule | Description | Auto merge |
 |:---|:---|:---|:---|
 | [`dependabot.yml`](../.github/dependabot.yml.templrte) | 毎週日曜日の AM 04:00 | GitHub Actions, npm, flake.lock のバージョンを更新してPR作成 | 未設定 |
-| [`ci.yml`](../.github/workflows/ci.yml) | `main` ブランチへのPR | OSV で `pnpm-lock.yaml` の依存関係をスキャン。別のジョブで `pnpm install --frozen-lockfile`、プロジェクトの lint（定義時）、`pnpm build` を順に実行 | 未設定 |
+| [`ci.yml`](../.github/workflows/ci.yml) | `main` ブランチへのPR | OSV で `pnpm-lock.yaml` の依存関係をスキャン。別のジョブで `pnpm install --frozen-lockfile`、プロジェクトの lint（定義時）、`pnpm exec next build` を順に実行。環境変数は CI から注入 | 未設定 |
 
 [justfile](../justfile) に定義したコマンドの内容は下記  
 

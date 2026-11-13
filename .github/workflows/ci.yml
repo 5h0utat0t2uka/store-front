@@ -66,4 +66,5 @@ jobs:
         run: pnpm run --if-present lint
 
       - name: Build
-        run: pnpm build
+        # CI uses runner environment variables instead of local SOPS credentials.
+        run: pnpm exec next build
