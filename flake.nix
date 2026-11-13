@@ -26,8 +26,6 @@
       # };
       runtimes = import ./nix/runtimes.nix { inherit pkgs system; };
       preCommit = import ./nix/pre-commit.nix { inherit pkgs git-hooks system runtimes; src = ./.; };
-      createProject = import ./nix/create-project.nix { inherit pkgs; };
-      scaffoldApp = import ./nix/scaffold-app.nix { inherit pkgs runtimes; };
     in
     {
       formatter = pkgs.nixfmt;
@@ -37,18 +35,6 @@
       packages = {
         update-runtimes = runtimes.update-runtimes;
         prek = preCommit.prek;
-        create-project = createProject;
-        scaffold-app = scaffoldApp;
-      };
-      apps = {
-        create-project = {
-          type = "app";
-          program = "${createProject}/bin/create-project";
-        };
-        scaffold-app = {
-          type = "app";
-          program = "${scaffoldApp}/bin/scaffold-app";
-        };
       };
       devShells.default = pkgs.mkShell {
         packages = [

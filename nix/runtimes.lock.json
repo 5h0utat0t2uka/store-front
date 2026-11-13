@@ -1,0 +1,44 @@
+{
+  "node": {
+    "version": "26.13.1",
+    "platforms": {
+      "aarch64-darwin": {
+        "url": "https://nodejs.org/dist/v26.13.1/node-v26.13.1-darwin-arm64.tar.gz",
+        "hash": "sha256-rsJRTqHOsrpSRV6exlmG9nSaBt11nl2ypy5oiWaMlzU="
+      },
+      "x86_64-darwin": {
+        "url": "https://nodejs.org/dist/v26.13.1/node-v26.13.1-darwin-x64.tar.gz",
+        "hash": "sha256-gruWB4okylC5yaOPI3nmvm2HFx/NQA/BTIk0s7zpbi8="
+      },
+      "aarch64-linux": {
+        "url": "https://nodejs.org/dist/v26.13.1/node-v26.13.1-linux-arm64.tar.xz",
+        "hash": "sha256-ieGFMTjbUei4LT6YupwNPylWoo5eVeobfhLSWq6S1d0="
+      },
+      "x86_64-linux": {
+        "url": "https://nodejs.org/dist/v26.13.1/node-v26.13.1-linux-x64.tar.xz",
+        "hash": "sha256-XAY+Rrqw+8HBfMRF1/8SnL3NBHG+btg7arhk+BQ7yGQ="
+      }
+    }
+  },
+  "pnpm": {
+    "version": "12.17.0",
+    "platforms": {
+      "aarch64-darwin": {
+        "url": "https://github.com/pnpm/pnpm/releases/download/v12.17.0/pnpm-darwin-arm64.tar.gz",
+        "hash": "sha256-RGwzTUk738bMLbaTdk0YEvygZFb2pL55lqE9cAh4Ajk="
+      },
+      "x86_64-darwin": {
+        "url": "https://github.com/pnpm/pnpm/releases/download/v12.17.0/pnpm-darwin-x64.tar.gz",
+        "hash": "sha256-uOdUoj0Z1fVn3RaWgbFWJ96asSmXJItsI1Bsbie9zpI="
+      },
+      "aarch64-linux": {
+        "url": "https://github.com/pnpm/pnpm/releases/download/v12.17.0/pnpm-linux-arm64.tar.gz",
+        "hash": "sha256-zlpblamXSgu9cTpe90QW280OP98R9p6pLFmVucGMy0c="
+      },
+      "x86_64-linux": {
+        "url": "https://github.com/pnpm/pnpm/releases/download/v12.17.0/pnpm-linux-x64.tar.gz",
+        "hash": "sha256-LFiVn9XfXLn05yeEwIpg/8fuVY/tmwSyIlTikRIgOlE="
+      }
+    }
+  }
+}
