@@ -1,6 +1,14 @@
 packages:
   - "."
 
+skills:
+  dirs:
+    - .agents/skills
+
+permissions:
+  "@shopify/hydrogen":
+    skills: true
+
 allowBuilds:
   esbuild: false
   sharp: false

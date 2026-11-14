@@ -23,9 +23,12 @@
     "dev": "sops exec-env --same-process .enc.env 'next dev'",
     "build": "sops exec-env --same-process .enc.env 'next build'",
     "start": "sops exec-env --same-process .enc.env 'next start'",
+    "typecheck": "next typegen && tsc --noEmit && pnpm run check:graphql",
+    "check:graphql": "hydrogen gql check --fail-on-warn",
     "shopify:check": "sops exec-env --same-process .enc.env 'node scripts/check-storefront.mjs'"
   },
   "dependencies": {
+    "@shopify/hydrogen": "2026.10.2",
     "gen-interface-jp": "0.8.0",
     "next": "16.4.5",
     "react": "19.3.1",
@@ -37,6 +40,6 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "babel-plugin-react-compiler": "1.0.0",
-    "typescript": "^7.0.2"
+    "typescript": "6.0.3"
   }
 }
