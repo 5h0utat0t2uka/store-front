@@ -1,3 +1,8 @@
+## Frontend guidance
+
+フロントエンドの実装・修正・レビューでは `modern-web-guidance` を使用し、対象に合ったガイドを確認して適用する。
+必要なインストール・検証・起動コマンドはユーザーに提示し、ユーザーが実行する。
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

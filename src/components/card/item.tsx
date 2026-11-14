@@ -1,47 +1,65 @@
+import { formatMoney } from "@shopify/hydrogen";
 import Image from "next/image";
+import Link from "next/link";
 import type { ProductSummary } from "@/lib/shopify";
+import { cx } from "@/utils/class";
 import styles from "./item.module.css";
 
 type ItemCardProps = {
   product: ProductSummary;
-  prioritizeImage?: boolean;
+  sizes: string;
+  loading?: "eager" | "lazy";
 };
 
-export function ItemCard({ product, prioritizeImage = false }: ItemCardProps) {
+function ItemLink({
+  product,
+  className,
+  children,
+}: {
+  product: ProductSummary;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      className={cx(styles.link, className)}
+      href={`/products/${encodeURIComponent(product.handle)}`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
   const { minVariantPrice, maxVariantPrice } = product.priceRange;
-  const priceFormatter = new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: minVariantPrice.currencyCode,
-  });
-  const minPrice = Number(minVariantPrice.amount);
-  const maxPrice = Number(maxVariantPrice.amount);
-  const price =
-    minPrice === maxPrice
-      ? priceFormatter.format(minPrice)
-      : `${priceFormatter.format(minPrice)} ～ ${priceFormatter.format(maxPrice)}`;
+  const featuredImage = product.featuredImage;
+  const imageSrc = featuredImage?.url ?? "/placehold.svg";
+  const imageAlt = featuredImage
+    ? featuredImage.altText?.trim() || product.title
+    : `${product.title}（商品画像なし）`;
+  const price = formatMoney([minVariantPrice, maxVariantPrice], {
+    locale: "ja-JP",
+  }).toString();
 
   return (
     <article className={styles.card}>
-      <div className={styles.imageFrame}>
-        {product.featuredImage ? (
-          <Image
-            className={styles.image}
-            src={product.featuredImage.url}
-            alt={product.featuredImage.altText?.trim() || product.title}
-            fill
-            sizes="(min-width: 1152px) 384px, (max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw"
-            loading={prioritizeImage ? "eager" : "lazy"}
-            fetchPriority={prioritizeImage ? "high" : "auto"}
-          />
-        ) : (
-          <span className={styles.noImage}>画像なし</span>
-        )}
-      </div>
+      <ItemLink product={product} className={styles.frame}>
+        <Image
+          className={styles.image}
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          sizes={sizes}
+          loading={loading}
+        />
+      </ItemLink>
       <div className={styles.details}>
         <p className={styles.category}>
           {product.category?.name ?? "カテゴリ未設定"}
         </p>
-        <h2 className={styles.title}>{product.title}</h2>
+        <h2 className={styles.title}>
+          <ItemLink product={product}>{product.title}</ItemLink>
+        </h2>
         <p className={styles.price}>{price}</p>
       </div>
       <p className={styles.availability}>
