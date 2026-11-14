@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Hydrogen generated GraphQL types
+/storefront-graphql-env.d.ts
+/customer-account-graphql-env.d.ts
+
 
 .direnv
 .scaffold.*

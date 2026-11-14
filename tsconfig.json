@@ -16,6 +16,9 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "@shopify/hydrogen/ts-plugin"
       }
     ],
     "paths": {
