@@ -1,3 +1,11 @@
 .footer {
   display: grid;
+  inline-size: min(100%, 72rem);
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  p {
+    font-size: clamp(0.75rem, 1vw, 1rem);
+    color: var(--foreground);
+  }
 }

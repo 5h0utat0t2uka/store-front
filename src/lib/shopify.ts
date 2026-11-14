@@ -17,10 +17,12 @@ const SHOP_METADATA_QUERY = gql(`
 `);
 
 const HOME_PRODUCTS_QUERY = gql(`
-  query HomeProducts {
+  query HomeProducts($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
     products(first: 6) {
       nodes {
         id
+        handle
         title
         availableForSale
         category {
@@ -47,11 +49,66 @@ const HOME_PRODUCTS_QUERY = gql(`
   }
 `);
 
+const PRODUCT_QUERY = gql(`
+  query ProductDetails(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    product(handle: $handle) {
+      handle
+      title
+      description
+      availableForSale
+      vendor
+      category {
+        name
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      featuredImage {
+        url
+        altText
+        width
+        height
+      }
+      images(first: 20) {
+        nodes {
+          url
+          altText
+          width
+          height
+        }
+      }
+      seo {
+        title
+        description
+      }
+    }
+  }
+`);
+
 export type ProductSummary = StorefrontApi.ResultOf<
   typeof HOME_PRODUCTS_QUERY
 >["products"]["nodes"][number];
 
+export type ProductDetail = NonNullable<
+  StorefrontApi.ResultOf<typeof PRODUCT_QUERY>["product"]
+>;
+
 function createCatalogClient() {
+  const storeDomain = process.env.PUBLIC_STORE_DOMAIN?.trim();
+  if (!storeDomain) {
+    throw new Error("PUBLIC_STORE_DOMAIN required in environment variables.");
+  }
   const token = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN?.trim();
   if (!token) {
     throw new Error(
@@ -68,7 +125,7 @@ function createCatalogClient() {
     type: "private_no_buyer_context",
     requestContext,
     config: {
-      storeDomain: "store-front-9clxicd4.myshopify.com",
+      storeDomain: storeDomain,
       apiVersion: "2026-10",
       privateStorefrontToken: token,
       defaultTimeoutInMs: 15_000,
@@ -115,4 +172,28 @@ export async function getHomeProducts(): Promise<ProductSummary[]> {
     );
   }
   return products;
+}
+
+export async function getProductByHandle(
+  handle: string,
+): Promise<ProductDetail | null> {
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(PRODUCT_QUERY, {
+    variables: { handle },
+  });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+
+  // 正常な null（商品なし）だけを呼び出し側で notFound() に変換する。
+  // 通信障害や不正なレスポンスを商品なしとしてキャッシュしない。
+  if (!result.data || result.data.product === undefined) {
+    throw new Error(
+      "Failed to fetch product from Shopify Storefront API: Invalid response format.",
+    );
+  }
+  return result.data.product;
 }

@@ -22,8 +22,15 @@ let
         enable = true;
         name = "biome";
         package = pkgs.biome;
-        entry = "${pkgs.biome}/bin/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched";
+        # 移行とチェックに同じ Biome を使い、移行失敗時はチェックを中止する。
+        entry = "${pkgs.writeShellScript "biome-pre-commit" ''
+          set -euo pipefail
+          ${pkgs.biome}/bin/biome migrate --write
+          exec ${pkgs.biome}/bin/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched "$@"
+        ''}";
         pass_filenames = true;
+        # ファイルのバッチ処理で biome.json を同時に更新しない。
+        require_serial = true;
       };
       # oxfmt = {
       #   enable = true;

@@ -24,8 +24,7 @@
     "build": "sops exec-env --same-process .enc.env 'next build'",
     "start": "sops exec-env --same-process .enc.env 'next start'",
     "typecheck": "next typegen && tsc --noEmit && pnpm run check:graphql",
-    "check:graphql": "hydrogen gql check --fail-on-warn",
-    "shopify:check": "sops exec-env --same-process .enc.env 'node scripts/check-storefront.mjs'"
+    "check:graphql": "hydrogen gql check --fail-on-warn"
   },
   "dependencies": {
     "@shopify/hydrogen": "2026.10.2",

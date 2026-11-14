@@ -80,6 +80,10 @@ cd REPO
 
 Betterleaks, Semgrep, zizmor などの [pre-commit フック](../nix/pre-commit.nix) は、ローカルのコミット時に prek を実行  
 
+Biome のフックは、Nix で固定した同じバイナリで `biome migrate --write`、`biome check --write` の順に実行する。移行に失敗した場合はチェックを実行しない。
+`biome.json` は Git 管理し、移行で変更された場合は差分を確認してステージし、再実行する。移行は `$schema` だけでなく設定項目も更新する場合がある。
+フックを通さず直接 `biome check` を実行した場合、自動移行は行わない。
+
 ## 3. `node`, `pnpm`バージョンの明示
 ランタイムとパッケージマネージャのバージョンは `package.json` で固定する  
 ``` json

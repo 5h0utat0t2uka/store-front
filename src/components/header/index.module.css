@@ -1,4 +1,8 @@
 .header {
   display: grid;
-  min-block-size: 1lh;
+  /*min-block-size: 1lh;*/
+  inline-size: min(100%, 72rem);
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
 }
