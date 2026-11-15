@@ -67,4 +67,8 @@ jobs:
 
       - name: Build
         # CI uses runner environment variables instead of local SOPS credentials.
+        # The build prerenders catalog pages, so it fetches from the Shopify store.
+        env:
+          PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
+          SHOPIFY_STOREFRONT_PRIVATE_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PRIVATE_TOKEN }}
         run: pnpm exec next build

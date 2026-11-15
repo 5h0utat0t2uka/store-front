@@ -1,10 +1,9 @@
 import { formatMoney } from "@shopify/hydrogen";
 import type { Metadata } from "next";
-import { io } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductByHandle } from "@/lib/shopify";
+import { getHomeProducts, getProductByHandle } from "@/lib/shopify";
 import styles from "./page.module.css";
 
 // page.module.css の最大幅・余白・列間隔と対応させる。
@@ -18,10 +17,25 @@ const GALLERY_IMAGE_SIZES = [
   "calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2)",
 ].join(", ");
 
+// ページ全体を静的に生成する。ビルド時に生成していない商品への最初のアクセスも、
+// 生成の完了を待ってから応答するため、存在しない商品は 404 ステータスになる。
+export const ensureStatic = "navigation";
+
+// ビルド時に 1 件も生成できないとビルドが失敗するため、商品が 0 件のときに使う。
+// このハンドルの商品は存在しないので、404 のページとして生成される。
+const PLACEHOLDER_HANDLE = "__placeholder__";
+
+// トップページに掲載する商品だけをビルド時に生成する。
+// それ以外の商品は最初のアクセスで生成され、以降は静的に配信される。
+export async function generateStaticParams() {
+  const products = await getHomeProducts();
+  if (products.length === 0) return [{ handle: PLACEHOLDER_HANDLE }];
+  return products.map((product) => ({ handle: product.handle }));
+}
+
 export async function generateMetadata({
   params,
 }: PageProps<"/products/[handle]">): Promise<Metadata> {
-  await io();
   const { handle } = await params;
   const product = await getProductByHandle(handle);
   if (!product) notFound();
@@ -60,8 +74,6 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: PageProps<"/products/[handle]">) {
-  // loading.tsx の Suspense 境界内で、実行環境のトークンを使って取得する。
-  await io();
   const { handle } = await params;
   const product = await getProductByHandle(handle);
   if (!product) notFound();
@@ -94,6 +106,8 @@ export default async function ProductPage({
             sizes={HERO_IMAGE_SIZES}
             loading="eager"
             fetchPriority={primaryImage ? "high" : "auto"}
+            // ローカルの代替画像は Shopify CDN のリサイズ対象外。
+            unoptimized={!primaryImage}
           />
         </div>
 

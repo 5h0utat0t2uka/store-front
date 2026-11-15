@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { io } from "next/cache";
 import { Suspense } from "react";
 import "gen-interface-jp/400.css";
 import "gen-interface-jp/600.css";
@@ -22,8 +21,7 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  // ビルド時ではなく、実行環境のトークンを使ってストア情報を取得する。
-  await io();
+  // キャッシュした結果をビルド時に静的シェルへ含め、cacheLife の間隔で再検証する。
   const shop = await getShopMetadata();
   const title = { template: `${shop.name} ・ %s`, default: shop.name };
   const description = shop.description?.trim() || shop.name;
@@ -41,13 +39,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function ShopHeader() {
-  await io();
   const shop = await getShopMetadata();
   return <Header name={shop.name} />;
 }
 
 async function ShopFooter() {
-  await io();
   const shop = await getShopMetadata();
   return <Footer name={shop.name} />;
 }

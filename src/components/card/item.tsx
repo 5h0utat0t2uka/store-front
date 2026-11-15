@@ -2,7 +2,6 @@ import { formatMoney } from "@shopify/hydrogen";
 import Image from "next/image";
 import Link from "next/link";
 import type { ProductSummary } from "@/lib/shopify";
-import { cx } from "@/utils/class";
 import styles from "./item.module.css";
 
 type ItemCardProps = {
@@ -11,39 +10,19 @@ type ItemCardProps = {
   loading?: "eager" | "lazy";
 };
 
-function ItemLink({
-  product,
-  className,
-  children,
-}: {
-  product: ProductSummary;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      className={cx(styles.link, className)}
-      href={`/products/${encodeURIComponent(product.handle)}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
 export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
   const { minVariantPrice, maxVariantPrice } = product.priceRange;
   const featuredImage = product.featuredImage;
   const imageSrc = featuredImage?.url ?? "/placehold.svg";
-  const imageAlt = featuredImage
-    ? featuredImage.altText?.trim() || product.title
-    : `${product.title}（商品画像なし）`;
+  // 商品名は直後の見出しで伝えるため、固有の代替テキストがない画像は装飾として扱う。
+  const imageAlt = featuredImage?.altText?.trim() ?? "";
   const price = formatMoney([minVariantPrice, maxVariantPrice], {
     locale: "ja-JP",
   }).toString();
 
   return (
     <article className={styles.card}>
-      <ItemLink product={product} className={styles.frame}>
+      <div className={styles.frame}>
         <Image
           className={styles.image}
           src={imageSrc}
@@ -51,14 +30,22 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
           fill
           sizes={sizes}
           loading={loading}
+          // ローカルの代替画像は Shopify CDN のリサイズ対象外。
+          unoptimized={!featuredImage}
         />
-      </ItemLink>
+      </div>
       <div className={styles.details}>
         <p className={styles.category}>
           {product.category?.name ?? "カテゴリ未設定"}
         </p>
         <h2 className={styles.title}>
-          <ItemLink product={product}>{product.title}</ItemLink>
+          {/* カード内のリンクはこの1つだけ。::after でカード全体をクリック可能にする。 */}
+          <Link
+            className={styles.link}
+            href={`/products/${encodeURIComponent(product.handle)}`}
+          >
+            {product.title}
+          </Link>
         </h2>
         <p className={styles.price}>{price}</p>
       </div>

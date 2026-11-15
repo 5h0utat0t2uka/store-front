@@ -7,7 +7,13 @@ import "@/styles/globals.css";
 
 import ErrorPage from "./error";
 
-export default function GlobalError({ retry }: { retry: () => void }) {
+export default function GlobalError({
+  error,
+  retry,
+}: {
+  error: unknown;
+  retry: () => void;
+}) {
   return (
     <html lang="en">
       <head>
@@ -20,7 +26,7 @@ export default function GlobalError({ retry }: { retry: () => void }) {
         <meta name="color-scheme" content="light dark" />
       </head>
       <body>
-        <ErrorPage retry={retry} />
+        <ErrorPage error={error} retry={retry} />
       </body>
     </html>
   );

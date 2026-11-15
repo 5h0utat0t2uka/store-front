@@ -8,16 +8,9 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.shopify.com",
-        port: "",
-        pathname: "/s/files/**",
-        // Shopify の画像更新用のクエリパラメーター（?v=...）を許可する。
-      },
-    ],
-    maximumRedirects: 0,
+    // 商品画像は Shopify CDN がリサイズするため、Next.js の画像最適化は使わない。
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
   },
   async headers() {
     return [
