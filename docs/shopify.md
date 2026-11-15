@@ -40,6 +40,11 @@ sops edit .enc.env
 },
 ```
 
+GitHub Actions での利用は、`gh secret set` で暗号化した値を渡す  
+``` sh
+sops decrypt --input-type dotenv --output-type dotenv .enc.env | gh secret set --env-file -
+sops decrypt --input-type dotenv --output-type dotenv .enc.env | gh secret set --env-file - --app dependabot
+```
 <!--
 ## Next.js での商品表示
 

@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -8,6 +9,16 @@
   padding: 1.5rem;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 0.75rem;
+
+  /* フォーカスとホバーは、全体がクリック可能なカード自体に表示する。 */
+  &:has(.link:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  &:has(.link:hover) {
+    border-color: currentColor;
+  }
 }
 
 .frame {
@@ -22,10 +33,6 @@
 .image {
   object-fit: contain;
   border-radius: inherit;
-}
-
-.noImage {
-  font-size: 0.875rem;
 }
 
 .details {
@@ -49,10 +56,16 @@
   text-decoration: underline;
   text-underline-offset: 0.2em;
 
+  /* 見出しのリンクのクリック領域をカード全体に広げる。 */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+  }
+
   &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
-    border-radius: 0.125rem;
+    outline: none;
   }
 }
 

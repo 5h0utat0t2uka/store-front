@@ -13,6 +13,30 @@
   }
 }
 
+.details {
+  display: grid;
+  gap: 0.75rem;
+  inline-size: 100%;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+
+  &:empty {
+    display: none;
+  }
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    white-space: pre-wrap;
+  }
+}
+
 .retry {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;

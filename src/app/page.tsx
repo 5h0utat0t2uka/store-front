@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { io } from "next/cache";
 import { Suspense } from "react";
 import { ItemCard } from "@/components/card/item";
 import { getHomeProducts } from "@/lib/shopify";
@@ -20,8 +19,7 @@ const PRODUCT_IMAGE_SIZES = [
 const EAGER_PRODUCT_IMAGE_COUNT = 3;
 
 async function Products() {
-  // ビルド時ではなく、実行環境のトークンを使って商品を取得する。
-  await io();
+  // キャッシュした結果をビルド時に静的シェルへ含め、cacheLife の間隔で再検証する。
   const products = await getHomeProducts();
   if (products.length === 0) {
     return <p className={styles.message}>現在、掲載中の商品はありません。</p>;
