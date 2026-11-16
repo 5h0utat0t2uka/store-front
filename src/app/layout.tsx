@@ -83,14 +83,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <ShopFooter />
             </Suspense>
           </CartRoot>
-          <Menu>
+          <Menu />
+          {/*<Menu>
             <ul>
               <li>Home</li>
               <li>Product</li>
+              <li>Feature</li>
+              <li>Category</li>
               <li>Blog</li>
               <li>Contact</li>
             </ul>
-          </Menu>
+          </Menu>*/}
         </div>
       </body>
     </html>

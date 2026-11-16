@@ -20,7 +20,7 @@
 }
 
 .popover {
-  inline-size: min(24rem, calc(100vw - 2rem));
+  inline-size: min(24rem, calc(100vw - 4rem));
   /*inline-size: min(calc(100% - clamp(1rem, 4vw, 3rem) - 1rem), 500px);*/
   max-block-size: min(36rem, calc(100svb - 2rem));
   padding: 1rem;

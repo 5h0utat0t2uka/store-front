@@ -97,7 +97,17 @@ export function Menu({ children }: Props) {
             <span className={styles.label}>Menu</span>
           </button>
         </form>
-        <div className={styles.panel}>{children}</div>
+        <nav className={styles.nav}>
+          <ul className={styles.list}>
+            <li>Home</li>
+            <li>Product</li>
+            <li>Feature</li>
+            <li>Category</li>
+            <li>Blog</li>
+            <li>Contact</li>
+          </ul>
+        </nav>
+        {/*<div className={styles.panel}>{children}</div>*/}
       </dialog>
     </>
   );
