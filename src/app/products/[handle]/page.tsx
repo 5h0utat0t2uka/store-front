@@ -1,8 +1,9 @@
-import { formatMoney } from "@shopify/hydrogen";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddToCart } from "@/components/product/add-to-cart";
+import { formatPriceRange } from "@/lib/money";
 import { getHomeProducts, getProductByHandle } from "@/lib/shopify";
 import styles from "./page.module.css";
 
@@ -17,28 +18,51 @@ const GALLERY_IMAGE_SIZES = [
   "calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2)",
 ].join(", ");
 
-// ページ全体を静的に生成する。ビルド時に生成していない商品への最初のアクセスも、
-// 生成の完了を待ってから応答するため、存在しない商品は 404 ステータスになる。
-export const ensureStatic = "navigation";
-
 // ビルド時に 1 件も生成できないとビルドが失敗するため、商品が 0 件のときに使う。
 // このハンドルの商品は存在しないので、404 のページとして生成される。
 const PLACEHOLDER_HANDLE = "__placeholder__";
 
 // トップページに掲載する商品だけをビルド時に生成する。
-// それ以外の商品は最初のアクセスで生成され、以降は静的に配信される。
+// それ以外の商品は、最初のアクセスでは loading.tsx を先に返して内容をストリームで届け、
+// 裏で生成が終わった後は静的に配信される。
+// 応答を先に返すため、存在しない商品への最初のアクセスは 200 になる（404 の画面と noindex は出力される）。
 export async function generateStaticParams() {
   const products = await getHomeProducts();
   if (products.length === 0) return [{ handle: PLACEHOLDER_HANDLE }];
   return products.map((product) => ({ handle: product.handle }));
 }
 
+// Shopify のハンドルの上限。
+const MAX_HANDLE_LENGTH = 255;
+// ハンドルに含まれない空白・制御文字・パスの区切り文字。
+const INVALID_HANDLE_CHARACTERS = /[\s/\\\p{Cc}]/u;
+
+// URL のパラメーターは % エンコードされたまま渡されるため、復号してから検証する。
+// 不正な値は Shopify に問い合わせず、キャッシュにも残さない。
+function parseHandle(param: string): string | null {
+  let handle: string;
+  try {
+    handle = decodeURIComponent(param);
+  } catch {
+    return null;
+  }
+  if (handle.length === 0 || handle.length > MAX_HANDLE_LENGTH) return null;
+  if (INVALID_HANDLE_CHARACTERS.test(handle)) return null;
+  return handle;
+}
+
+async function getProduct(params: PageProps<"/products/[handle]">["params"]) {
+  const handle = parseHandle((await params).handle);
+  if (!handle) notFound();
+  const product = await getProductByHandle(handle);
+  if (!product) notFound();
+  return product;
+}
+
 export async function generateMetadata({
   params,
 }: PageProps<"/products/[handle]">): Promise<Metadata> {
-  const { handle } = await params;
-  const product = await getProductByHandle(handle);
-  if (!product) notFound();
+  const product = await getProduct(params);
 
   const title = product.seo.title?.trim() || product.title;
   const description =
@@ -74,9 +98,7 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: PageProps<"/products/[handle]">) {
-  const { handle } = await params;
-  const product = await getProductByHandle(handle);
-  if (!product) notFound();
+  const product = await getProduct(params);
   const primaryImage = product.featuredImage ?? product.images.nodes[0];
   const imageSrc = primaryImage?.url ?? "/placehold.svg";
   const imageAlt = primaryImage
@@ -85,10 +107,10 @@ export default async function ProductPage({
   const additionalImages = product.images.nodes.filter(
     (image) => image.url !== primaryImage?.url,
   );
-  const price = formatMoney(
-    [product.priceRange.minVariantPrice, product.priceRange.maxVariantPrice],
-    { locale: "ja-JP" },
-  ).toString();
+  const price = formatPriceRange(
+    product.priceRange.minVariantPrice,
+    product.priceRange.maxVariantPrice,
+  );
 
   return (
     <main className={styles.main}>
@@ -114,6 +136,21 @@ export default async function ProductPage({
         <div className={styles.details}>
           <h1>{product.title}</h1>
           <p className={styles.price}>{price}</p>
+          <AddToCart
+            product={{
+              id: product.id,
+              title: product.title,
+              handle: product.handle,
+              vendor: product.vendor,
+              requiresSellingPlan: product.requiresSellingPlan,
+              encodedVariantExistence: product.encodedVariantExistence,
+              encodedVariantAvailability: product.encodedVariantAvailability,
+              options: product.options,
+              selectedOrFirstAvailableVariant:
+                product.selectedOrFirstAvailableVariant,
+              adjacentVariants: product.adjacentVariants,
+            }}
+          />
           <dl className={styles.attributes}>
             <div>
               <dt>販売状況</dt>

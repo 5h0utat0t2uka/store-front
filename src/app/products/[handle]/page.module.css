@@ -120,8 +120,8 @@
   line-height: 1.8;
 }
 
-.skeletonDetails {
+/*.skeletonDetails {
   min-block-size: 18rem;
   border-radius: 0.75rem;
   background: color-mix(in srgb, currentColor 4%, transparent);
-}
+}*/
