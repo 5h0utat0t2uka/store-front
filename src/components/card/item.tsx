@@ -1,8 +1,8 @@
-import { formatMoney } from "@shopify/hydrogen";
 import Image from "next/image";
-import Link from "next/link";
+import { formatPriceRange } from "@/lib/money";
 import type { ProductSummary } from "@/lib/shopify";
 import styles from "./item.module.css";
+import { ItemLink } from "./item-link";
 
 type ItemCardProps = {
   product: ProductSummary;
@@ -16,9 +16,7 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
   const imageSrc = featuredImage?.url ?? "/placehold.svg";
   // 商品名は直後の見出しで伝えるため、固有の代替テキストがない画像は装飾として扱う。
   const imageAlt = featuredImage?.altText?.trim() ?? "";
-  const price = formatMoney([minVariantPrice, maxVariantPrice], {
-    locale: "ja-JP",
-  }).toString();
+  const price = formatPriceRange(minVariantPrice, maxVariantPrice);
 
   return (
     <article className={styles.card}>
@@ -40,12 +38,9 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
         </p>
         <h2 className={styles.title}>
           {/* カード内のリンクはこの1つだけ。::after でカード全体をクリック可能にする。 */}
-          <Link
-            className={styles.link}
-            href={`/products/${encodeURIComponent(product.handle)}`}
-          >
+          <ItemLink className={styles.link} handle={product.handle}>
             {product.title}
-          </Link>
+          </ItemLink>
         </h2>
         <p className={styles.price}>{price}</p>
       </div>

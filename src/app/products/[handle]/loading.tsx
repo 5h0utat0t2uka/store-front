@@ -13,7 +13,7 @@ export default function ProductLoading() {
             商品情報を読み込んでいます…
           </p>
         </div>
-        <div className={styles.skeletonDetails} aria-hidden="true" />
+        <div aria-hidden="true">{/* UIに合わせてスケルトンを実装 */}</div>
       </div>
     </main>
   );

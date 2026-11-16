@@ -3,11 +3,19 @@ import { Suspense } from "react";
 import "gen-interface-jp/400.css";
 import "gen-interface-jp/600.css";
 import "gen-interface-jp/700.css";
+import "@/styles/reset.css";
 import "@/styles/globals.css";
 
+import { CartRoot } from "@/components/cart/provider";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { Menu } from "@/components/nav/menu";
+import { seedCart } from "@/lib/cart-server";
 import { getShopMetadata } from "@/lib/shopify";
+
+// アプリ全体で、App Shell とリンクごとの先読みを静的な出力に限定する。
+// リクエストごとの内容は <Suspense> の内側に置き、遷移後にストリームで届ける。
+export const ensureStatic = "prefetch";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -31,7 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(url),
-    alternates: { canonical: `/` },
     title,
     description,
     openGraph: { title, description, images: ["/ogp.png"] },
@@ -49,16 +56,42 @@ async function ShopFooter() {
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // await しない。未解決の Promise のままクライアントのストアへ渡し、
+  // カートの読み取りで静的なシェルの表示を止めない。
+  const cartData = seedCart();
+
   return (
     <html lang="ja">
+      <head>
+        {/* カートのストアが変更の送信に使う Shopify の Standard Actions。 */}
+        <script
+          crossOrigin="anonymous"
+          defer
+          id="shopify-standard-actions"
+          src="https://cdn.shopify.com/storefront/standard-actions.js"
+          type="module"
+        />
+      </head>
       <body>
-        <Suspense fallback={<Header name="" />}>
-          <ShopHeader />
-        </Suspense>
-        {children}
-        <Suspense fallback={<Footer name="" />}>
-          <ShopFooter />
-        </Suspense>
+        <div id="root">
+          <CartRoot cartData={cartData}>
+            <Suspense fallback={<Header name="" />}>
+              <ShopHeader />
+            </Suspense>
+            {children}
+            <Suspense fallback={<Footer name="" />}>
+              <ShopFooter />
+            </Suspense>
+          </CartRoot>
+          <Menu>
+            <ul>
+              <li>Home</li>
+              <li>Product</li>
+              <li>Blog</li>
+              <li>Contact</li>
+            </ul>
+          </Menu>
+        </div>
       </body>
     </html>
   );

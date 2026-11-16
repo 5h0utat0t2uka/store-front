@@ -1,0 +1,60 @@
+.cart {
+  position: relative;
+  border: none;
+}
+
+.count {
+  position: absolute;
+  inset-block-start: -0.5rem;
+  inset-inline-end: -0.5rem;
+  min-inline-size: 1.25rem;
+  padding-inline: 0.25rem;
+  border-radius: calc(infinity * 1px);
+  background: var(--foreground);
+  background: orange;
+  color: var(--background);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.popover {
+  inline-size: min(24rem, calc(100vw - 2rem));
+  /*inline-size: min(calc(100% - clamp(1rem, 4vw, 3rem) - 1rem), 500px);*/
+  max-block-size: min(36rem, calc(100svb - 2rem));
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+
+  /* 閉じているときの display: none を上書きしないよう、開いているときだけ指定する。 */
+  &:popover-open {
+    display: grid;
+    gap: 1rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+  .link {
+    justify-self: center;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+
+/* アンカー配置に対応するブラウザでは、カートボタンの下に、ボタンの端とそろえて表示する。
+   未対応のブラウザでは inset と margin を変えず、ブラウザ既定の画面中央の表示のままにする。 */
+@supports (position-area: block-end) {
+  .popover {
+    inset: auto;
+    margin-block: 1rem;
+    margin-inline: 0;
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
+}

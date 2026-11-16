@@ -16,8 +16,20 @@
     outline-offset: 4px;
   }
 
-  &:has(.link:hover) {
-    border-color: currentColor;
+  @media (any-hover: hover) {
+    &:has(.link:hover) {
+      border-color: currentColor;
+    }
+  }
+
+  /* 商品リンク以外の操作要素は、カード全体を覆う .link::after より手前に出して操作できるようにする。 */
+  a:not(.link),
+  button,
+  input,
+  select,
+  textarea {
+    position: relative;
+    z-index: 1;
   }
 }
 

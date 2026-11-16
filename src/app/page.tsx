@@ -6,12 +6,14 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Home",
+  // canonical はレイアウトに置くと未指定の子ページへ継承されるため、ページごとに指定する。
+  alternates: { canonical: "/" },
 };
 
 // page.module.css の列数・余白と item.module.css のカード内余白・枠線に合わせる。
 const PRODUCT_IMAGE_SIZES = [
-  "(min-width: 60rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 3 - 3rem - 2px)",
-  "(min-width: 40rem) calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2 - 3rem - 2px)",
+  "(width: 60rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 3 - 3rem - 2px)",
+  "(width: 40rem) calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2 - 3rem - 2px)",
   "calc(100vw - clamp(2rem, 8vw, 6rem) - 3rem - 2px)",
 ].join(", ");
 
