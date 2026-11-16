@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ItemCard } from "@/components/card/item";
+import { Carousel } from "@/components/carousel";
 import { getHomeProducts } from "@/lib/shopify";
 import styles from "./page.module.css";
 
@@ -45,17 +46,20 @@ async function Products() {
 
 export default function Home(_props: PageProps<"/">) {
   return (
-    <main className={styles.main}>
-      <h1>Products</h1>
-      <Suspense
-        fallback={
-          <p className={styles.message} role="status">
-            商品を読み込んでいます…
-          </p>
-        }
-      >
-        <Products />
-      </Suspense>
-    </main>
+    <>
+      <Carousel />
+      <main className={styles.main}>
+        <h1>Products</h1>
+        <Suspense
+          fallback={
+            <p className={styles.message} role="status">
+              商品を読み込んでいます…
+            </p>
+          }
+        >
+          <Products />
+        </Suspense>
+      </main>
+    </>
   );
 }

@@ -1,0 +1,186 @@
+.carousel {
+  --slide-gap: 1.5rem;
+  /* スライドの左右に空ける幅。隣のスライドはここから gap を引いた分だけ見える。 */
+  --slide-peek: 5%;
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+  /*scroll-behavior: smooth;*/
+  inline-size: min(100%, 85rem);
+  margin-inline: auto;
+  margin-block-end: calc(clamp(2.5rem, 6vw, 5rem) * 2);
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  > ul {
+    display: flex;
+    /*width: 100%;*/
+    /*height: 100%;*/
+    gap: var(--slide-gap);
+    flex-direction: row;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+    list-style: none;
+    /* 両端に余白を足してスクロールできる範囲を広げ、最初と最後のスライドも中央にスナップさせる。
+       % はこの ul の幅が基準なので、5% ずつ空けるとスライドは ul の 90% になる。 */
+    padding-block: 0;
+    padding-inline: var(--slide-peek);
+    margin: 0;
+
+    /* 前後のボタンをこのスクロール領域に重ねて置くための基準。 */
+    anchor-name: --carousel-track;
+    /* スライドごとのマーカーを、スクロール領域の直後にまとめて生成する。 */
+    scroll-marker-group: after;
+    /* マーカーの読み上げ名に使うスライドの番号。 */
+    counter-reset: slide;
+
+    /* ボタンやマーカーによる移動にも効く。動きを減らす設定のときは瞬時に切り替える。 */
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+
+    /* 前後のボタン。ブラウザがスクロール領域の隣に <button> 相当の要素を生成し、
+       端まで進むと自動で無効にする。未対応のブラウザでは何も表示されない。
+       content をここに書くと上下方向のボタンまで生成されるため、content は向きごとの規則に書く。 */
+    &::scroll-button(*) {
+      position: absolute;
+      position-anchor: --carousel-track;
+      position-area: center;
+      align-self: center;
+      /* スライド内の .caption（z-index: 1）より前面に出す。 */
+      z-index: 2;
+      /* 押せる範囲。見えるのは mask で切り抜いたアイコンの部分だけ。 */
+      inline-size: 2.75rem;
+      block-size: 2.75rem;
+      margin-inline: 0.75rem;
+      background: var(--foreground);
+      cursor: pointer;
+      /* mask は既定で繰り返すため、1 つだけ中央に置く。 */
+      mask-image: var(--icon-angle);
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: 1.5rem;
+    }
+    &::scroll-button(*):disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    /* mask を掛けた要素では outline も切り抜かれて見えないため、
+       フォーカスの輪は mask の 2 枚目として外周に描く。 */
+    &::scroll-button(*):focus-visible {
+      mask-image:
+        var(--icon-angle),
+        radial-gradient(
+          circle closest-side,
+          transparent calc(100% - 2px),
+          #000 calc(100% - 2px)
+        );
+      mask-size: 1.5rem, 100%;
+    }
+    /* content の / 以降は読み上げ用の名前。 */
+    &::scroll-button(inline-start) {
+      content: "" / "Prev slide";
+      justify-self: start;
+      rotate: 0.5turn;
+    }
+    &::scroll-button(inline-end) {
+      content: "" / "Next slide";
+      justify-self: end;
+    }
+
+    /* マーカーの並び。大きさが中身から決まらないため、高さを指定する。 */
+    &::scroll-marker-group {
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      block-size: 2rem;
+      margin-block-start: 1rem;
+    }
+
+    > li {
+      counter-increment: slide;
+      scroll-snap-align: center;
+      /* ul の padding を除いた幅いっぱいにする。 */
+      flex: 0 0 100%;
+      display: grid;
+
+      aspect-ratio: 4 / 6;
+      position: relative;
+      border-radius: .375rem;
+      background: color-mix(in srgb, currentColor 4%, transparent);
+      > * {
+        grid-area: 1 / 1;
+      }
+      img {
+        object-fit: cover;
+        border-radius: .375rem;
+        filter: brightness(1.1);
+        @media (prefers-color-scheme: dark) {
+          filter: brightness(0.8);
+        }
+      }
+      > .caption {
+        z-index: 1;
+        place-self: center;
+        /*inset: 0;*/
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        place-items: center;
+        padding: 1.5rem;
+        > .heading {
+          font-size: 1.5rem;
+          line-height: 1.6;
+          color: var(--foreground);
+          text-align: center;
+        }
+        > .description {
+          font-size: 0.9rem;
+          line-height: 1.5;
+          color: color-mix(in srgb, var(--foreground) 80%, transparent);
+          text-align: center;
+        }
+        > .link {
+          color: var(--background);
+          background: var(--foreground);
+          padding: 0.5rem 1rem;
+          border-radius: .375rem;
+          text-transform: capitalize;
+          margin-block-start: 1.5rem;
+        }
+      }
+
+      /* スライドごとのマーカー。押せる範囲は 1.5rem、見える点は padding の内側の 0.5rem にする。
+         content の / 以降は読み上げ用の名前。 */
+      &::scroll-marker {
+        content: "" / "スライド " counter(slide);
+        inline-size: 0.6rem;
+        block-size: 0.6rem;
+        padding: 0.5rem;
+        border-radius: calc(infinity * 1px);
+        background: var(--foreground) content-box;
+        opacity: 0.3;
+        cursor: pointer;
+        transition: opacity 0.2s ease-in-out, inline-size 0.2s ease-in-out;
+        @media (any-hover: hover) {
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+      &::scroll-marker:target-current {
+        inline-size: 2rem;
+        opacity: 1;
+      }
+      &::scroll-marker:focus-visible {
+        outline: 2px solid var(--foreground);
+      }
+    }
+    @media(min-aspect-ratio: 0.8) {
+      > li {
+        aspect-ratio: 16 / 10;
+      }
+    }
+
+  }
+}
