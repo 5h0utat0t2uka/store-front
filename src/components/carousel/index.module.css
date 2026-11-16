@@ -41,9 +41,9 @@
 
     /* 前後のボタン。ブラウザがスクロール領域の隣に <button> 相当の要素を生成し、
        端まで進むと自動で無効にする。未対応のブラウザでは何も表示されない。
-       ::scroll-button(*) とまとめて書くと、ビルド時の CSS の解析で警告が出るため、向きを並べて書く。 */
-    &::scroll-button(inline-start),
-    &::scroll-button(inline-end) {
+       content をここに書くと上下方向のボタンまで生成されるため、content は向きごとの規則に書く。
+       ビルド時に「valid pseudo-element ではない」という警告が出るが、出力される CSS には影響しない。 */
+    &::scroll-button(*) {
       position: absolute;
       position-anchor: --carousel-track;
       position-area: center;
@@ -62,15 +62,13 @@
       mask-position: center;
       mask-size: 1.5rem;
     }
-    &::scroll-button(inline-start):disabled,
-    &::scroll-button(inline-end):disabled {
+    &::scroll-button(*):disabled {
       opacity: 0.3;
       cursor: default;
     }
     /* mask を掛けた要素では outline も切り抜かれて見えないため、
        フォーカスの輪は mask の 2 枚目として外周に描く。 */
-    &::scroll-button(inline-start):focus-visible,
-    &::scroll-button(inline-end):focus-visible {
+    &::scroll-button(*):focus-visible {
       mask-image:
         var(--icon-angle),
         radial-gradient(

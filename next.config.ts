@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
   },
+  turbopack: {
+    ignoreIssue: [
+      {
+        // ::scroll-button(*) などをパーサーがまだ認識しないため暫定的に追加
+        // 対応したら外す
+        path: "**/src/components/carousel/index.module.css",
+        description: /is not recognized as a valid pseudo-element/,
+      },
+    ],
+  },
   async headers() {
     return [
       {
