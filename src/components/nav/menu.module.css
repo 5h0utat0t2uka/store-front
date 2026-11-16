@@ -2,8 +2,9 @@
   position: fixed;
   inset-block-end: 0;
   inset-inline-start: 50%;
-  translate: -50% -100%;
-  background: color-mix(in srgb, white 90%, transparent);
+  /*translate: -50% -100%;*/
+  translate: -50% -50%;
+  background: color-mix(in srgb, var(--background) 90%, transparent);
   backdrop-filter: blur(10px);
   inline-size: max-content;
   /*inline-size: 10rem;*/
@@ -54,15 +55,32 @@
   }
 }
 
-.panel {
-  inline-size: 90cqi;
-  block-size: 90cqb;
+.nav {
+  /*inline-size: 90cqi;*/
+  /*block-size: 90cqb;*/
+  inline-size: 100%;
+  block-size: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: clamp(1rem, 4vw, 3rem);
   /* 下部に固定した閉じるボタンに、末尾の内容が隠れないようにする。 */
   padding-block-end: 7rem;
-  border-radius: 1rem;
-  background: var(--background);
+  /*border-radius: 1rem;*/
+  /*background: var(--background);*/
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  backdrop-filter: blur(10px);
   color: var(--foreground);
+  place-content: center;
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    place-content: center;
+    place-items: center;
+    font-size: 5rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    line-height: 1.35;
+    padding: 3rem;
+  }
 }
