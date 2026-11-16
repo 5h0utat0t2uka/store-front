@@ -1,11 +1,11 @@
-@keyframes spinner {
+/*@keyframes spinner {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+}*/
 .form {
   display: grid;
   gap: 0.5rem;
@@ -34,7 +34,7 @@
     block-size: 0.8lh;
     inline-size: 0.8lh;
     aspect-ratio: 1;
-    animation: spinner 0.75s linear infinite;
+    /*animation: spinner 0.75s linear infinite;*/
   }
 }
 .status[role="status"] {

@@ -10,9 +10,10 @@
   min-inline-size: 1.25rem;
   padding-inline: 0.25rem;
   border-radius: calc(infinity * 1px);
-  background: var(--foreground);
-  background: orange;
-  color: var(--background);
+  /*background: var(--foreground);*/
+  background: royalblue;
+  /*color: var(--background);*/
+  color: white;
   font-size: 0.75rem;
   line-height: 1.25rem;
   text-align: center;

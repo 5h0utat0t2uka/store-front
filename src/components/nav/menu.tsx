@@ -3,11 +3,12 @@
 import { type ReactNode, useEffect, useRef } from "react";
 import styles from "./menu.module.css";
 
-type Props = {
-  children?: ReactNode;
-};
+// type Props = {
+//   children?: ReactNode;
+// };
 
-export function Menu({ children }: Props) {
+// export function Menu({ children }: Props) { })
+export function Menu() {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // showModal() で開くと、ブラウザがダイアログの外側（#root を含むページ全体）を inert として扱い、
@@ -105,6 +106,7 @@ export function Menu({ children }: Props) {
             <li>Category</li>
             <li>Blog</li>
             <li>Contact</li>
+            <li>Policy</li>
           </ul>
         </nav>
         {/*<div className={styles.panel}>{children}</div>*/}
