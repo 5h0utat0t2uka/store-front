@@ -2,10 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { handleShopifyRoutes } from "@shopify/hydrogen";
 import { type NextRequest, NextResponse, type ProxyConfig } from "next/server";
 import { cartHandlers } from "@/lib/shopify/cart-handlers";
-import {
-  createBuyerClient,
-  createBuyerRequestContext,
-} from "@/lib/shopify/client";
+import { createBuyerClient, createBuyerRequestContext } from "@/lib/shopify/client";
 import { predictiveSearchHandlers } from "@/lib/shopify/search-handlers";
 
 export const config: ProxyConfig = {
@@ -25,8 +22,7 @@ function isEqual(a: string, b: string): boolean {
 }
 
 function readCredentials(request: NextRequest): string | null {
-  const [scheme, encoded] =
-    request.headers.get("authorization")?.split(" ") ?? [];
+  const [scheme, encoded] = request.headers.get("authorization")?.split(" ") ?? [];
   if (scheme?.toLowerCase() !== "basic" || !encoded) return null;
   return Buffer.from(encoded, "base64").toString("utf8");
 }

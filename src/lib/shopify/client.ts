@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  createShopifyRequestContext,
-  createStorefrontClient,
-} from "@shopify/hydrogen";
+import { createShopifyRequestContext, createStorefrontClient } from "@shopify/hydrogen";
 
 const I18N = { country: "JP", language: "JA" } as const;
 
@@ -13,9 +10,7 @@ function readConfig() {
   }
   const token = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN?.trim();
   if (!token) {
-    throw new Error(
-      "SHOPIFY_STOREFRONT_PRIVATE_TOKEN required in environment variables.",
-    );
+    throw new Error("SHOPIFY_STOREFRONT_PRIVATE_TOKEN required in environment variables.");
   }
   return {
     storeDomain,
@@ -23,8 +18,7 @@ function readConfig() {
     privateStorefrontToken: token,
     defaultTimeoutInMs: 15_000,
     // 非公開トークンを別のURLへ転送しない。
-    fetch: (input: RequestInfo | URL, init?: RequestInit) =>
-      fetch(input, { ...init, redirect: "error" }),
+    fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, { ...init, redirect: "error" }),
   };
 }
 
@@ -47,9 +41,7 @@ function readBuyerIp(headers: Headers): string {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
 }
 
-type BuyerRequest = Parameters<
-  typeof createShopifyRequestContext
->[0]["request"];
+type BuyerRequest = Parameters<typeof createShopifyRequestContext>[0]["request"];
 
 // カートなど購入者ごとの操作に使う。リクエストの Cookie と IP を Storefront API に渡すため、
 // 結果をキャッシュする処理では使わない。
@@ -61,9 +53,7 @@ export function createBuyerRequestContext(request: BuyerRequest) {
   });
 }
 
-export function createBuyerClient(
-  requestContext: ReturnType<typeof createBuyerRequestContext>,
-) {
+export function createBuyerClient(requestContext: ReturnType<typeof createBuyerRequestContext>) {
   return createStorefrontClient({
     type: "private",
     requestContext,

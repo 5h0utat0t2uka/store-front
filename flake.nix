@@ -7,49 +7,63 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
   };
 
-  outputs = { nixpkgs, flake-utils, git-hooks, ... }: flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-      };
-      runtimes = import ./nix/runtimes.nix {
-        inherit pkgs system;
-      };
-      preCommit = import ./nix/pre-commit.nix {
-        inherit pkgs git-hooks system runtimes;
-        src = ./.;
-      };
-    in
+  outputs =
     {
-      formatter = pkgs.nixfmt;
-      checks = {
-        semgrep-package = pkgs.semgrep;
-      };
-      packages = {
-        update-runtimes = runtimes.update-runtimes;
-        prek = preCommit.prek;
-      };
-      devShells.default = pkgs.mkShell {
-        packages = [
-          runtimes.nodejs
-          runtimes.pnpm
-          pkgs.age
-          pkgs.just
-          pkgs.sops
-          pkgs.typescript-language-server
-        ] ++ preCommit.enabledPackages;
-        shellHook = ''
-          ${preCommit.shellHook}
-          echo "node: $(node -v)"
-          echo "pnpm: $(pnpm -v)"
-        '';
-      };
-      devShells.ci = pkgs.mkShell {
-        packages = [
-          runtimes.nodejs
-          runtimes.pnpm
-        ];
-      };
-    }
-  );
+      nixpkgs,
+      flake-utils,
+      git-hooks,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
+        runtimes = import ./nix/runtimes.nix {
+          inherit pkgs system;
+        };
+        preCommit = import ./nix/pre-commit.nix {
+          inherit
+            pkgs
+            git-hooks
+            system
+            runtimes
+            ;
+          src = ./.;
+        };
+      in
+      {
+        formatter = pkgs.nixfmt;
+        checks = {
+          semgrep-package = pkgs.semgrep;
+        };
+        packages = {
+          update-runtimes = runtimes.update-runtimes;
+          prek = preCommit.prek;
+        };
+        devShells.default = pkgs.mkShell {
+          packages = [
+            runtimes.nodejs
+            runtimes.pnpm
+            pkgs.age
+            pkgs.just
+            pkgs.sops
+            pkgs.typescript-language-server
+          ]
+          ++ preCommit.enabledPackages;
+          shellHook = ''
+            ${preCommit.shellHook}
+            echo "node: $(node -v)"
+            echo "pnpm: $(pnpm -v)"
+          '';
+        };
+        devShells.ci = pkgs.mkShell {
+          packages = [
+            runtimes.nodejs
+            runtimes.pnpm
+          ];
+        };
+      }
+    );
 }

@@ -2,10 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-export function useMatchMedia(
-  mediaQuery: string,
-  initialState = false,
-): boolean {
+export function useMatchMedia(mediaQuery: string, initialState = false): boolean {
   const subscribe = useCallback(
     (callback: () => void) => {
       const media = window.matchMedia(mediaQuery);
@@ -17,10 +14,7 @@ export function useMatchMedia(
     [mediaQuery],
   );
 
-  const getClientSnapshot = useCallback(
-    () => window.matchMedia(mediaQuery).matches,
-    [mediaQuery],
-  );
+  const getClientSnapshot = useCallback(() => window.matchMedia(mediaQuery).matches, [mediaQuery]);
   const getServerSnapshot = useCallback(() => initialState, [initialState]);
 
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);

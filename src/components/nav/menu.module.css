@@ -29,7 +29,6 @@
     inline-size: 0.8lh;
     aspect-ratio: 1;
   }
-
 }
 
 /* showModal() で最前面のレイヤーに表示される。<dialog> 自体は画面全体を覆う透明な入れ物にして、

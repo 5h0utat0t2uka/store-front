@@ -59,16 +59,11 @@ async function getProduct(params: PageProps<"/products/[handle]">["params"]) {
   return product;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/products/[handle]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/products/[handle]">): Promise<Metadata> {
   const product = await getProduct(params);
 
   const title = product.seo.title?.trim() || product.title;
-  const description =
-    product.seo.description?.trim() ||
-    product.description.trim().slice(0, 160) ||
-    undefined;
+  const description = product.seo.description?.trim() || product.description.trim().slice(0, 160) || undefined;
   const url = `/products/${encodeURIComponent(product.handle)}`;
   const image = product.featuredImage ?? product.images.nodes[0];
 
@@ -95,22 +90,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
-  params,
-}: PageProps<"/products/[handle]">) {
+export default async function ProductPage({ params }: PageProps<"/products/[handle]">) {
   const product = await getProduct(params);
   const primaryImage = product.featuredImage ?? product.images.nodes[0];
   const imageSrc = primaryImage?.url ?? "/placehold.svg";
-  const imageAlt = primaryImage
-    ? primaryImage.altText?.trim() || product.title
-    : `${product.title}（商品画像なし）`;
-  const additionalImages = product.images.nodes.filter(
-    (image) => image.url !== primaryImage?.url,
-  );
-  const price = formatPriceRange(
-    product.priceRange.minVariantPrice,
-    product.priceRange.maxVariantPrice,
-  );
+  const imageAlt = primaryImage ? primaryImage.altText?.trim() || product.title : `${product.title}（商品画像なし）`;
+  const additionalImages = product.images.nodes.filter((image) => image.url !== primaryImage?.url);
+  const price = formatPriceRange(product.priceRange.minVariantPrice, product.priceRange.maxVariantPrice);
 
   return (
     <main className={styles.main}>
@@ -146,17 +132,14 @@ export default async function ProductPage({
               encodedVariantExistence: product.encodedVariantExistence,
               encodedVariantAvailability: product.encodedVariantAvailability,
               options: product.options,
-              selectedOrFirstAvailableVariant:
-                product.selectedOrFirstAvailableVariant,
+              selectedOrFirstAvailableVariant: product.selectedOrFirstAvailableVariant,
               adjacentVariants: product.adjacentVariants,
             }}
           />
           <dl className={styles.attributes}>
             <div>
               <dt>販売状況</dt>
-              <dd>
-                {product.availableForSale ? "購入可能" : "現在購入できません"}
-              </dd>
+              <dd>{product.availableForSale ? "購入可能" : "現在購入できません"}</dd>
             </div>
             <div>
               <dt>カテゴリ</dt>
@@ -171,27 +154,21 @@ export default async function ProductPage({
           </dl>
           <section className={styles.descriptionSection}>
             <h2>商品説明</h2>
-            <p className={styles.description}>
-              {product.description.trim() ||
-                "商品説明はまだ登録されていません。"}
-            </p>
+            <p className={styles.description}>{product.description.trim() || "商品説明はまだ登録されていません。"}</p>
           </section>
         </div>
 
         {additionalImages.length > 0 && (
           <section className={styles.gallery} aria-labelledby="product-images">
             <h2 id="product-images">商品画像</h2>
-            {/* biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
+            {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
             <ul className={styles.imageList} role="list">
               {additionalImages.map((image, index) => (
                 <li className={styles.frame} key={image.url}>
                   <Image
                     className={styles.image}
                     src={image.url}
-                    alt={
-                      image.altText?.trim() ||
-                      `${product.title}（画像 ${index + 2}）`
-                    }
+                    alt={image.altText?.trim() || `${product.title}（画像 ${index + 2}）`}
                     fill
                     sizes={GALLERY_IMAGE_SIZES}
                     loading="lazy"

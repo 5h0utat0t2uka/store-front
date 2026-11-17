@@ -11,6 +11,8 @@ import styles from "./menu.module.css";
 // export function Menu({ children }: Props) { })
 export function Menu() {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  // パネルの外側で押し始めたかどうか。描画には使わない値なので、state ではなく ref で持つ。
+  const pressedOutsideRef = useRef(false);
 
   // showModal() で開くと、ブラウザがダイアログの外側（#root を含むページ全体）を inert として扱い、
   // フォーカスの閉じ込め、Esc や戻る操作での閉じる動作、閉じたあとのフォーカスの復帰まで処理する。
@@ -24,16 +26,14 @@ export function Menu() {
     if (!dialog) return;
 
     // パネルの中で押して外側で離した操作（文字の選択など）では閉じないよう、押した位置も見る。
-    let pressedOutside = false;
     const trackPress = (event: PointerEvent) => {
-      pressedOutside = event.target === dialog;
+      pressedOutsideRef.current = event.target === dialog;
     };
 
     const closeOnClick = (event: MouseEvent) => {
-      const outside = pressedOutside && event.target === dialog;
+      const outside = pressedOutsideRef.current && event.target === dialog;
       // ダイアログはレイアウトにあり、ページを移動しても残るため、リンクで移動するときは自分で閉じる。
-      const link =
-        event.target instanceof Element && event.target.closest("a[href]");
+      const link = event.target instanceof Element && event.target.closest("a[href]");
       if (outside || link) dialog.close();
     };
 
@@ -47,20 +47,8 @@ export function Menu() {
 
   return (
     <>
-      <button
-        type="button"
-        className={styles.menu}
-        onClick={open}
-        aria-label="Open Menu"
-        aria-haspopup="dialog"
-      >
-        <svg
-          role="img"
-          aria-hidden="true"
-          width={24}
-          height={24}
-          viewBox="0 0 24 24"
-        >
+      <button type="button" className={styles.menu} onClick={open} aria-label="Open Menu" aria-haspopup="dialog">
+        <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
           <path
             fill="none"
             stroke="currentColor"
@@ -78,20 +66,8 @@ export function Menu() {
             パネルより前に置き、中身の量にかかわらず、開いたときのフォーカスをこのボタンに当てる。 */}
         <form method="dialog">
           <button type="submit" className={styles.menu} aria-label="Close menu">
-            <svg
-              role="img"
-              aria-hidden="true"
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-            >
-              <g
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              >
+            <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
+              <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}>
                 <path d="m5 5 14 14"></path>
                 <path d="M19 5 5 19"></path>
               </g>

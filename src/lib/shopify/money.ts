@@ -16,7 +16,5 @@ export function formatPrice(money: MoneyV2): string {
 
 // 最低価格と最高価格が同じ場合は、1 つの価格として表示される。
 export function formatPriceRange(min: MoneyV2, max: MoneyV2): string {
-  return normalizeYenSign(
-    formatMoney([min, max], { locale: LOCALE }).toString(),
-  );
+  return normalizeYenSign(formatMoney([min, max], { locale: LOCALE }).toString());
 }

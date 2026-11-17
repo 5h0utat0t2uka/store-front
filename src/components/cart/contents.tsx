@@ -62,7 +62,7 @@ function CartBody({ onNavigate }: Props) {
         <p>カートに商品はありません。</p>
       ) : (
         <>
-          {/* biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
+          {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
           <ul className={styles.lines} role="list">
             {lines.map((line) => (
               <li key={line.id}>
@@ -73,9 +73,7 @@ function CartBody({ onNavigate }: Props) {
 
           <dl className={styles.summary}>
             <dt>小計</dt>
-            <dd data-pending={isCostPending || undefined}>
-              {formatPrice(cart.cost.subtotalAmount)}
-            </dd>
+            <dd data-pending={isCostPending || undefined}>{formatPrice(cart.cost.subtotalAmount)}</dd>
           </dl>
 
           {cart.checkoutUrl && (
@@ -99,15 +97,8 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
   const merchandise = line.merchandise;
   const title = merchandise?.product.title ?? "商品";
   const handle = merchandise?.product.handle;
-  const variantTitle =
-    merchandise?.title && merchandise.title !== DEFAULT_VARIANT_TITLE
-      ? merchandise.title
-      : null;
-  const messages = lineErrors
-    ? [...lineErrors.userErrors, ...lineErrors.warnings].map(
-        (error) => error.message,
-      )
-    : [];
+  const variantTitle = merchandise?.title && merchandise.title !== DEFAULT_VARIANT_TITLE ? merchandise.title : null;
+  const messages = lineErrors ? [...lineErrors.userErrors, ...lineErrors.warnings].map((error) => error.message) : [];
   const hasError = messages.length > 0;
 
   return (
@@ -115,23 +106,14 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
       <div className={styles.thumb}>
         {merchandise?.image && (
           // 隣に商品名があるため、画像は装飾として扱う。
-          <Image
-            className={styles.image}
-            src={merchandise.image.url}
-            alt=""
-            width={80}
-            height={80}
-          />
+          <Image className={styles.image} src={merchandise.image.url} alt="" width={80} height={80} />
         )}
       </div>
 
       <div className={styles.lineDetails}>
         <p className={styles.lineTitle}>
           {handle ? (
-            <Link
-              href={`/products/${encodeURIComponent(handle)}`}
-              onClick={onNavigate}
-            >
+            <Link href={`/products/${encodeURIComponent(handle)}`} onClick={onNavigate}>
               {title}
             </Link>
           ) : (
@@ -150,9 +132,7 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
             beforeSubmit: (event) => {
               const input = event.currentTarget.elements.namedItem("quantity");
               if (input instanceof HTMLInputElement) {
-                input.value = String(
-                  sanitizeQuantity(input.value, { min: 0, max: MAX_QUANTITY }),
-                );
+                input.value = String(sanitizeQuantity(input.value, { min: 0, max: MAX_QUANTITY }));
               }
             },
           })}

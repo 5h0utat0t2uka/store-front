@@ -263,26 +263,18 @@ const SHOP_POLICIES_QUERY = gql(
   [SHOP_POLICY_FRAGMENT],
 );
 
-export type ProductSummary = StorefrontApi.ResultOf<
-  typeof HOME_PRODUCTS_QUERY
->["products"]["nodes"][number];
+export type ProductSummary = StorefrontApi.ResultOf<typeof HOME_PRODUCTS_QUERY>["products"]["nodes"][number];
 
 export type ShopMetadata = {
   name: string;
   description?: string | null;
 };
 
-export type ProductDetail = NonNullable<
-  StorefrontApi.ResultOf<typeof PRODUCT_QUERY>["product"]
->;
+export type ProductDetail = NonNullable<StorefrontApi.ResultOf<typeof PRODUCT_QUERY>["product"]>;
 
-export type ContentPage = NonNullable<
-  StorefrontApi.ResultOf<typeof PAGE_QUERY>["page"]
->;
+export type ContentPage = NonNullable<StorefrontApi.ResultOf<typeof PAGE_QUERY>["page"]>;
 
-export type ShopPolicy = NonNullable<
-  StorefrontApi.ResultOf<typeof SHOP_POLICIES_QUERY>["shop"]["privacyPolicy"]
->;
+export type ShopPolicy = NonNullable<StorefrontApi.ResultOf<typeof SHOP_POLICIES_QUERY>["shop"]["privacyPolicy"]>;
 
 // 各関数の結果はビルド時の静的生成に含まれ、cacheLife の revalidate の間隔で再検証される。
 // expire を 5 分未満、stale を 30 秒未満、revalidate を 0 にすると静的生成から外れ、
@@ -303,9 +295,7 @@ async function fetchShopMetadata(): Promise<ShopMetadata> {
 
   const shop = result.data?.shop;
   if (!shop) {
-    throw new Error(
-      "Failed to fetch shop metadata from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch shop metadata from Shopify Storefront API: Invalid response format.");
   }
   return shop;
 }
@@ -329,10 +319,7 @@ export async function getShopMetadata(): Promise<ShopMetadata> {
     unstable_rethrow(error);
     const fallback = getFallbackShopMetadata();
     if (!fallback) throw error;
-    console.error(
-      "Failed to fetch shop metadata. Falling back to PUBLIC_STORE_NAME.",
-      error,
-    );
+    console.error("Failed to fetch shop metadata. Falling back to PUBLIC_STORE_NAME.", error);
     return fallback;
   }
 }
@@ -349,16 +336,12 @@ export async function getHomeProducts(): Promise<ProductSummary[]> {
 
   const products = result.data?.products?.nodes;
   if (!Array.isArray(products)) {
-    throw new Error(
-      "Failed to fetch products from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch products from Shopify Storefront API: Invalid response format.");
   }
   return products;
 }
 
-export async function getProductByHandle(
-  handle: string,
-): Promise<ProductDetail | null> {
+export async function getProductByHandle(handle: string): Promise<ProductDetail | null> {
   "use cache";
   cacheLife({ stale: 60, revalidate: 60, expire: 300 });
 
@@ -373,9 +356,7 @@ export async function getProductByHandle(
   // 正常な null（商品なし）だけを呼び出し側で notFound() に変換する。
   // 通信障害や不正なレスポンスを商品なしとしてキャッシュしない。
   if (!result.data || result.data.product === undefined) {
-    throw new Error(
-      "Failed to fetch product from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch product from Shopify Storefront API: Invalid response format.");
   }
   return result.data.product;
 }
@@ -397,16 +378,12 @@ export async function getPageHandles(): Promise<string[]> {
 
   const pages = result.data?.pages?.nodes;
   if (!Array.isArray(pages)) {
-    throw new Error(
-      "Failed to fetch pages from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch pages from Shopify Storefront API: Invalid response format.");
   }
   return pages.map((page) => page.handle);
 }
 
-export async function getPageByHandle(
-  handle: string,
-): Promise<ContentPage | null> {
+export async function getPageByHandle(handle: string): Promise<ContentPage | null> {
   "use cache";
   cacheLife({ stale: 300, revalidate: 300, expire: 3_600 });
 
@@ -421,9 +398,7 @@ export async function getPageByHandle(
   // 正常な null（ページなし）だけを呼び出し側で notFound() に変換する。
   // 通信障害や不正なレスポンスをページなしとしてキャッシュしない。
   if (!result.data || result.data.page === undefined) {
-    throw new Error(
-      "Failed to fetch page from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch page from Shopify Storefront API: Invalid response format.");
   }
   return result.data.page;
 }
@@ -442,9 +417,7 @@ export async function getShopPolicies(): Promise<ShopPolicy[]> {
 
   const shop = result.data?.shop;
   if (!shop) {
-    throw new Error(
-      "Failed to fetch shop policies from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to fetch shop policies from Shopify Storefront API: Invalid response format.");
   }
   return [
     shop.termsOfService,
@@ -459,9 +432,7 @@ export async function getShopPolicies(): Promise<ShopPolicy[]> {
 
 // フッターのリンク用。取得に失敗しても、リンクを出さずにページの表示を続ける。
 // 失敗した結果をキャッシュしないよう、フォールバックはキャッシュ関数の外で行う。
-export async function getShopPolicyLinks(): Promise<
-  Pick<ShopPolicy, "handle" | "title">[]
-> {
+export async function getShopPolicyLinks(): Promise<Pick<ShopPolicy, "handle" | "title">[]> {
   try {
     const policies = await getShopPolicies();
     return policies.map(({ handle, title }) => ({ handle, title }));

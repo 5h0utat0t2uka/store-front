@@ -1,4 +1,10 @@
-{ pkgs, git-hooks, system, runtimes, src }:
+{
+  pkgs,
+  git-hooks,
+  system,
+  runtimes,
+  src,
+}:
 
 let
   preCommit = git-hooks.lib.${system}.run {
@@ -11,6 +17,10 @@ let
         enable = true;
         args = [ "--maxkb=500" ];
       };
+      nixfmt = {
+        enable = true;
+        package = pkgs.nixfmt;
+      };
       node-tests = {
         enable = false;
         name = "node-test";
@@ -18,32 +28,24 @@ let
         files = "^(apps|packages)/.*\\.tsx?$";
         pass_filenames = false;
       };
-      biome = {
+      oxfmt = {
         enable = true;
-        name = "biome";
-        package = pkgs.biome;
-        # 移行とチェックに同じ Biome を使い、移行失敗時はチェックを中止する。
-        entry = "${pkgs.writeShellScript "biome-pre-commit" ''
-          set -euo pipefail
-          ${pkgs.biome}/bin/biome migrate --write
-          exec ${pkgs.biome}/bin/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched "$@"
-        ''}";
-        pass_filenames = true;
-        # ファイルのバッチ処理で biome.json を同時に更新しない。
-        require_serial = true;
+        package = pkgs.oxfmt;
+        after = [ "oxlint" ];
+        types_or = [
+          "javascript"
+          "jsx"
+          "ts"
+          "tsx"
+          "css"
+          "json"
+        ];
       };
-      # oxfmt = {
-      #   enable = true;
-      #   package = pkgs.oxfmt;
-      #   settings.mode = "write";
-      # };
-      # oxlint = {
-      #   enable = true;
-      #   name = "oxlint";
-      #   package = pkgs.oxlint;
-      #   entry = "${pkgs.oxlint}/bin/oxlint";
-      #   files = "\\.(js|jsx|mjs|cjs|ts|tsx|mts|cts)$";
-      # };
+      oxlint = {
+        enable = true;
+        package = pkgs.oxlint;
+        settings.fix = [ "safe" ];
+      };
       betterleaks = rec {
         enable = true;
         name = "betterleaks";
@@ -61,7 +63,10 @@ let
       zizmor = {
         enable = true;
         package = pkgs.zizmor;
-        args = [ "--collect=workflows,actions" "." ];
+        args = [
+          "--collect=workflows,actions"
+          "."
+        ];
         files = "^\\.github/(workflows|actions)/.*";
         pass_filenames = false;
       };
@@ -73,11 +78,15 @@ in
   prek = pkgs.writeShellApplication {
     name = "prek";
     runtimeInputs = [ preCommit.config.gitPackage ] ++ preCommit.enabledPackages;
-    text = let
-      configDir = pkgs.linkFarm "prek-config" { ".pre-commit-config.yaml" = preCommit.config.configFile; };
-    in ''
-      exec ${pkgs.lib.getExe preCommit.config.package} run \
-        --config ${configDir}/.pre-commit-config.yaml --all-files "$@"
-    '';
+    text =
+      let
+        configDir = pkgs.linkFarm "prek-config" {
+          ".pre-commit-config.yaml" = preCommit.config.configFile;
+        };
+      in
+      ''
+        exec ${pkgs.lib.getExe preCommit.config.package} run \
+          --config ${configDir}/.pre-commit-config.yaml --all-files "$@"
+      '';
   };
 }

@@ -73,7 +73,7 @@
     /*outline: 2px solid currentColor;*/
     /*outline-offset: -4px;*/
     /*border-radius: 0.5rem;*/
-    outline: none
+    outline: none;
   }
 }
 
@@ -103,8 +103,7 @@
   /* 入力前は空の .status だけが入っているため、表示する内容があるときだけ余白と区切り線を付ける。 */
   &:has(> .status:not(:empty), > .error) {
     padding: 1rem;
-    border-block-start: 1px solid
-      color-mix(in srgb, currentColor 15%, transparent);
+    border-block-start: 1px solid color-mix(in srgb, currentColor 15%, transparent);
   }
 
   /* 次の結果を待つ間に残っている前の結果。 */

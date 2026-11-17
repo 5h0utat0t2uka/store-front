@@ -53,8 +53,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value:
-              "geolocation=(self), autoplay=(self), fullscreen=(self), picture-in-picture=(self)",
+            value: "geolocation=(self), autoplay=(self), fullscreen=(self), picture-in-picture=(self)",
           },
           // {
           //   key: "Content-Security-Policy",

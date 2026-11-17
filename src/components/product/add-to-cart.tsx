@@ -21,8 +21,7 @@ export type ProductFormInput = Pick<
   | "adjacentVariants"
 >;
 
-const { ProductProvider, useProductForm } =
-  createProductComponents<ProductFormInput>();
+const { ProductProvider, useProductForm } = createProductComponents<ProductFormInput>();
 
 type Props = {
   product: ProductFormInput;
@@ -48,32 +47,18 @@ export function AddToCart({ product }: Props) {
 }
 
 function AddToCartForm({ product }: Props) {
-  const {
-    options,
-    selectedVariant,
-    register,
-    formProps,
-    errors,
-    matchedLineItem,
-    pending,
-  } = useProductForm();
+  const { options, selectedVariant, register, formProps, errors, matchedLineItem, pending } = useProductForm();
   const errorId = useId();
   const hydrated = useHydrated();
 
   // サーバーが出力する HTML は購入者のカートを含まない。一方 useProductForm は、ハイドレーション中も
   // ブラウザで読み込み済みのカートを返すため、カートに由来する表示はハイドレーションの後に出す。
   const lineInCart = hydrated ? matchedLineItem : null;
-  const cartErrors = hydrated
-    ? [...errors.userErrors, ...errors.warnings, ...errors.networkErrors]
-    : [];
+  const cartErrors = hydrated ? [...errors.userErrors, ...errors.warnings, ...errors.networkErrors] : [];
 
   // バリアントが選択済みで、購入可能で、定期購入専用でないときだけ追加できる。
   const addable = canAddToCart(product, options);
-  const label = addable
-    ? "カートに追加"
-    : selectedVariant
-      ? "現在購入できません"
-      : "オプションを選択してください";
+  const label = addable ? "カートに追加" : selectedVariant ? "現在購入できません" : "オプションを選択してください";
   const messages = cartErrors.map((error) => error.message);
 
   return (
@@ -88,13 +73,7 @@ function AddToCartForm({ product }: Props) {
         aria-describedby={messages.length > 0 ? errorId : undefined}
       >
         {pending && (
-          <svg
-            role="img"
-            aria-hidden="true"
-            width={24}
-            height={24}
-            viewBox="0 0 24 24"
-          >
+          <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
             <path
               fill="currentColor"
               d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
