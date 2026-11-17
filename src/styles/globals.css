@@ -2,6 +2,18 @@
   color-scheme: light dark;
   --background: #ffffff;
   --foreground: #171717;
+  --w: tan(atan2(var(--_w), 1px));
+  --h: tan(atan2(var(--_h), 1px));
+  --space: clamp(1rem, 0.368rem + 3.16vw, 1.75rem);
+  --header-block: calc((var(--space) * 2) + 60px);
+  --header-block: calc((var(--space) * 2) + 3rem);
+  --button-block: 2.8rem;
+  --content-inline: min(100%, 72rem);
+  /*--footer-block: var(--header-block);*/
+
+  --primary: light-dark(oklch(20% 0 none), oklch(98% 0 none)); /* #191919 / #fafafa */
+  --secondary: light-dark(oklch(57% 0 none), oklch(72% 0 none)); /* #484848 / #a6a6a6 */
+  --border: light-dark(oklch(84% 0 none), oklch(36% 0 none)); /* #b9b9b9 / #595959 */
 }
 
 @media (prefers-color-scheme: dark) {

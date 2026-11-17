@@ -75,12 +75,12 @@
 
   blockquote {
     padding-inline-start: 1em;
-    border-inline-start: 0.25rem solid color-mix(in srgb, currentColor 25%, transparent);
+    border-inline-start: 0.25rem solid color-mix(in oklch, currentColor 25%, transparent);
   }
 
   hr {
     border: none;
-    border-block-start: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    border-block-start: 1px solid color-mix(in oklch, currentColor 25%, transparent);
   }
 
   /* 列の多い表は、ページではなく表の中で横にスクロールさせる。 */
@@ -92,7 +92,7 @@
 
   :is(th, td) {
     padding: 0.5rem 0.75rem;
-    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    border: 1px solid color-mix(in oklch, currentColor 25%, transparent);
     text-align: start;
     vertical-align: top;
   }

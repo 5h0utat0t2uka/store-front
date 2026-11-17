@@ -1,36 +1,38 @@
 .footer {
   display: grid;
-  inline-size: min(100%, 72rem);
-  margin-inline: auto;
-  padding-block: clamp(2.5rem, 6vw, 5rem) calc(clamp(2.5rem, 6vw, 5rem) * 2 + env(safe-area-inset-bottom));
-  padding-inline: clamp(1rem, 4vw, 3rem);
-  > div {
+  padding-block-end: calc(var(--button-block) * 1 + env(safe-area-inset-bottom));
+  background: color-mix(in oklch, var(--foreground) 5%, transparent);
+  > .content {
     display: grid;
-    gap: 1.5rem;
-  }
-  /* ポリシーのリンク。幅に収まらない分は折り返す。 */
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-    list-style: none;
-    font-size: clamp(0.75rem, 1vw, 1rem);
-  }
-  a {
-    @media (any-hover: hover) {
-      &:hover {
-        text-decoration: underline;
-        text-underline-offset: 0.2em;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    inline-size: var(--content-inline);
+    margin-inline: auto;
+    padding-inline: calc(var(--space) * 2);
+    padding-block: calc(var(--space) * 2) calc(var(--space) * 2 + env(safe-area-inset-bottom));
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      list-style: none;
+      font-size: clamp(0.75rem, 1vw, 1rem);
+      a {
+        @media (any-hover: hover) {
+          &:hover {
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+          }
+        }
+        &:focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: 4px;
+          border-radius: 0.125rem;
+        }
       }
     }
-    &:focus-visible {
-      outline: 2px solid currentColor;
-      outline-offset: 4px;
-      border-radius: 0.125rem;
+    small {
+      font-size: clamp(0.75rem, 1vw, 1rem);
+      color: var(--secondary);
     }
-  }
-  p {
-    font-size: clamp(0.75rem, 1vw, 1rem);
-    color: var(--foreground);
   }
 }

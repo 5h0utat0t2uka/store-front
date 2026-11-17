@@ -10,7 +10,7 @@ type Props = {
 export function Header({ name }: Props) {
   return (
     <header className={styles.header}>
-      <div>
+      <div className={styles.content}>
         <Link href="/">
           <svg role="img" aria-label="Home" width={24} height={24} viewBox="0 0 24 24">
             <path fill="currentColor" d="M12 2.68L22 20H2z"></path>

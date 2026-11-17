@@ -86,7 +86,6 @@ export function Menu() {
               {/* Shopify のオンラインストアの「ページ」（ハンドル: contact）を表示する。 */}
               <Link href="/pages/contact">Contact</Link>
             </li>
-            {/*<li>Policy</li>*/}
           </ul>
         </nav>
         {/*<div className={styles.panel}>{children}</div>*/}

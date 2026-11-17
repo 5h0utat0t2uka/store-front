@@ -38,7 +38,7 @@
   }
 }
 .status[role="status"] {
-  color: color-mix(in srgb, currentColor 50%, transparent);
+  color: color-mix(in oklch, currentColor 50%, transparent);
 }
 
 .error {

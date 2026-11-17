@@ -47,9 +47,15 @@ async function Products() {
 export default function Home(_props: PageProps<"/">) {
   return (
     <>
+      {/*<section>
+        <hgroup>
+          <h1>Shopify Online Store with Next.js</h1>
+          <p>This is a Shopify Storefront application built with Next.js and Hydrogen.</p>
+        </hgroup>
+      </section>*/}
       <Carousel />
       <main className={styles.main}>
-        <h1>Products</h1>
+        <h2>Products</h2>
         <Suspense
           fallback={
             <p className={styles.message} role="status">

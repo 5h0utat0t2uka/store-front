@@ -10,7 +10,7 @@ type Props = {
 export function Footer({ name, policies = [] }: Props) {
   return (
     <footer className={styles.footer}>
-      <div>
+      <div className={styles.content}>
         {policies.length > 0 && (
           <nav aria-label="ポリシー">
             {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
@@ -23,7 +23,7 @@ export function Footer({ name, policies = [] }: Props) {
             </ul>
           </nav>
         )}
-        <p>© 2016 {name}</p>
+        <small>© 2016 {name}</small>
       </div>
     </footer>
   );
