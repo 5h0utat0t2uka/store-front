@@ -1,7 +1,7 @@
 .carousel {
   --slide-gap: 1.5rem;
   /* スライドの左右に空ける幅。隣のスライドはここから gap を引いた分だけ見える。 */
-  --slide-peek: 5%;
+  --slide-peek: 8%;
   container-type: inline-size;
   position: relative;
   display: grid;
@@ -9,7 +9,7 @@
   inline-size: min(100%, 85rem);
   margin-inline: auto;
   margin-block-end: calc(clamp(2.5rem, 6vw, 5rem) * 2);
-  padding-inline: clamp(1rem, 4vw, 3rem);
+  /*padding-inline: clamp(1rem, 4vw, 3rem);*/
   > ul {
     display: flex;
     /*width: 100%;*/
@@ -89,7 +89,7 @@
       display: flex;
       justify-content: center;
       gap: 0.25rem;
-      block-size: 2rem;
+      block-size: 1.5rem;
       margin-block-start: 1rem;
     }
 
@@ -103,7 +103,7 @@
       aspect-ratio: 4 / 6;
       position: relative;
       border-radius: 0.375rem;
-      background: color-mix(in srgb, currentColor 4%, transparent);
+      background: color-mix(in oklch, currentColor 4%, transparent);
       > * {
         grid-area: 1 / 1;
       }
@@ -133,7 +133,7 @@
         > .description {
           font-size: 1rem;
           line-height: 1.3;
-          color: color-mix(in srgb, var(--foreground) 80%, transparent);
+          color: color-mix(in oklch, var(--foreground) 80%, transparent);
           text-align: center;
         }
         > .link {
@@ -151,8 +151,8 @@
          content の / 以降は読み上げ用の名前。 */
       &::scroll-marker {
         content: "" / "スライド " counter(slide);
-        inline-size: 0.6rem;
-        block-size: 0.6rem;
+        inline-size: 0.5rem;
+        block-size: 0.5rem;
         padding: 0.5rem;
         border-radius: calc(infinity * 1px);
         background: var(--foreground) content-box;
