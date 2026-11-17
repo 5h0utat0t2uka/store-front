@@ -26,9 +26,7 @@ async function getPolicy(params: PageProps<"/policies/[handle]">["params"]) {
   return policy;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/policies/[handle]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/policies/[handle]">): Promise<Metadata> {
   const policy = await getPolicy(params);
 
   return {
@@ -39,9 +37,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PolicyPage({
-  params,
-}: PageProps<"/policies/[handle]">) {
+export default async function PolicyPage({ params }: PageProps<"/policies/[handle]">) {
   const policy = await getPolicy(params);
   return <Content title={policy.title} html={policy.body} />;
 }

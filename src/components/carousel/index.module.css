@@ -70,12 +70,7 @@
        フォーカスの輪は mask の 2 枚目として外周に描く。 */
     &::scroll-button(*):focus-visible {
       mask-image:
-        var(--icon-angle),
-        radial-gradient(
-          circle closest-side,
-          transparent calc(100% - 2px),
-          #000 calc(100% - 2px)
-        );
+        var(--icon-angle), radial-gradient(circle closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
       mask-size: 1.5rem, 100%;
     }
     /* content の / 以降は読み上げ用の名前。 */
@@ -107,14 +102,14 @@
 
       aspect-ratio: 4 / 6;
       position: relative;
-      border-radius: .375rem;
+      border-radius: 0.375rem;
       background: color-mix(in srgb, currentColor 4%, transparent);
       > * {
         grid-area: 1 / 1;
       }
       img {
         object-fit: cover;
-        border-radius: .375rem;
+        border-radius: 0.375rem;
         filter: brightness(1.1);
         @media (prefers-color-scheme: dark) {
           filter: brightness(0.8);
@@ -146,7 +141,7 @@
           font-size: 0.8rem;
           background: var(--foreground);
           padding: 0.5rem 1rem;
-          border-radius: .375rem;
+          border-radius: 0.375rem;
           text-transform: capitalize;
           margin-block-start: 1.5rem;
         }
@@ -163,7 +158,9 @@
         background: var(--foreground) content-box;
         opacity: 0.3;
         cursor: pointer;
-        transition: opacity 0.2s ease-in-out, inline-size 0.2s ease-in-out;
+        transition:
+          opacity 0.2s ease-in-out,
+          inline-size 0.2s ease-in-out;
         @media (any-hover: hover) {
           &:hover {
             opacity: 1;
@@ -178,11 +175,10 @@
         outline: 2px solid var(--foreground);
       }
     }
-    @media(min-aspect-ratio: 0.8) {
+    @media (min-aspect-ratio: 0.8) {
       > li {
         aspect-ratio: 16 / 10;
       }
     }
-
   }
 }

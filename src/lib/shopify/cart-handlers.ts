@@ -1,9 +1,5 @@
 import "server-only";
-import {
-  type CartDataFromHandlers,
-  type CartGetData,
-  createCartServerHandlers,
-} from "@shopify/hydrogen";
+import { type CartDataFromHandlers, type CartGetData, createCartServerHandlers } from "@shopify/hydrogen";
 
 // /api/cart の取得（GET）と変更（POST）を処理する。proxy.ts の handleShopifyRoutes に登録する。
 export const cartHandlers = createCartServerHandlers();

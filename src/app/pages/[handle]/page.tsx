@@ -25,24 +25,17 @@ async function getPage(params: PageProps<"/pages/[handle]">["params"]) {
   return page;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/pages/[handle]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/pages/[handle]">): Promise<Metadata> {
   const page = await getPage(params);
 
   return {
     title: page.seo?.title?.trim() || page.title,
-    description:
-      page.seo?.description?.trim() ||
-      page.bodySummary.trim().slice(0, 160) ||
-      undefined,
+    description: page.seo?.description?.trim() || page.bodySummary.trim().slice(0, 160) || undefined,
     alternates: { canonical: `/pages/${encodeURIComponent(page.handle)}` },
   };
 }
 
-export default async function ContentPage({
-  params,
-}: PageProps<"/pages/[handle]">) {
+export default async function ContentPage({ params }: PageProps<"/pages/[handle]">) {
   const page = await getPage(params);
   return <Content title={page.title} html={page.body} />;
 }

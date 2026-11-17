@@ -1,6 +1,6 @@
 "use client";
 
-import { getPredictiveSearchItemUrl } from "@shopify/hydrogen";
+import { getPredictiveSearchItemUrl, readPredictiveSearchFormTerm } from "@shopify/hydrogen";
 import {
   PredictiveSearchProvider,
   usePredictiveSearch,
@@ -11,19 +11,9 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  type MouseEvent as ReactMouseEvent,
-  useEffect,
-  useId,
-  useRef,
-} from "react";
+import { type MouseEvent as ReactMouseEvent, useEffect, useId, useRef } from "react";
 import { formatPrice } from "@/lib/shopify/money";
-import {
-  getSearchUrl,
-  MAX_SEARCH_TERM_LENGTH,
-  routeTemplates,
-  SEARCH_PATH,
-} from "@/lib/shopify/search";
+import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, routeTemplates, SEARCH_PATH } from "@/lib/shopify/search";
 import styles from "./search.module.css";
 
 // 入力中の候補は /api/predictive-search から取得する。入力の間引き（既定で 150 ミリ秒）と、
@@ -32,11 +22,7 @@ import styles from "./search.module.css";
 // 同じく、除外せずに末尾へ並べる。
 export function Search() {
   return (
-    <PredictiveSearchProvider
-      limit={4}
-      types={["PRODUCT", "QUERY"]}
-      unavailableProducts="LAST"
-    >
+    <PredictiveSearchProvider limit={4} types={["PRODUCT", "QUERY"]} unavailableProducts="LAST">
       <SearchDialog />
     </PredictiveSearchProvider>
   );
@@ -45,6 +31,8 @@ export function Search() {
 function SearchDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  // 背景の上で押し始めたかどうか。描画には使わない値なので、state ではなく ref で持つ。
+  const pressedOnBackdropRef = useRef(false);
   const inputId = useId();
   const router = useRouter();
   const { clear } = usePredictiveSearchActions();
@@ -91,12 +79,11 @@ function SearchDialog() {
     };
 
     // 入力欄の文字を選択しながら外側で離した操作では閉じないよう、押した位置も見る。
-    let pressedOnBackdrop = false;
     const trackPress = (event: PointerEvent) => {
-      pressedOnBackdrop = isOnBackdrop(event);
+      pressedOnBackdropRef.current = isOnBackdrop(event);
     };
     const closeOnBackdropClick = (event: MouseEvent) => {
-      if (pressedOnBackdrop && isOnBackdrop(event)) dialog.close();
+      if (pressedOnBackdropRef.current && isOnBackdrop(event)) dialog.close();
     };
 
     dialog.addEventListener("pointerdown", trackPress);
@@ -109,20 +96,8 @@ function SearchDialog() {
 
   return (
     <>
-      <Link
-        className={styles.search}
-        href={SEARCH_PATH}
-        onClick={open}
-        aria-label="検索"
-        aria-haspopup="dialog"
-      >
-        <svg
-          role="img"
-          aria-hidden="true"
-          width={24}
-          height={24}
-          viewBox="0 0 24 24"
-        >
+      <Link className={styles.search} href={SEARCH_PATH} onClick={open} aria-label="検索" aria-haspopup="dialog">
+        <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
           <path
             fill="none"
             stroke="currentColor"
@@ -134,35 +109,24 @@ function SearchDialog() {
         </svg>
       </Link>
 
-      <dialog
-        ref={dialogRef}
-        className={styles.dialog}
-        aria-label="商品を検索"
-        closedby="any"
-        onClose={reset}
-      >
+      <dialog ref={dialogRef} className={styles.dialog} aria-label="商品を検索" closedby="any" onClose={reset}>
         {/* 送信先は GET /search?q=…。JavaScript が動いているときはページを読み込み直さずに移動する。 */}
+        {/* formProps() が返す onSubmit は既定では何もしないため、送信の処理は onSubmit で上書きする。 */}
+        {/* ref を読む関数を描画中に formProps() へ渡すと、React Compiler がこのコンポーネントを最適化しない。 */}
         <form
           ref={formRef}
           className={styles.form}
-          {...formProps({
-            onSubmit: (event, term) => {
-              event.preventDefault();
-              const trimmed = term.trim();
-              if (!trimmed) return;
-              router.push(getSearchUrl(trimmed) as Route);
-              close();
-            },
-          })}
+          {...formProps()}
+          onSubmit={(event) => {
+            event.preventDefault();
+            const trimmed = readPredictiveSearchFormTerm(new FormData(event.currentTarget)).trim();
+            if (!trimmed) return;
+            router.push(getSearchUrl(trimmed) as Route);
+            close();
+          }}
         >
           <label className={styles.label} htmlFor={inputId}>
-            <svg
-              role="img"
-              aria-hidden="true"
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-            >
+            <svg role="img" aria-hidden="true" width={20} height={20} viewBox="0 0 24 24">
               <path
                 fill="none"
                 stroke="currentColor"
@@ -185,26 +149,9 @@ function SearchDialog() {
               autoCorrect: "off",
             })}
           />
-          <button
-            type="button"
-            className={styles.close}
-            onClick={close}
-            aria-label="検索を閉じる"
-          >
-            <svg
-              role="img"
-              aria-hidden="true"
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-            >
-              <g
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              >
+          <button type="button" className={styles.close} onClick={close} aria-label="検索を閉じる">
+            <svg role="img" aria-hidden="true" width={20} height={20} viewBox="0 0 24 24">
+              <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}>
                 <path d="m5 5 14 14"></path>
                 <path d="M19 5 5 19"></path>
               </g>
@@ -253,7 +200,7 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
       {!failed && queries.length > 0 && (
         <ul
           className={styles.queries}
-          // biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。
+          // list-style: none による Safari のリスト認識の喪失を防ぐ。
           role="list"
           aria-label="キーワードの候補"
         >
@@ -275,7 +222,7 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
         </ul>
       )}
       {!failed && products.length > 0 && (
-        // biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。
+        // list-style: none による Safari のリスト認識の喪失を防ぐ。
         <ul className={styles.products} role="list" aria-label="商品の候補">
           {products.map((product) => {
             const variant = product.selectedOrFirstAvailableVariant;
@@ -304,11 +251,7 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
                     />
                   </span>
                   <span className={styles.title}>{product.title}</span>
-                  {variant && (
-                    <span className={styles.price}>
-                      {formatPrice(variant.price)}
-                    </span>
-                  )}
+                  {variant && <span className={styles.price}>{formatPrice(variant.price)}</span>}
                 </Link>
               </li>
             );
@@ -316,11 +259,7 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
         </ul>
       )}
       {status !== "idle" && term && (
-        <Link
-          className={styles.all}
-          href={getSearchUrl(term) as Route}
-          onClick={onNavigate}
-        >
+        <Link className={styles.all} href={getSearchUrl(term) as Route} onClick={onNavigate}>
           「{term}」の検索結果をすべて見る
         </Link>
       )}

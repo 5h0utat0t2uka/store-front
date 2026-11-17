@@ -14,10 +14,7 @@ function describeError(error: unknown) {
   if (!(error instanceof Error)) {
     return { message: String(error), digest: undefined };
   }
-  const digest =
-    "digest" in error && typeof error.digest === "string"
-      ? error.digest
-      : undefined;
+  const digest = "digest" in error && typeof error.digest === "string" ? error.digest : undefined;
   return { message: error.message, digest };
 }
 

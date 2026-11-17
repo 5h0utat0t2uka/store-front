@@ -19,7 +19,6 @@ let
       };
       nixfmt = {
         enable = true;
-        # flake.nix の formatter と同じ nixfmt で、ステージした .nix ファイルを整形する。
         package = pkgs.nixfmt;
       };
       node-tests = {
@@ -29,32 +28,24 @@ let
         files = "^(apps|packages)/.*\\.tsx?$";
         pass_filenames = false;
       };
-      biome = {
+      oxfmt = {
         enable = true;
-        name = "biome";
-        package = pkgs.biome;
-        # 移行とチェックに同じ Biome を使い、移行失敗時はチェックを中止する。
-        entry = "${pkgs.writeShellScript "biome-pre-commit" ''
-          set -euo pipefail
-          ${pkgs.biome}/bin/biome migrate --write
-          exec ${pkgs.biome}/bin/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched "$@"
-        ''}";
-        pass_filenames = true;
-        # ファイルのバッチ処理で biome.json を同時に更新しない。
-        require_serial = true;
+        package = pkgs.oxfmt;
+        after = [ "oxlint" ];
+        types_or = [
+          "javascript"
+          "jsx"
+          "ts"
+          "tsx"
+          "css"
+          "json"
+        ];
       };
-      # oxfmt = {
-      #   enable = true;
-      #   package = pkgs.oxfmt;
-      #   settings.mode = "write";
-      # };
-      # oxlint = {
-      #   enable = true;
-      #   name = "oxlint";
-      #   package = pkgs.oxlint;
-      #   entry = "${pkgs.oxlint}/bin/oxlint";
-      #   files = "\\.(js|jsx|mjs|cjs|ts|tsx|mts|cts)$";
-      # };
+      oxlint = {
+        enable = true;
+        package = pkgs.oxlint;
+        settings.fix = [ "safe" ];
+      };
       betterleaks = rec {
         enable = true;
         name = "betterleaks";

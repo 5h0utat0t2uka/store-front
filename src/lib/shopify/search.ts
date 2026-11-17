@@ -1,7 +1,4 @@
-import {
-  createShopifyRouteTemplates,
-  getSearchResultUrl,
-} from "@shopify/hydrogen";
+import { createShopifyRouteTemplates, getSearchResultUrl } from "@shopify/hydrogen";
 
 // 検索結果のページ。検索フォームの送信先と、候補から検索結果へ進むリンクに使う。
 export const SEARCH_PATH = "/search";

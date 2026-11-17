@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { ProductSummary } from "@/lib/shopify";
 import { formatPriceRange } from "@/lib/shopify/money";
-import styles from "./item.module.css";
 import { ItemLink } from "./item-link";
+import styles from "./item.module.css";
 
 type ItemCardProps = {
   product: ProductSummary;
@@ -33,9 +33,7 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
         />
       </div>
       <div className={styles.details}>
-        <p className={styles.category}>
-          {product.category?.name ?? "カテゴリ未設定"}
-        </p>
+        <p className={styles.category}>{product.category?.name ?? "カテゴリ未設定"}</p>
         <h2 className={styles.title}>
           {/* カード内のリンクはこの1つだけ。::after でカード全体をクリック可能にする。 */}
           <ItemLink className={styles.link} handle={product.handle}>
@@ -44,9 +42,7 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
         </h2>
         <p className={styles.price}>{price}</p>
       </div>
-      <p className={styles.availability}>
-        {product.availableForSale ? "販売中" : "現在購入できません"}
-      </p>
+      <p className={styles.availability}>{product.availableForSale ? "販売中" : "現在購入できません"}</p>
     </article>
   );
 }

@@ -1,11 +1,4 @@
-type ClassValue =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | ClassDictionary
-  | ClassArray;
+type ClassValue = string | number | boolean | null | undefined | ClassDictionary | ClassArray;
 type ClassDictionary = Record<string, unknown>;
 type ClassArray = ClassValue[];
 

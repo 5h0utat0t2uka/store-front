@@ -15,7 +15,8 @@ export function Content({ title, html }: Props) {
         {html.trim() ? (
           <div
             className={styles.body}
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Shopify 管理画面で編集された HTML を表示するため。
+            // Shopify 管理画面で編集された HTML を表示するため。
+            // oxlint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: html }} // nosemgrep
           />
         ) : (

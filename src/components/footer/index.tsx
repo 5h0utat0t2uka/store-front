@@ -13,13 +13,11 @@ export function Footer({ name, policies = [] }: Props) {
       <div>
         {policies.length > 0 && (
           <nav aria-label="ポリシー">
-            {/* biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
+            {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
             <ul role="list">
               {policies.map((policy) => (
                 <li key={policy.handle}>
-                  <Link href={`/policies/${encodeURIComponent(policy.handle)}`}>
-                    {policy.title}
-                  </Link>
+                  <Link href={`/policies/${encodeURIComponent(policy.handle)}`}>{policy.title}</Link>
                 </li>
               ))}
             </ul>

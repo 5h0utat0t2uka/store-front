@@ -80,9 +80,14 @@ cd REPO
 
 Betterleaks, Semgrep, zizmor などの [pre-commit フック](../nix/pre-commit.nix) は、ローカルのコミット時に prek を実行  
 
-Biome のフックは、Nix で固定した同じバイナリで `biome migrate --write`、`biome check --write` の順に実行する。移行に失敗した場合はチェックを実行しない。
-`biome.json` は Git 管理し、移行で変更された場合は差分を確認してステージし、再実行する。移行は `$schema` だけでなく設定項目も更新する場合がある。
-フックを通さず直接 `biome check` を実行した場合、自動移行は行わない。
+oxlint のフックは、ステージした JS / TS ファイルを lint し、安全に直せるものはその場で修正する。ルールとプラグインは [`.oxlintrc.json`](../.oxlintrc.json) で指定する。
+- `correctness` カテゴリのルールをエラーにし、`react`・`nextjs`・`jsx-a11y` のプラグインを有効にしている
+- `jsx-a11y/no-redundant-roles` は、`list-style: none` による Safari のリスト認識の喪失を防ぐため、`ul` と `ol` の `role="list"` だけ許可している
+- `jsx-a11y/prefer-tag-over-role` は、`role="status"` などを意図して付けているため無効にしている
+- 個別に抑制する場合は、対象の直前の行に `// oxlint-disable-next-line ルール名` を書く
+
+oxfmt のフックは、oxlint のあとに、ステージした JS / TS / CSS / JSON ファイルを整形する。設定は [`.oxfmtrc.json`](../.oxfmtrc.json) で指定し、行の幅は 120 桁、import の並び替えは有効、`package.json` の並び替えは無効にしている。
+整形や修正でファイルが変更された場合は、差分を確認してステージし、再実行する。
 
 nixfmt のフックは、`flake.nix` の `formatter` と同じ nixfmt で、ステージした `.nix` ファイルを整形する。整形で変更された場合は差分を確認してステージし、再実行する。
 

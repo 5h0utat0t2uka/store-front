@@ -52,10 +52,7 @@ async function ShopHeader() {
 
 async function ShopFooter() {
   // どちらもキャッシュした結果を使うため、静的なシェルに含まれる。
-  const [shop, policies] = await Promise.all([
-    getShopMetadata(),
-    getShopPolicyLinks(),
-  ]);
+  const [shop, policies] = await Promise.all([getShopMetadata(), getShopPolicyLinks()]);
   return <Footer name={shop.name} policies={policies} />;
 }
 

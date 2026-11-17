@@ -61,22 +61,16 @@ function SearchForm({ term }: { term: string }) {
 async function Results({ term }: { term: string }) {
   const { products, totalCount } = await searchProducts(term);
   if (products.length === 0) {
-    return (
-      <p className={styles.message}>
-        「{term}」に一致する商品は見つかりませんでした。
-      </p>
-    );
+    return <p className={styles.message}>「{term}」に一致する商品は見つかりませんでした。</p>;
   }
 
   return (
     <>
       <p className={styles.summary}>
         「{term}」の検索結果：
-        {totalCount > products.length
-          ? `${totalCount} 件中 ${products.length} 件を表示`
-          : `${products.length} 件`}
+        {totalCount > products.length ? `${totalCount} 件中 ${products.length} 件を表示` : `${products.length} 件`}
       </p>
-      {/* biome-ignore lint/a11y/noRedundantRoles: list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
+      {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
       <ul className={styles.products} role="list">
         {products.map((product, index) => (
           <li key={product.id}>

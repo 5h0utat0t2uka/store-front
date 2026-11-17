@@ -47,7 +47,6 @@
   }
 }
 
-
 /* アンカー配置に対応するブラウザでは、カートボタンの下に、ボタンの端とそろえて表示する。
    未対応のブラウザでは inset と margin を変えず、ブラウザ既定の画面中央の表示のままにする。 */
 @supports (position-area: block-end) {
@@ -56,6 +55,9 @@
     margin-block: 1rem;
     margin-inline: 0;
     position-area: block-end span-inline-start;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
   }
 }

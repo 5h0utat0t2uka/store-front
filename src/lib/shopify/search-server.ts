@@ -54,9 +54,7 @@ const SEARCH_PRODUCTS_QUERY = gql(`
   }
 `);
 
-type SearchNode = StorefrontApi.ResultOf<
-  typeof SEARCH_PRODUCTS_QUERY
->["search"]["nodes"][number];
+type SearchNode = StorefrontApi.ResultOf<typeof SEARCH_PRODUCTS_QUERY>["search"]["nodes"][number];
 
 export type SearchProduct = Extract<SearchNode, { __typename: "Product" }>;
 
@@ -68,9 +66,7 @@ export type SearchProductsResult = {
 
 // 検索結果はキーワードごとに変わるため "use cache" には入れず、リクエストごとに問い合わせる。
 // 入力中の候補（/api/predictive-search）と同じく、購入者の IP を Storefront API に渡す。
-export async function searchProducts(
-  term: string,
-): Promise<SearchProductsResult> {
+export async function searchProducts(term: string): Promise<SearchProductsResult> {
   const requestContext = createBuyerRequestContext({
     headers: await headers(),
   });
@@ -84,14 +80,10 @@ export async function searchProducts(
 
   const search = result.data?.search;
   if (!search || !Array.isArray(search.nodes)) {
-    throw new Error(
-      "Failed to search products from Shopify Storefront API: Invalid response format.",
-    );
+    throw new Error("Failed to search products from Shopify Storefront API: Invalid response format.");
   }
   return {
-    products: search.nodes.filter(
-      (node): node is SearchProduct => node.__typename === "Product",
-    ),
+    products: search.nodes.filter((node): node is SearchProduct => node.__typename === "Product"),
     totalCount: search.totalCount,
   };
 }
