@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { formatPriceRange } from "@/lib/money";
 import type { ProductSummary } from "@/lib/shopify";
+import { formatPriceRange } from "@/lib/shopify/money";
 import styles from "./item.module.css";
 import { ItemLink } from "./item-link";
 

@@ -1,11 +1,12 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { handleShopifyRoutes } from "@shopify/hydrogen";
 import { type NextRequest, NextResponse, type ProxyConfig } from "next/server";
-import { cartHandlers } from "@/lib/cart-handlers";
+import { cartHandlers } from "@/lib/shopify/cart-handlers";
 import {
   createBuyerClient,
   createBuyerRequestContext,
-} from "@/lib/shopify-client";
+} from "@/lib/shopify/client";
+import { predictiveSearchHandlers } from "@/lib/shopify/search-handlers";
 
 export const config: ProxyConfig = {
   matcher: [
@@ -30,7 +31,7 @@ function readCredentials(request: NextRequest): string | null {
   return Buffer.from(encoded, "base64").toString("utf8");
 }
 
-// 認証を通過したリクエストのうち、/api/cart など Hydrogen が担当する経路を先に処理する。
+// 認証を通過したリクエストのうち、/api/cart や /api/predictive-search など Hydrogen が担当する経路を先に処理する。
 // 該当しない場合は null が返るので、通常のページへ進める。
 function handleStorefront(request: NextRequest) {
   const requestContext = createBuyerRequestContext(request);
@@ -38,7 +39,7 @@ function handleStorefront(request: NextRequest) {
     request,
     requestContext,
     storefrontClient: createBuyerClient(requestContext),
-    handlers: [cartHandlers],
+    handlers: [cartHandlers, predictiveSearchHandlers],
   });
   if (shopifyRoute) return shopifyRoute;
 

@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/product/add-to-cart";
-import { formatPriceRange } from "@/lib/money";
 import { getHomeProducts, getProductByHandle } from "@/lib/shopify";
+import { formatPriceRange } from "@/lib/shopify/money";
 import styles from "./page.module.css";
 
 // page.module.css の最大幅・余白・列間隔と対応させる。

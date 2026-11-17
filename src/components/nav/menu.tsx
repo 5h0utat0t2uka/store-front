@@ -1,6 +1,7 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 import styles from "./menu.module.css";
 
 // type Props = {
@@ -105,8 +106,11 @@ export function Menu() {
             <li>Feature</li>
             <li>Category</li>
             <li>Blog</li>
-            <li>Contact</li>
-            <li>Policy</li>
+            <li>
+              {/* Shopify のオンラインストアの「ページ」（ハンドル: contact）を表示する。 */}
+              <Link href="/pages/contact">Contact</Link>
+            </li>
+            {/*<li>Policy</li>*/}
           </ul>
         </nav>
         {/*<div className={styles.panel}>{children}</div>*/}

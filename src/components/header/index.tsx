@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Cart } from "./cart";
 import styles from "./index.module.css";
+import { Search } from "./search";
 
 type Props = {
   name: string;
@@ -23,6 +24,7 @@ export function Header({ name }: Props) {
           <p>{name}</p>
         </Link>
         <div>
+          <Search />
           <Cart />
         </div>
       </div>

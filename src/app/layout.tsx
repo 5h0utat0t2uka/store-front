@@ -10,8 +10,8 @@ import { CartRoot } from "@/components/cart/provider";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Menu } from "@/components/nav/menu";
-import { seedCart } from "@/lib/cart-server";
-import { getShopMetadata } from "@/lib/shopify";
+import { getShopMetadata, getShopPolicyLinks } from "@/lib/shopify";
+import { seedCart } from "@/lib/shopify/cart-server";
 
 // アプリ全体で、App Shell とリンクごとの先読みを静的な出力に限定する。
 // リクエストごとの内容は <Suspense> の内側に置き、遷移後にストリームで届ける。
@@ -51,8 +51,12 @@ async function ShopHeader() {
 }
 
 async function ShopFooter() {
-  const shop = await getShopMetadata();
-  return <Footer name={shop.name} />;
+  // どちらもキャッシュした結果を使うため、静的なシェルに含まれる。
+  const [shop, policies] = await Promise.all([
+    getShopMetadata(),
+    getShopPolicyLinks(),
+  ]);
+  return <Footer name={shop.name} policies={policies} />;
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

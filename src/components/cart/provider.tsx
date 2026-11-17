@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps, ReactNode } from "react";
-import { CartProvider } from "@/lib/cart";
+import { CartProvider } from "@/lib/shopify/cart";
 
 type Props = {
   cartData: ComponentProps<typeof CartProvider>["initialData"];
