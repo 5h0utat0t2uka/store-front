@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useId, useRef } from "react";
 import { CartContents } from "@/components/cart/contents";
-import { useCart } from "@/lib/cart";
+import { useCart } from "@/lib/shopify/cart";
 import styles from "./cart.module.css";
 
 export function Cart() {

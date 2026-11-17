@@ -19,5 +19,11 @@
       inline-size: fit-content;
       min-block-size: 1lh;
     }
+    > div {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      align-items: center;
+    }
   }
 }

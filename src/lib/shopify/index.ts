@@ -2,7 +2,7 @@ import "server-only";
 import { gql, type StorefrontApi } from "@shopify/hydrogen";
 import { cacheLife } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
-import { createCatalogClient } from "./shopify-client";
+import { createCatalogClient } from "./client";
 
 const SHOP_METADATA_QUERY = gql(`
   query ShopMetadata {
@@ -189,6 +189,80 @@ const PRODUCT_QUERY = gql(`
   }
 `);
 
+// オンラインストアの「ページ」（管理画面のオンラインストア → ページ）。body は HTML で返る。
+const PAGE_QUERY = gql(`
+  query PageDetails(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    page(handle: $handle) {
+      id
+      handle
+      title
+      body
+      bodySummary
+      seo {
+        title
+        description
+      }
+    }
+  }
+`);
+
+const PAGE_HANDLES_QUERY = gql(`
+  query PageHandles($first: Int!) {
+    pages(first: $first) {
+      nodes {
+        handle
+      }
+    }
+  }
+`);
+
+const SHOP_POLICY_FRAGMENT = gql(`
+  fragment ShopPolicyFields on ShopPolicy {
+    id
+    handle
+    title
+    body
+  }
+`);
+
+// 管理画面の設定 → ポリシーで管理する文書。未作成のものは null で返る。
+// subscriptionPolicy は未作成でも Shopify の既定の文面が返り、作成済みかどうかを区別できないため含めない。
+const SHOP_POLICIES_QUERY = gql(
+  `
+  query ShopPolicies($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    shop {
+      privacyPolicy {
+        ...ShopPolicyFields
+      }
+      refundPolicy {
+        ...ShopPolicyFields
+      }
+      shippingPolicy {
+        ...ShopPolicyFields
+      }
+      termsOfService {
+        ...ShopPolicyFields
+      }
+      termsOfSale {
+        ...ShopPolicyFields
+      }
+      legalNotice {
+        ...ShopPolicyFields
+      }
+      contactInformation {
+        ...ShopPolicyFields
+      }
+    }
+  }
+`,
+  [SHOP_POLICY_FRAGMENT],
+);
+
 export type ProductSummary = StorefrontApi.ResultOf<
   typeof HOME_PRODUCTS_QUERY
 >["products"]["nodes"][number];
@@ -200,6 +274,14 @@ export type ShopMetadata = {
 
 export type ProductDetail = NonNullable<
   StorefrontApi.ResultOf<typeof PRODUCT_QUERY>["product"]
+>;
+
+export type ContentPage = NonNullable<
+  StorefrontApi.ResultOf<typeof PAGE_QUERY>["page"]
+>;
+
+export type ShopPolicy = NonNullable<
+  StorefrontApi.ResultOf<typeof SHOP_POLICIES_QUERY>["shop"]["privacyPolicy"]
 >;
 
 // 各関数の結果はビルド時の静的生成に含まれ、cacheLife の revalidate の間隔で再検証される。
@@ -296,4 +378,97 @@ export async function getProductByHandle(
     );
   }
   return result.data.product;
+}
+
+// ビルド時に生成するページの上限。超えた分は最初のアクセスで生成される。
+const STATIC_PAGE_COUNT = 50;
+
+export async function getPageHandles(): Promise<string[]> {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300, expire: 3_600 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(PAGE_HANDLES_QUERY, {
+    variables: { first: STATIC_PAGE_COUNT },
+  });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+
+  const pages = result.data?.pages?.nodes;
+  if (!Array.isArray(pages)) {
+    throw new Error(
+      "Failed to fetch pages from Shopify Storefront API: Invalid response format.",
+    );
+  }
+  return pages.map((page) => page.handle);
+}
+
+export async function getPageByHandle(
+  handle: string,
+): Promise<ContentPage | null> {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300, expire: 3_600 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(PAGE_QUERY, {
+    variables: { handle },
+  });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+
+  // 正常な null（ページなし）だけを呼び出し側で notFound() に変換する。
+  // 通信障害や不正なレスポンスをページなしとしてキャッシュしない。
+  if (!result.data || result.data.page === undefined) {
+    throw new Error(
+      "Failed to fetch page from Shopify Storefront API: Invalid response format.",
+    );
+  }
+  return result.data.page;
+}
+
+// 作成済みのポリシーを、フッターに並べる順で返す。
+// フッターは全ページのレイアウトで使うため、ショップ情報と同じく stale を 5 分にして App Shell に含める。
+export async function getShopPolicies(): Promise<ShopPolicy[]> {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300, expire: 3_600 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(SHOP_POLICIES_QUERY);
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+
+  const shop = result.data?.shop;
+  if (!shop) {
+    throw new Error(
+      "Failed to fetch shop policies from Shopify Storefront API: Invalid response format.",
+    );
+  }
+  return [
+    shop.termsOfService,
+    shop.termsOfSale,
+    shop.privacyPolicy,
+    shop.refundPolicy,
+    shop.shippingPolicy,
+    shop.legalNotice,
+    shop.contactInformation,
+  ].filter((policy) => policy != null);
+}
+
+// フッターのリンク用。取得に失敗しても、リンクを出さずにページの表示を続ける。
+// 失敗した結果をキャッシュしないよう、フォールバックはキャッシュ関数の外で行う。
+export async function getShopPolicyLinks(): Promise<
+  Pick<ShopPolicy, "handle" | "title">[]
+> {
+  try {
+    const policies = await getShopPolicies();
+    return policies.map(({ handle, title }) => ({ handle, title }));
+  } catch (error) {
+    // Next.js が制御に使う内部エラーは握りつぶさない。
+    unstable_rethrow(error);
+    console.error("Failed to fetch shop policies.", error);
+    return [];
+  }
 }

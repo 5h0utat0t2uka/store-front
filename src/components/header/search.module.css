@@ -1,0 +1,207 @@
+.search {
+  display: grid;
+  place-items: center;
+}
+
+/* showModal() で最前面のレイヤーに表示される。UA の中央寄せ（margin: auto）は globals.css の
+   * { margin: 0 } で消えるため、ここで指定する。左右は中央に寄せ、上だけ固定して画面の上寄りに置く。
+   高さは中身で決まり、画面に収まらない分は .results の中でスクロールする。 */
+.dialog {
+  --offset: clamp(1rem, 15dvb, 8rem);
+  inline-size: min(100% - 2rem, 36rem);
+  max-block-size: calc(100dvb - var(--offset) - 1rem);
+  margin-block: var(--offset) auto;
+  margin-inline: auto;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+  overflow: hidden;
+
+  /* 閉じているときの display: none を上書きしないよう、開いているときだけ指定する。 */
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &::backdrop {
+    background: color-mix(in srgb, var(--background) 60%, transparent);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.form {
+  flex: none;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  padding-inline: 1rem 0.5rem;
+}
+
+.label {
+  display: grid;
+  place-items: center;
+}
+
+.visuallyHidden {
+  position: absolute;
+  clip-path: inset(50%);
+  overflow: hidden;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  white-space: nowrap;
+}
+
+.input {
+  min-block-size: 3.5rem;
+  padding-inline: 0.75rem;
+  border-color: transparent;
+  background: transparent;
+  color: inherit;
+  /* 16px 未満にすると、iOS がフォーカス時に画面を拡大する。 */
+  font-size: max(1rem, 1em);
+
+  /* すぐ隣に閉じるボタンがあり、× が 2 つ並ぶと紛らわしいため、ブラウザの消去ボタンは出さない。
+     入力の消去は Esc（1 回目で消去、2 回目でダイアログを閉じる）でもできる。 */
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  /* 入力欄はダイアログの幅いっぱいにあるため、輪は内側に描く。 */
+  &:focus-visible {
+    /*outline: 2px solid currentColor;*/
+    /*outline-offset: -4px;*/
+    /*border-radius: 0.5rem;*/
+    outline: none
+  }
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-color: transparent;
+  border-radius: 0.375rem;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -4px;
+  }
+}
+
+.results {
+  display: grid;
+  gap: 0.75rem;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  /* 入力前は空の .status だけが入っているため、表示する内容があるときだけ余白と区切り線を付ける。 */
+  &:has(> .status:not(:empty), > .error) {
+    padding: 1rem;
+    border-block-start: 1px solid
+      color-mix(in srgb, currentColor 15%, transparent);
+  }
+
+  /* 次の結果を待つ間に残っている前の結果。 */
+  &[aria-busy="true"] > :is(.queries, .products) {
+    opacity: 0.5;
+  }
+
+  a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.status {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.5;
+
+  /* 空のときは grid の行から外し、エラー表示の上に gap が空かないようにする。 */
+  &:empty {
+    position: absolute;
+  }
+}
+
+.error {
+  line-height: 1.8;
+}
+
+.queries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+
+  a {
+    display: block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    border-radius: calc(infinity * 1px);
+    font-size: 0.875rem;
+    line-height: 1.5;
+
+    @media (any-hover: hover) {
+      &:hover {
+        border-color: currentColor;
+      }
+    }
+  }
+}
+
+.products {
+  display: grid;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.product {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  line-height: 1.5;
+
+  @media (any-hover: hover) {
+    &:hover {
+      background: color-mix(in srgb, currentColor 6%, transparent);
+    }
+  }
+}
+
+.thumbnail {
+  display: grid;
+  inline-size: 3.5rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+
+  img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+}
+
+.price {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.all {
+  justify-self: center;
+  padding-block: 0.25rem;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

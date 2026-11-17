@@ -1,0 +1,84 @@
+.main {
+  inline-size: min(100%, 72rem);
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
+
+  h1 {
+    margin-block-end: 2rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.2;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 0.5rem;
+  /*max-inline-size: 36rem;*/
+  inline-size: 100%;
+
+  label {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+
+  input,
+  button {
+    min-block-size: 3rem;
+    border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+    border-radius: 0.375rem;
+    /* 16px 未満にすると、iOS がフォーカス時に画面を拡大する。 */
+    font-size: max(1rem, 1em);
+  }
+
+  input {
+    padding-inline: 0.75rem;
+    background: transparent;
+    color: inherit;
+  }
+
+  button {
+    padding-inline: 1.25rem;
+    border-color: transparent;
+    background: var(--foreground);
+    color: var(--background);
+    cursor: pointer;
+  }
+
+  :is(input, button):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.summary {
+  padding-block: 2rem 1rem;
+  line-height: 1.8;
+}
+
+.message {
+  padding-block: 2rem;
+  line-height: 1.8;
+}
+
+/* トップページの一覧（app/page.module.css）と同じ列数・ブレークポイントにする。 */
+.products {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  list-style: none;
+
+  @media (width >= 40rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (width >= 60rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

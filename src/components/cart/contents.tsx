@@ -4,9 +4,9 @@ import { sanitizeQuantity } from "@shopify/hydrogen";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useId } from "react";
-import { useCart, useCartForm, useSuspenseCart } from "@/lib/cart";
-import type { CartLine } from "@/lib/cart-handlers";
-import { formatPrice } from "@/lib/money";
+import { useCart, useCartForm, useSuspenseCart } from "@/lib/shopify/cart";
+import type { CartLine } from "@/lib/shopify/cart-handlers";
+import { formatPrice } from "@/lib/shopify/money";
 import styles from "./contents.module.css";
 
 type Props = {

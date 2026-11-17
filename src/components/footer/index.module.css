@@ -2,8 +2,33 @@
   display: grid;
   inline-size: min(100%, 72rem);
   margin-inline: auto;
-  padding-block: clamp(2.5rem, 6vw, 5rem) calc(clamp(2.5rem, 6vw, 5rem) * 2);
+  padding-block: clamp(2.5rem, 6vw, 5rem) calc(clamp(2.5rem, 6vw, 5rem) * 2 + env(safe-area-inset-bottom));
   padding-inline: clamp(1rem, 4vw, 3rem);
+  > div {
+    display: grid;
+    gap: 1.5rem;
+  }
+  /* ポリシーのリンク。幅に収まらない分は折り返す。 */
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    list-style: none;
+    font-size: clamp(0.75rem, 1vw, 1rem);
+  }
+  a {
+    @media (any-hover: hover) {
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+      }
+    }
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+      border-radius: 0.125rem;
+    }
+  }
   p {
     font-size: clamp(0.75rem, 1vw, 1rem);
     color: var(--foreground);

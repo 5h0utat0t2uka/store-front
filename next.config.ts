@@ -10,15 +10,19 @@ const nextConfig: NextConfig = {
   images: {
     // 商品画像は Shopify CDN がリサイズするため、Next.js の画像最適化は使わない。
     loader: "custom",
-    loaderFile: "./src/lib/image-loader.ts",
+    loaderFile: "./src/lib/shopify/image-loader.ts",
   },
   turbopack: {
+    // ::scroll-button(*), ::scroll-marker:target-current などをパーサーがまだ認識しないため暫定的に追加
+    // 対応したら外す
     ignoreIssue: [
       {
-        // ::scroll-button(*) などをパーサーがまだ認識しないため暫定的に追加
-        // 対応したら外す
         path: "**/src/components/carousel/index.module.css",
         description: /is not recognized as a valid pseudo-element/,
+      },
+      {
+        path: "**/src/components/carousel/index.module.css",
+        description: /is not recognized as a valid pseudo-class/,
       },
     ],
   },
