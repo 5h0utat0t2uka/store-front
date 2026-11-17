@@ -1,4 +1,10 @@
-{ pkgs, git-hooks, system, runtimes, src }:
+{
+  pkgs,
+  git-hooks,
+  system,
+  runtimes,
+  src,
+}:
 
 let
   preCommit = git-hooks.lib.${system}.run {
@@ -10,6 +16,11 @@ let
       check-added-large-files = {
         enable = true;
         args = [ "--maxkb=500" ];
+      };
+      nixfmt = {
+        enable = true;
+        # flake.nix の formatter と同じ nixfmt で、ステージした .nix ファイルを整形する。
+        package = pkgs.nixfmt;
       };
       node-tests = {
         enable = false;
@@ -61,7 +72,10 @@ let
       zizmor = {
         enable = true;
         package = pkgs.zizmor;
-        args = [ "--collect=workflows,actions" "." ];
+        args = [
+          "--collect=workflows,actions"
+          "."
+        ];
         files = "^\\.github/(workflows|actions)/.*";
         pass_filenames = false;
       };
@@ -73,11 +87,15 @@ in
   prek = pkgs.writeShellApplication {
     name = "prek";
     runtimeInputs = [ preCommit.config.gitPackage ] ++ preCommit.enabledPackages;
-    text = let
-      configDir = pkgs.linkFarm "prek-config" { ".pre-commit-config.yaml" = preCommit.config.configFile; };
-    in ''
-      exec ${pkgs.lib.getExe preCommit.config.package} run \
-        --config ${configDir}/.pre-commit-config.yaml --all-files "$@"
-    '';
+    text =
+      let
+        configDir = pkgs.linkFarm "prek-config" {
+          ".pre-commit-config.yaml" = preCommit.config.configFile;
+        };
+      in
+      ''
+        exec ${pkgs.lib.getExe preCommit.config.package} run \
+          --config ${configDir}/.pre-commit-config.yaml --all-files "$@"
+      '';
   };
 }

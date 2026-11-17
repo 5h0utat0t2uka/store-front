@@ -8,7 +8,8 @@ let
   nodeVersion = manifest.devEngines.runtime.version;
   pnpmVersion = manifest.devEngines.packageManager.version;
 
-  lockedSrc = name: version:
+  lockedSrc =
+    name: version:
     let
       entry = lock.${name};
       platform =
