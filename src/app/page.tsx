@@ -11,15 +11,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-// page.module.css の列数・余白と item.module.css のカード内余白・枠線に合わせる。
-const PRODUCT_IMAGE_SIZES = [
-  "(width: 60rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 3 - 3rem - 2px)",
-  "(width: 40rem) calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2 - 3rem - 2px)",
-  "calc(100vw - clamp(2rem, 8vw, 6rem) - 3rem - 2px)",
-].join(", ");
+// sizes は画面幅が基準なので、main の左右余白（最大3.5rem）を含めて列幅を見積もる。
+const PRODUCT_IMAGE_SIZES = "(min-width: 57.5rem) min(16rem, 25vw), (min-width: 43.5rem) 33vw, 50vw";
 
-// 一覧は最大3列。先頭行のどの画像もLCPになり得るため、先頭3枚は遅延しない。
-const EAGER_PRODUCT_IMAGE_COUNT = 3;
+// 最大4列の先頭行に合わせ、先頭4枚は遅延しない。
+const EAGER_PRODUCT_IMAGE_COUNT = 4;
 
 async function Products() {
   // キャッシュした結果をビルド時に静的シェルへ含め、cacheLife の間隔で再検証する。
