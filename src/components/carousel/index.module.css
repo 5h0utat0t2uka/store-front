@@ -1,16 +1,22 @@
 .carousel {
-  --slide-gap: 1.5rem;
-  /* スライドの左右に空ける幅。隣のスライドはここから gap を引いた分だけ見える。 */
-  --slide-peek: 8%;
   container-type: inline-size;
-  position: relative;
-  display: grid;
-  /*scroll-behavior: smooth;*/
   inline-size: min(100%, 85rem);
   margin-inline: auto;
-  margin-block-end: calc(clamp(2.5rem, 6vw, 5rem) * 2);
-  /*padding-inline: clamp(1rem, 4vw, 3rem);*/
-  > ul {
+  margin-block-end: calc(var(--space) * 4);
+  --slide-gap: 1.5rem;
+}
+
+.productGallery {
+  --slide-gap: 0.75rem;
+}
+
+.carousel,
+.productGallery {
+  --slide-peek: 8%;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  > .list {
     display: flex;
     /*width: 100%;*/
     /*height: 100%;*/
@@ -21,8 +27,7 @@
     scrollbar-width: none;
     overscroll-behavior-inline: contain;
     list-style: none;
-    /* 両端に余白を足してスクロールできる範囲を広げ、最初と最後のスライドも中央にスナップさせる。
-       % はこの ul の幅が基準なので、5% ずつ空けるとスライドは ul の 90% になる。 */
+    /* 両端にも余白を置き、最初と最後のスライドも中央にスナップさせる。 */
     padding-block: 0;
     padding-inline: var(--slide-peek);
     margin: 0;
@@ -84,12 +89,13 @@
       justify-self: end;
     }
 
-    /* マーカーの並び。大きさが中身から決まらないため、高さを指定する。 */
+    /* 画像の多い商品ではマーカーを折り返す。 */
     &::scroll-marker-group {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 0.25rem;
-      block-size: 1.5rem;
+      min-block-size: 1.5rem;
       margin-block-start: 1rem;
     }
 
@@ -98,9 +104,12 @@
       scroll-snap-align: center;
       /* ul の padding を除いた幅いっぱいにする。 */
       flex: 0 0 100%;
+    }
+
+    > .item {
       display: grid;
 
-      aspect-ratio: 4 / 6;
+      aspect-ratio: 5 / 8;
       position: relative;
       border-radius: 0.375rem;
       background: color-mix(in oklch, currentColor 4%, transparent);
@@ -131,14 +140,14 @@
           text-align: center;
         }
         > .description {
-          font-size: 1rem;
+          font-size: 0.875rem;
           line-height: 1.3;
           color: color-mix(in oklch, var(--foreground) 80%, transparent);
           text-align: center;
         }
         > .link {
           color: var(--background);
-          font-size: 0.8rem;
+          font-size: 0.875rem;
           background: var(--foreground);
           padding: 0.5rem 1rem;
           border-radius: 0.375rem;
@@ -146,7 +155,9 @@
           margin-block-start: 1.5rem;
         }
       }
+    }
 
+    > li {
       /* スライドごとのマーカー。押せる範囲は 1.5rem、見える点は padding の内側の 0.5rem にする。
          content の / 以降は読み上げ用の名前。 */
       &::scroll-marker {
@@ -176,9 +187,115 @@
       }
     }
     @media (min-aspect-ratio: 0.8) {
-      > li {
-        aspect-ratio: 16 / 10;
+      > .item {
+        aspect-ratio: 16 / 11;
       }
     }
+  }
+}
+
+/* ネイティブのマーカーがあるブラウザーでは、代替の操作要素を表示しない。 */
+.markers {
+  display: none;
+}
+
+@supports not selector(::scroll-marker) {
+  .markers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-block-start: 1rem;
+  }
+
+  .marker {
+    box-sizing: border-box;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    min-inline-size: 24px;
+    min-block-size: 24px;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: calc(infinity * 1px);
+    background: var(--foreground) content-box;
+    opacity: 0.6;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &[aria-current="true"] {
+      inline-size: 3rem;
+      opacity: 1;
+    }
+
+    @media (any-hover: hover) {
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &:focus-visible {
+      opacity: 1;
+      outline: 2px solid var(--foreground);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        opacity 0.2s ease-in-out,
+        inline-size 0.2s ease-in-out;
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+      background-color: ButtonText;
+      opacity: 1;
+
+      &[aria-current="true"] {
+        background-color: Highlight;
+      }
+
+      &:focus-visible {
+        outline-color: Highlight;
+      }
+    }
+  }
+
+  .status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* 商品詳細の2カラム時は、同じ画像を先頭全幅・以降3列で並べる。判定基準は main。 */
+@container (inline-size >= 48rem) {
+  .productGallery > .list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space);
+    padding-inline: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    scroll-marker-group: none;
+
+    > :first-child {
+      grid-column: 1 / -1;
+    }
+    &::scroll-button(inline-start),
+    &::scroll-button(inline-end) {
+      content: none;
+    }
+    > li::scroll-marker {
+      content: none;
+    }
+  }
+
+  .productGallery > .markers {
+    display: none;
   }
 }

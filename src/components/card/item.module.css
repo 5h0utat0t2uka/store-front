@@ -6,9 +6,9 @@
   gap: 1.5rem;
   min-inline-size: 0;
   block-size: 100%;
-  padding: 1.5rem;
-  border: 1px solid color-mix(in oklch, currentColor 25%, transparent);
-  border-radius: 0.75rem;
+  /*padding: 1.5rem;*/
+  /*border: 1px solid color-mix(in oklch, currentColor 25%, transparent);*/
+  /*border-radius: 0.75rem;*/
 
   /* フォーカスとホバーは、全体がクリック可能なカード自体に表示する。 */
   &:has(.link:focus-visible) {

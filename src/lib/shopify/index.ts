@@ -1,5 +1,5 @@
 import "server-only";
-import { gql, type StorefrontApi } from "@shopify/hydrogen";
+import { gql, type SelectedOption, type StorefrontApi } from "@shopify/hydrogen";
 import { cacheLife } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
 import { createCatalogClient } from "./client";
@@ -51,6 +51,7 @@ const HOME_PRODUCTS_QUERY = gql(`
 const PRODUCT_QUERY = gql(`
   query ProductDetails(
     $handle: String!
+    $selectedOptions: [SelectedOptionInput!]!
     $country: CountryCode
     $language: LanguageCode
   ) @inContext(country: $country, language: $language) {
@@ -59,7 +60,6 @@ const PRODUCT_QUERY = gql(`
       handle
       title
       description
-      availableForSale
       vendor
       requiresSellingPlan
       encodedVariantExistence
@@ -98,7 +98,7 @@ const PRODUCT_QUERY = gql(`
           }
         }
       }
-      selectedOrFirstAvailableVariant {
+      selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions) {
         id
         title
         availableForSale
@@ -126,7 +126,7 @@ const PRODUCT_QUERY = gql(`
           height
         }
       }
-      adjacentVariants {
+      adjacentVariants(selectedOptions: $selectedOptions) {
         id
         title
         availableForSale
@@ -341,13 +341,16 @@ export async function getHomeProducts(): Promise<ProductSummary[]> {
   return products;
 }
 
-export async function getProductByHandle(handle: string): Promise<ProductDetail | null> {
+export async function getProductByHandle(
+  handle: string,
+  selectedOptions: SelectedOption[] = [],
+): Promise<ProductDetail | null> {
   "use cache";
   cacheLife({ stale: 60, revalidate: 60, expire: 300 });
 
   const storefront = createCatalogClient();
   const result = await storefront.graphql(PRODUCT_QUERY, {
-    variables: { handle },
+    variables: { handle, selectedOptions },
   });
   if (result.errors?.length) {
     throw new Error(result.errors.map((error) => error.message).join("\n"));

@@ -1,16 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CarouselTrack } from "./track";
 import styles from "./index.module.css";
 
 export function Carousel() {
   return (
     // 名前のない <section> は役割を持たず、aria-roledescription を付けられないため、名前はここに付ける。
     <section className={styles.carousel} aria-roledescription="carousel" aria-label="Recommended Products">
-      <ul
-        className={styles.slides}
-        // list-style: none による Safari のリスト認識の喪失を防ぐ。
-        role="list"
-      >
+      <CarouselTrack>
         <li className={styles.item}>
           <Image src="/carousel/c1.webp" alt="" fill unoptimized loading="eager" fetchPriority="high" decoding="sync" />
           <div className={styles.caption}>
@@ -48,7 +45,7 @@ export function Carousel() {
             </Link>
           </div>
         </li>
-      </ul>
+      </CarouselTrack>
     </section>
   );
 }

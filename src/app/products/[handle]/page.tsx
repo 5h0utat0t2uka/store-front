@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AddToCart } from "@/components/product/add-to-cart";
-import { getHomeProducts, getProductByHandle } from "@/lib/shopify";
-import { formatPriceRange } from "@/lib/shopify/money";
+import { Suspense } from "react";
+import { AddToCart } from "@/app/products/_components/add-to-cart";
+import { CarouselTrack } from "@/components/carousel/track";
+import { getHomeProducts, getProductByHandle, type ProductDetail } from "@/lib/shopify";
+import { cx } from "@/utils/class";
 import styles from "./page.module.css";
+import carouselStyles from "@/components/carousel/index.module.css";
 
-// page.module.css の最大幅・余白・列間隔と対応させる。
-const HERO_IMAGE_SIZES = [
-  "(min-width: 48rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 2)",
-  "calc(100vw - clamp(2rem, 8vw, 6rem))",
-].join(", ");
-
-const GALLERY_IMAGE_SIZES = [
-  "(min-width: 48rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 3)",
-  "calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2)",
-].join(", ");
+// sizes は画面幅が基準。main の内幅が 48rem になる目安は、左右の余白を含めて 51.5rem。
+const CONTENT_WIDTH = "min(100vw, 72rem) - 2 * clamp(1rem, 0.368rem + 3.16vw, 1.75rem)";
+const IMAGE_COLUMN_WIDTH = `calc((${CONTENT_WIDTH}) * 0.58)`;
+// カルーセルの左右に 8% ずつ余白があるので、1枚の幅は 84%。
+const SLIDE_WIDTH = `calc((${CONTENT_WIDTH}) * 0.84)`;
+const GALLERY_IMAGE_SIZES = `(min-width: 51.5rem) calc((${IMAGE_COLUMN_WIDTH} - 3.5rem) / 3), ${SLIDE_WIDTH}`;
 
 // ビルド時に 1 件も生成できないとビルドが失敗するため、商品が 0 件のときに使う。
 // このハンドルの商品は存在しないので、404 のページとして生成される。
@@ -90,79 +88,75 @@ export async function generateMetadata({ params }: PageProps<"/products/[handle]
   };
 }
 
-export default async function ProductPage({ params }: PageProps<"/products/[handle]">) {
+async function ProductPurchase({
+  product,
+  searchParams,
+}: {
+  product: ProductDetail;
+  searchParams: PageProps<"/products/[handle]">["searchParams"];
+}) {
+  let selection = product;
+  if (product.options.some((option) => option.optionValues.length > 1)) {
+    const query = await searchParams;
+    // 商品に登録された名前・値だけを、Shopify と同じ順序でキャッシュキーに使う。
+    const selectedOptions = product.options.flatMap(({ name, optionValues }) => {
+      const value = query[name];
+      return typeof value === "string" && optionValues.some((option) => option.name === value) ? [{ name, value }] : [];
+    });
+    if (selectedOptions.length > 0) {
+      selection = (await getProductByHandle(product.handle, selectedOptions)) ?? notFound();
+    }
+  }
+  return (
+    <AddToCart
+      product={{
+        id: selection.id,
+        title: selection.title,
+        handle: selection.handle,
+        vendor: selection.vendor,
+        priceRange: selection.priceRange,
+        requiresSellingPlan: selection.requiresSellingPlan,
+        encodedVariantExistence: selection.encodedVariantExistence,
+        encodedVariantAvailability: selection.encodedVariantAvailability,
+        options: selection.options,
+        selectedOrFirstAvailableVariant: selection.selectedOrFirstAvailableVariant,
+        adjacentVariants: selection.adjacentVariants,
+      }}
+    />
+  );
+}
+
+export default async function ProductPage({ params, searchParams }: PageProps<"/products/[handle]">) {
   const product = await getProduct(params);
   const primaryImage = product.featuredImage ?? product.images.nodes[0];
   const imageSrc = primaryImage?.url ?? "/placehold.svg";
   const imageAlt = primaryImage ? primaryImage.altText?.trim() || product.title : `${product.title}（商品画像なし）`;
   const additionalImages = product.images.nodes.filter((image) => image.url !== primaryImage?.url);
-  const price = formatPriceRange(product.priceRange.minVariantPrice, product.priceRange.maxVariantPrice);
+  const hasGallery = additionalImages.length > 0;
+  const hero = (
+    <Image
+      className={styles.image}
+      src={imageSrc}
+      alt={imageAlt}
+      fill
+      sizes={`(min-width: 51.5rem) ${IMAGE_COLUMN_WIDTH}, ${hasGallery ? SLIDE_WIDTH : `calc(${CONTENT_WIDTH})`}`}
+      loading="eager"
+      fetchPriority={primaryImage ? "high" : "auto"}
+      unoptimized={!primaryImage}
+    />
+  );
 
   return (
     <main className={styles.main}>
-      <Link className={styles.backLink} href="/">
+      {/*<Link className={styles.backLink} href="/">
         トップページへ戻る
-      </Link>
+      </Link>*/}
 
       <article className={styles.product}>
-        <div className={styles.frame}>
-          <Image
-            className={styles.image}
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            sizes={HERO_IMAGE_SIZES}
-            loading="eager"
-            fetchPriority={primaryImage ? "high" : "auto"}
-            // ローカルの代替画像は Shopify CDN のリサイズ対象外。
-            unoptimized={!primaryImage}
-          />
-        </div>
-
-        <div className={styles.details}>
-          <h1>{product.title}</h1>
-          <p className={styles.price}>{price}</p>
-          <AddToCart
-            product={{
-              id: product.id,
-              title: product.title,
-              handle: product.handle,
-              vendor: product.vendor,
-              requiresSellingPlan: product.requiresSellingPlan,
-              encodedVariantExistence: product.encodedVariantExistence,
-              encodedVariantAvailability: product.encodedVariantAvailability,
-              options: product.options,
-              selectedOrFirstAvailableVariant: product.selectedOrFirstAvailableVariant,
-              adjacentVariants: product.adjacentVariants,
-            }}
-          />
-          <dl className={styles.attributes}>
-            <div>
-              <dt>販売状況</dt>
-              <dd>{product.availableForSale ? "購入可能" : "現在購入できません"}</dd>
-            </div>
-            <div>
-              <dt>カテゴリ</dt>
-              <dd>{product.category?.name ?? "カテゴリ未設定"}</dd>
-            </div>
-            {product.vendor.trim() && (
-              <div>
-                <dt>販売元</dt>
-                <dd>{product.vendor}</dd>
-              </div>
-            )}
-          </dl>
-          <section className={styles.descriptionSection}>
-            <h2>商品説明</h2>
-            <p className={styles.description}>{product.description.trim() || "商品説明はまだ登録されていません。"}</p>
-          </section>
-        </div>
-
-        {additionalImages.length > 0 && (
-          <section className={styles.gallery} aria-labelledby="product-images">
-            <h2 id="product-images">商品画像</h2>
-            {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
-            <ul className={styles.imageList} role="list">
+        <section className={cx(styles.images, hasGallery && carouselStyles.productGallery)} aria-label="商品画像">
+          {hasGallery ? (
+            <CarouselTrack key={product.id}>
+              <li className={styles.frame}>{hero}</li>
               {additionalImages.map((image, index) => (
                 <li className={styles.frame} key={image.url}>
                   <Image
@@ -175,9 +169,34 @@ export default async function ProductPage({ params }: PageProps<"/products/[hand
                   />
                 </li>
               ))}
-            </ul>
+            </CarouselTrack>
+          ) : (
+            <div className={styles.frame}>{hero}</div>
+          )}
+        </section>
+
+        <div className={styles.details}>
+          <h1>{product.title}</h1>
+          <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
+            <ProductPurchase product={product} searchParams={searchParams} />
+          </Suspense>
+          <dl className={styles.attributes}>
+            <div>
+              <dt>カテゴリ</dt>
+              <dd>{product.category?.name ?? "カテゴリ未設定"}</dd>
+            </div>
+            {/*{product.vendor.trim() && (
+              <div>
+                <dt>販売元</dt>
+                <dd>{product.vendor}</dd>
+              </div>
+            )}*/}
+          </dl>
+          <section className={styles.descriptionSection}>
+            <h2>商品説明</h2>
+            <p className={styles.description}>{product.description.trim() || "商品説明はまだ登録されていません。"}</p>
           </section>
-        )}
+        </div>
       </article>
     </main>
   );

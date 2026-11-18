@@ -1,28 +1,28 @@
 .main {
   inline-size: min(100%, 72rem);
   margin-inline: auto;
-  padding-block: clamp(2.5rem, 6vw, 5rem);
-  padding-inline: clamp(1rem, 4vw, 3rem);
-  h1 {
+  /*padding-block: clamp(2.5rem, 6vw, 5rem);*/
+  /*padding-inline: clamp(1rem, 4vw, 3rem);*/
+  h2 {
     font-size: clamp(2rem, 5vw, 3rem);
     line-height: 1.2;
-    margin-block-end: 2rem;
+    margin-block-end: 3rem;
   }
 }
 
 .products {
+  --columns: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: var(--space);
   list-style: none;
 
-  /* page.tsx の PRODUCT_IMAGE_SIZES と同じ列数・ブレークポイントにする。 */
-  @media (width >= 40rem) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  @container (inline-size >= 40rem) {
+    --columns: 3;
   }
 
-  @media (width >= 60rem) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  @container (inline-size >= 54rem) {
+    --columns: 4;
   }
 }
 

@@ -54,7 +54,7 @@ export function Menu() {
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={1.5}
+            strokeWidth={2}
             d="M2.72 5.19h18.56M2.72 11.94h18.56M2.72 18.81h18.56"
           ></path>
         </svg>
@@ -67,7 +67,7 @@ export function Menu() {
         <form method="dialog">
           <button type="submit" className={styles.menu} aria-label="Close menu">
             <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
-              <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}>
+              <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}>
                 <path d="m5 5 14 14"></path>
                 <path d="M19 5 5 19"></path>
               </g>

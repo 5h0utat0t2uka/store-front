@@ -1,33 +1,16 @@
 .main {
   inline-size: min(100%, 72rem);
   margin-inline: auto;
-  padding-block: clamp(2.5rem, 6vw, 5rem);
-  padding-inline: clamp(1rem, 4vw, 3rem);
+  /*padding-block: clamp(2.5rem, 6vw, 5rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);*/
   overflow-wrap: anywhere;
-
   h1 {
     font-size: clamp(1.5rem, 4vw, 2.5rem);
     line-height: 1.35;
   }
-
   h2 {
     font-size: 1.25rem;
     line-height: 1.6;
-  }
-}
-
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 2.75rem;
-  margin-block-end: 1.5rem;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-
-  &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
-    border-radius: 0.125rem;
   }
 }
 
@@ -36,84 +19,62 @@
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 2rem;
-
-  /* page.tsx の HERO_IMAGE_SIZES と合わせる。 */
-  @media (width >= 48rem) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  @container (inline-size >= 48rem) {
+    grid-template-columns: 58% auto;
   }
-}
 
-.frame {
-  position: relative;
-  display: grid;
-  place-items: center;
-  inline-size: 100%;
-  aspect-ratio: 1;
-  border-radius: 0.75rem;
-  background: color-mix(in oklch, currentColor 4%, transparent);
-}
-
-.image {
-  object-fit: contain;
-  border-radius: inherit;
-}
-
-.details {
-  display: grid;
-  gap: 1.5rem;
-  min-inline-size: 0;
-}
-
-.price {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-}
-
-.attributes {
-  display: grid;
-  gap: 1rem;
-  line-height: 1.6;
-
-  > div {
+  > .images {
     display: grid;
-    gap: 0.25rem;
+    min-inline-size: 0;
+    .frame {
+      position: relative;
+      display: grid;
+      place-items: center;
+      inline-size: 100%;
+      aspect-ratio: 1;
+      border-radius: 0.75rem;
+      background: color-mix(in oklch, currentColor 4%, transparent);
+      > .image {
+        object-fit: contain;
+        border-radius: inherit;
+      }
+    }
   }
-
-  dt {
-    font-size: 0.875rem;
-    font-weight: 600;
+  > .details {
+    display: grid;
+    gap: 1.5rem;
+    min-inline-size: 0;
+    position: sticky;
+    top: calc(var(--header-block) + calc(var(--space) * 1));
+    .attributes {
+      display: grid;
+      gap: 1rem;
+      line-height: 1.6;
+      > div {
+        display: grid;
+        gap: 0.25rem;
+      }
+      dt {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+    }
+    .descriptionSection {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .description {
+      white-space: pre-wrap;
+      line-height: 1.8;
+    }
   }
 }
 
-.descriptionSection {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.description {
-  white-space: pre-wrap;
-  line-height: 1.8;
-}
-
-.gallery {
+/*.gallery {
   grid-column: 1 / -1;
   display: grid;
   gap: 1rem;
-}
-
-.imageList {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  list-style: none;
-
-  /* page.tsx の GALLERY_IMAGE_SIZES と合わせる。 */
-  @media (width >= 48rem) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
+}*/
 
 .message {
   margin-block: 1rem;

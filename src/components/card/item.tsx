@@ -34,12 +34,12 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
       </div>
       <div className={styles.details}>
         <p className={styles.category}>{product.category?.name ?? "カテゴリ未設定"}</p>
-        <h2 className={styles.title}>
+        <h3 className={styles.title}>
           {/* カード内のリンクはこの1つだけ。::after でカード全体をクリック可能にする。 */}
           <ItemLink className={styles.link} handle={product.handle}>
             {product.title}
           </ItemLink>
-        </h2>
+        </h3>
         <p className={styles.price}>{price}</p>
       </div>
       <p className={styles.availability}>{product.availableForSale ? "販売中" : "現在購入できません"}</p>
