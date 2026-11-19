@@ -13,10 +13,23 @@ const SHOP_METADATA_QUERY = gql(`
   }
 `);
 
-const HOME_PRODUCTS_QUERY = gql(`
-  query HomeProducts($country: CountryCode, $language: LanguageCode)
-  @inContext(country: $country, language: $language) {
-    products(first: 6) {
+const PRODUCTS_QUERY = gql(`
+  query CatalogProducts(
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
+    $query: String
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    products(first: $first, after: $after, last: $last, before: $before, query: $query) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+      }
       nodes {
         id
         handle
@@ -60,6 +73,7 @@ const PRODUCT_QUERY = gql(`
       handle
       title
       description
+      tags
       vendor
       requiresSellingPlan
       encodedVariantExistence
@@ -263,7 +277,7 @@ const SHOP_POLICIES_QUERY = gql(
   [SHOP_POLICY_FRAGMENT],
 );
 
-export type ProductSummary = StorefrontApi.ResultOf<typeof HOME_PRODUCTS_QUERY>["products"]["nodes"][number];
+export type ProductSummary = StorefrontApi.ResultOf<typeof PRODUCTS_QUERY>["products"]["nodes"][number];
 
 export type ShopMetadata = {
   name: string;
@@ -325,17 +339,39 @@ export async function getShopMetadata(): Promise<ShopMetadata> {
 }
 
 export async function getHomeProducts(): Promise<ProductSummary[]> {
+  const products = await getProductPage({ pageSize: 6 });
+  return products.nodes;
+}
+
+export async function getProductPage({
+  tag,
+  after,
+  before,
+  pageSize = 24, // 検索結果と同じ1ページあたりの件数。
+}: {
+  tag?: string;
+  after?: string;
+  before?: string;
+  pageSize?: number;
+}) {
   "use cache";
   cacheLife({ stale: 60, revalidate: 60, expire: 300 });
 
   const storefront = createCatalogClient();
-  const result = await storefront.graphql(HOME_PRODUCTS_QUERY);
+  // タグ全体を1つの検索値として渡す。空白、引用符、* などを検索演算子として扱わせない。
+  const query = tag ? `tag:"${tag.replace(/[\\":()*]/g, "\\$&")}"` : undefined;
+  const result = await storefront.graphql(PRODUCTS_QUERY, {
+    variables: {
+      query,
+      ...(before ? { last: pageSize, before } : { first: pageSize, after }),
+    },
+  });
   if (result.errors?.length) {
     throw new Error(result.errors.map((error) => error.message).join("\n"));
   }
 
-  const products = result.data?.products?.nodes;
-  if (!Array.isArray(products)) {
+  const products = result.data?.products;
+  if (!products || !Array.isArray(products.nodes)) {
     throw new Error("Failed to fetch products from Shopify Storefront API: Invalid response format.");
   }
   return products;

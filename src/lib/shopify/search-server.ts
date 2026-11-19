@@ -6,7 +6,7 @@ import { createBuyerClient, createBuyerRequestContext } from "./client";
 // 一度に表示する件数。ページ送りは実装していない。
 const SEARCH_RESULT_COUNT = 24;
 
-// 商品の項目は shopify.ts の HOME_PRODUCTS_QUERY と同じにして、一覧と同じカードで表示する。
+// 商品の項目はカタログ一覧とそろえ、同じ商品カードで表示する。
 // search は商品以外（記事・ページ）も返せる union なので、__typename で商品だけを取り出す。
 const SEARCH_PRODUCTS_QUERY = gql(`
   query SearchProducts(

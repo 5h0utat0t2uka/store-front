@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ItemCard } from "@/components/card/item";
+import { ProductGrid } from "@/components/card/grid";
 import { Carousel } from "@/components/carousel";
 import { getHomeProducts } from "@/lib/shopify";
 import styles from "./page.module.css";
@@ -11,12 +11,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-// sizes は画面幅が基準なので、main の左右余白（最大3.5rem）を含めて列幅を見積もる。
-const PRODUCT_IMAGE_SIZES = "(min-width: 57.5rem) min(16rem, 25vw), (min-width: 43.5rem) 33vw, 50vw";
-
-// 最大4列の先頭行に合わせ、先頭4枚は遅延しない。
-const EAGER_PRODUCT_IMAGE_COUNT = 4;
-
 async function Products() {
   // キャッシュした結果をビルド時に静的シェルへ含め、cacheLife の間隔で再検証する。
   const products = await getHomeProducts();
@@ -24,20 +18,7 @@ async function Products() {
     return <p className={styles.message}>現在、掲載中の商品はありません。</p>;
   }
 
-  return (
-    // list-style: none による Safari のリスト認識の喪失を防ぐ。
-    <ul className={styles.products} role="list">
-      {products.map((product, index) => (
-        <li key={product.id}>
-          <ItemCard
-            product={product}
-            sizes={PRODUCT_IMAGE_SIZES}
-            loading={index < EAGER_PRODUCT_IMAGE_COUNT ? "eager" : "lazy"}
-          />
-        </li>
-      ))}
-    </ul>
-  );
+  return <ProductGrid products={products} />;
 }
 
 export default function Home(_props: PageProps<"/">) {

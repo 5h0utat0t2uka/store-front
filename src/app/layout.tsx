@@ -6,9 +6,9 @@ import "gen-interface-jp/700.css";
 import "@/styles/reset.css";
 import "@/styles/globals.css";
 
-import { CartRoot } from "@/components/cart/provider";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { CartRoot } from "@/components/header/cart/provider";
 import { Menu } from "@/components/nav/menu";
 import { getShopMetadata, getShopPolicyLinks } from "@/lib/shopify";
 import { seedCart } from "@/lib/shopify/cart-server";

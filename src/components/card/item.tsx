@@ -26,7 +26,7 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
           src={imageSrc}
           alt={imageAlt}
           fill
-          sizes={sizes}
+          sizes={loading === "lazy" ? `auto, ${sizes}` : sizes}
           loading={loading}
           // ローカルの代替画像は Shopify CDN のリサイズ対象外。
           unoptimized={!featuredImage}
