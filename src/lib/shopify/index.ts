@@ -3,6 +3,7 @@ import { gql, type SelectedOption, type StorefrontApi } from "@shopify/hydrogen"
 import { cacheLife } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
 import { createCatalogClient } from "./client";
+import { PRODUCT_CARD_FRAGMENT, PRODUCT_VARIANT_FRAGMENT } from "./product";
 
 const SHOP_METADATA_QUERY = gql(`
   query ShopMetadata {
@@ -13,7 +14,8 @@ const SHOP_METADATA_QUERY = gql(`
   }
 `);
 
-const PRODUCTS_QUERY = gql(`
+const PRODUCTS_QUERY = gql(
+  `
   query CatalogProducts(
     $first: Int
     $after: String
@@ -31,37 +33,18 @@ const PRODUCTS_QUERY = gql(`
         hasNextPage
       }
       nodes {
-        id
-        handle
-        title
-        availableForSale
-        category {
-          name
-        }
-        priceRange {
-          minVariantPrice {
-            amount
-            currencyCode
-          }
-          maxVariantPrice {
-            amount
-            currencyCode
-          }
-        }
-        featuredImage {
-          url
-          altText
-          width
-          height
-        }
+        ...ProductCardFields
       }
     }
   }
-`);
+`,
+  [PRODUCT_CARD_FRAGMENT],
+);
 
 // requiresSellingPlan から adjacentVariants までは、Hydrogen の商品フォーム
-// （バリアントの解決とカートへの追加）が使う。バリアントの項目は 3 か所で同じ内容にそろえる。
-const PRODUCT_QUERY = gql(`
+// （バリアントの解決とカートへの追加）が使う。
+const PRODUCT_QUERY = gql(
+  `
   query ProductDetails(
     $handle: String!
     $selectedOptions: [SelectedOptionInput!]!
@@ -83,90 +66,15 @@ const PRODUCT_QUERY = gql(`
         optionValues {
           name
           firstSelectableVariant {
-            id
-            title
-            availableForSale
-            selectedOptions {
-              name
-              value
-            }
-            price {
-              amount
-              currencyCode
-            }
-            compareAtPrice {
-              amount
-              currencyCode
-            }
-            product {
-              handle
-              title
-            }
-            sku
-            image {
-              url
-              altText
-              width
-              height
-            }
+            ...ProductVariantFields
           }
         }
       }
       selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions) {
-        id
-        title
-        availableForSale
-        selectedOptions {
-          name
-          value
-        }
-        price {
-          amount
-          currencyCode
-        }
-        compareAtPrice {
-          amount
-          currencyCode
-        }
-        product {
-          handle
-          title
-        }
-        sku
-        image {
-          url
-          altText
-          width
-          height
-        }
+        ...ProductVariantFields
       }
       adjacentVariants(selectedOptions: $selectedOptions) {
-        id
-        title
-        availableForSale
-        selectedOptions {
-          name
-          value
-        }
-        price {
-          amount
-          currencyCode
-        }
-        compareAtPrice {
-          amount
-          currencyCode
-        }
-        product {
-          handle
-          title
-        }
-        sku
-        image {
-          url
-          altText
-          width
-          height
-        }
+        ...ProductVariantFields
       }
       category {
         name
@@ -201,7 +109,9 @@ const PRODUCT_QUERY = gql(`
       }
     }
   }
-`);
+`,
+  [PRODUCT_VARIANT_FRAGMENT],
+);
 
 // オンラインストアの「ページ」（管理画面のオンラインストア → ページ）。body は HTML で返る。
 const PAGE_QUERY = gql(`

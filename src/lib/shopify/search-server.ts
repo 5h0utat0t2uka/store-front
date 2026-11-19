@@ -2,13 +2,15 @@ import "server-only";
 import { gql, type StorefrontApi } from "@shopify/hydrogen";
 import { headers } from "next/headers";
 import { createBuyerClient, createBuyerRequestContext } from "./client";
+import { PRODUCT_CARD_FRAGMENT } from "./product";
 
 // 一度に表示する件数。ページ送りは実装していない。
 const SEARCH_RESULT_COUNT = 24;
 
 // 商品の項目はカタログ一覧とそろえ、同じ商品カードで表示する。
 // search は商品以外（記事・ページ）も返せる union なので、__typename で商品だけを取り出す。
-const SEARCH_PRODUCTS_QUERY = gql(`
+const SEARCH_PRODUCTS_QUERY = gql(
+  `
   query SearchProducts(
     $term: String!
     $first: Int!
@@ -24,35 +26,13 @@ const SEARCH_PRODUCTS_QUERY = gql(`
       totalCount
       nodes {
         __typename
-        ... on Product {
-          id
-          handle
-          title
-          availableForSale
-          category {
-            name
-          }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-            maxVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            url
-            altText
-            width
-            height
-          }
-        }
+        ...ProductCardFields
       }
     }
   }
-`);
+`,
+  [PRODUCT_CARD_FRAGMENT],
+);
 
 type SearchNode = StorefrontApi.ResultOf<typeof SEARCH_PRODUCTS_QUERY>["search"]["nodes"][number];
 

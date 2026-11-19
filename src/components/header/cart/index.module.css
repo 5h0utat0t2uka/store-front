@@ -22,10 +22,11 @@
 
 .popover {
   /*inline-size: min(24rem, calc(100vw - 4rem));*/
-  inline-size: min(calc(100% - clamp(1rem, 4vw, 3rem) - 1rem), 500px);
+  /*inline-size: min(calc(100% - clamp(1rem, 4vw, 3rem) - 1rem), 500px);*/
+  inline-size: min(500px, 100% - 2 * var(--space));
   max-block-size: min(36rem, calc(100svb - 2rem));
   padding: var(--space);
-  border: 1px solid color-mix(in oklch, currentColor 25%, transparent);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
   background: var(--background);
   color: var(--foreground);

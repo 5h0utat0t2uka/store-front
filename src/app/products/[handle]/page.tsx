@@ -1,21 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AddToCart } from "@/app/products/_components/add-to-cart";
 import { CarouselTrack } from "@/components/carousel/track";
+import { createPageMetadata } from "@/lib/metadata";
 import { getHomeProducts, getProductByHandle, type ProductDetail } from "@/lib/shopify";
+import { parseHandle } from "@/lib/shopify/handle";
+import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
+import { PRODUCT_GALLERY_SIZES, PRODUCT_HERO_SIZES } from "@/styles/image-sizes";
 import { cx } from "@/utils/class";
 import styles from "./page.module.css";
 import carouselStyles from "@/components/carousel/index.module.css";
-
-// sizes は画面幅が基準。main の内幅が 48rem になる目安は、左右の余白を含めて 51.5rem。
-const CONTENT_WIDTH = "min(100vw, 72rem) - 2 * clamp(1rem, 0.368rem + 3.16vw, 1.75rem)";
-const IMAGE_COLUMN_WIDTH = `calc((${CONTENT_WIDTH}) * 0.58)`;
-// カルーセルの左右に 8% ずつ余白があるので、1枚の幅は 84%。
-const SLIDE_WIDTH = `calc((${CONTENT_WIDTH}) * 0.84)`;
-const GALLERY_IMAGE_SIZES = `(min-width: 51.5rem) calc((${IMAGE_COLUMN_WIDTH} - 3.5rem) / 3), ${SLIDE_WIDTH}`;
 
 // ビルド時に 1 件も生成できないとビルドが失敗するため、商品が 0 件のときに使う。
 // このハンドルの商品は存在しないので、404 のページとして生成される。
@@ -31,25 +28,6 @@ export async function generateStaticParams() {
   return products.map((product) => ({ handle: product.handle }));
 }
 
-// Shopify のハンドルの上限。
-const MAX_HANDLE_LENGTH = 255;
-// ハンドルに含まれない空白・制御文字・パスの区切り文字。
-const INVALID_HANDLE_CHARACTERS = /[\s/\\\p{Cc}]/u;
-
-// URL のパラメーターは % エンコードされたまま渡されるため、復号してから検証する。
-// 不正な値は Shopify に問い合わせず、キャッシュにも残さない。
-function parseHandle(param: string): string | null {
-  let handle: string;
-  try {
-    handle = decodeURIComponent(param);
-  } catch {
-    return null;
-  }
-  if (handle.length === 0 || handle.length > MAX_HANDLE_LENGTH) return null;
-  if (INVALID_HANDLE_CHARACTERS.test(handle)) return null;
-  return handle;
-}
-
 async function getProduct(params: PageProps<"/products/[handle]">["params"]) {
   const handle = parseHandle((await params).handle);
   if (!handle) notFound();
@@ -58,33 +36,26 @@ async function getProduct(params: PageProps<"/products/[handle]">["params"]) {
   return product;
 }
 
-export async function generateMetadata({ params }: PageProps<"/products/[handle]">): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: PageProps<"/products/[handle]">,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const product = await getProduct(params);
   const title = product.seo.title?.trim() || product.title;
   const description = product.seo.description?.trim() || product.description.trim().slice(0, 160) || undefined;
   const url = `/products/${encodeURIComponent(product.handle)}`;
   const image = product.featuredImage ?? product.images.nodes[0];
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      url,
-      images: image
-        ? [
-            {
-              url: image.url,
-              alt: image.altText?.trim() || product.title,
-              width: image.width ?? undefined,
-              height: image.height ?? undefined,
-            },
-          ]
-        : [],
-    },
-  };
+  const images = image
+    ? [
+        {
+          url: image.url,
+          alt: image.altText?.trim() || product.title,
+          width: image.width ?? undefined,
+          height: image.height ?? undefined,
+        },
+      ]
+    : undefined;
+  return createPageMetadata({ title, description, url, images }, parent);
 }
 
 async function ProductPurchase({
@@ -138,7 +109,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
       src={imageSrc}
       alt={imageAlt}
       fill
-      sizes={`(min-width: 51.5rem) ${IMAGE_COLUMN_WIDTH}, ${hasGallery ? SLIDE_WIDTH : `calc(${CONTENT_WIDTH})`}`}
+      sizes={PRODUCT_HERO_SIZES}
       loading="eager"
       fetchPriority={primaryImage ? "high" : "auto"}
       unoptimized={!primaryImage}
@@ -147,10 +118,6 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
 
   return (
     <main className={styles.main}>
-      {/*<Link className={styles.backLink} href="/">
-        トップページへ戻る
-      </Link>*/}
-
       <article className={styles.product}>
         <section className={cx(styles.images, hasGallery && carouselStyles.productGallery)} aria-label="商品画像">
           {hasGallery ? (
@@ -163,7 +130,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
                     src={image.url}
                     alt={image.altText?.trim() || `${product.title}（画像 ${index + 2}）`}
                     fill
-                    sizes={GALLERY_IMAGE_SIZES}
+                    sizes={PRODUCT_GALLERY_SIZES}
                     loading="lazy"
                   />
                 </li>
@@ -176,7 +143,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
 
         <div className={styles.details}>
           <hgroup className={styles.heading}>
-            <p>{product.category?.name ?? "Other"}</p>
+            <p>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</p>
             <h1>{product.title}</h1>
           </hgroup>
           <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
@@ -185,7 +152,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           {/*<dl className={styles.attributes}>
             <div>
               <dt>カテゴリ</dt>
-              <dd>{product.category?.name ?? "カテゴリ未設定"}</dd>
+              <dd>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</dd>
             </div>
             {product.vendor.trim() && (
               <div>

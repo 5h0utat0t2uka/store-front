@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
+import { createPageMetadata } from "@/lib/metadata";
 import { getProductPage } from "@/lib/shopify";
 import styles from "./page.module.css";
 
@@ -19,7 +20,7 @@ function readListing(params: Awaited<ProductsProps["searchParams"]>) {
   const before = firstParam(params.before);
   if (after && before) notFound();
 
-  return { tag, after, before, title: tag ? `「${tag}」タグの商品一覧` : "商品一覧" };
+  return { tag, after, before, title: tag ? `「${tag}」一覧` : "商品一覧" };
 }
 
 export async function generateMetadata({ searchParams }: ProductsProps, parent: ResolvingMetadata): Promise<Metadata> {
@@ -29,15 +30,8 @@ export async function generateMetadata({ searchParams }: ProductsProps, parent: 
   if (after) query.set("after", after);
   if (before) query.set("before", before);
   const url = query.size ? `/products?${query}` : "/products";
-  const inherited = await parent;
-  const description = tag ? `「${tag}」タグが付いた商品を掲載しています。` : (inherited.description ?? undefined);
-
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: { type: "website", title, description, url, images: inherited.openGraph?.images },
-  };
+  const description = tag ? `「${tag}」タグが付いた商品を掲載しています。` : undefined;
+  return createPageMetadata({ title, description, url }, parent);
 }
 
 async function ProductResults({ searchParams }: Pick<ProductsProps, "searchParams">) {
@@ -51,7 +45,7 @@ async function ProductResults({ searchParams }: Pick<ProductsProps, "searchParam
     <>
       <h1>{title}</h1>
       {nodes.length > 0 ? (
-        <ProductGrid products={nodes} />
+        <ProductGrid products={nodes} heading="h2" />
       ) : (
         <p>{after || before ? "このページには商品がありません。" : "該当する商品はありません。"}</p>
       )}

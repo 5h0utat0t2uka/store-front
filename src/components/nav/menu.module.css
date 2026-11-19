@@ -16,7 +16,7 @@
   /*padding: 1rem 2rem;*/
   /*padding: 0.8rem 1.6rem;*/
   padding-inline: 1.6rem;
-  border: 1px solid color-mix(in oklch, currentColor 10%, transparent);
+  border: 1px solid var(--border);
   border-radius: calc(infinity * 1px);
   display: grid;
   grid-template-columns: auto 1fr;
