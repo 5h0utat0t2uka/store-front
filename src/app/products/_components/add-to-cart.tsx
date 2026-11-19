@@ -67,73 +67,77 @@ function VariantPicker({
   const searchParams = useSearchParams();
 
   return options.map((option) => (
-    <fieldset className={styles.option} key={option.name}>
-      <legend>{option.name}</legend>
-      <div className={styles.values}>
-        {option.values.map((value) => {
-          if (!value.exists) {
-            // 例: 赤/S と 青/M だけの商品でも、実在する組み合わせには直接移れるようにする。
-            const alternative = product.options
-              .find(({ name }) => name === option.name)
-              ?.optionValues.find(({ name }) => name === value.name)?.firstSelectableVariant;
+    <div className={styles.option} key={option.name}>
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.key}>{option.name}</legend>
+        <div className={styles.values}>
+          {option.values.map((value) => {
+            if (!value.exists) {
+              // 例: 赤/S と 青/M だけの商品でも、実在する組み合わせには直接移れるようにする。
+              const alternative = product.options
+                .find(({ name }) => name === option.name)
+                ?.optionValues.find(({ name }) => name === value.name)?.firstSelectableVariant;
+              return (
+                <div className={styles.alternative} key={value.name}>
+                  <button className={styles.value} type="button" disabled>
+                    {value.name}（組み合わせなし）
+                  </button>
+                  {alternative && (
+                    <Link
+                      href={variantHref(product, alternative.selectedOptions, searchParams, alternative.product.handle)}
+                      data-available={alternative.availableForSale}
+                      prefetch={false}
+                      replace
+                      scroll={false}
+                      onNavigate={() => {
+                        pendingFocus = { handle: alternative.product.handle, option: option.name, value: value.name };
+                      }}
+                    >
+                      {alternative.title} を選択{!alternative.availableForSale && "（売り切れ）"}
+                    </Link>
+                  )}
+                </div>
+              );
+            }
             return (
-              <div className={styles.alternative} key={value.name}>
-                <button className={styles.value} type="button" disabled>
-                  {value.name}（組み合わせなし）
-                </button>
-                {alternative && (
-                  <Link
-                    href={variantHref(product, alternative.selectedOptions, searchParams, alternative.product.handle)}
-                    data-available={alternative.availableForSale}
-                    prefetch={false}
-                    replace
-                    scroll={false}
-                    onNavigate={() => {
-                      pendingFocus = { handle: alternative.product.handle, option: option.name, value: value.name };
-                    }}
-                  >
-                    {alternative.title} を選択{!alternative.availableForSale && "（売り切れ）"}
-                  </Link>
-                )}
-              </div>
+              <Link
+                key={value.name}
+                className={styles.value}
+                href={variantHref(product, value.selectedOptions, searchParams, value.handle)}
+                scroll={false}
+                prefetch={false}
+                aria-current={value.selected ? "true" : undefined}
+                aria-label={value.available ? undefined : `${value.name}（売り切れ）`}
+                data-available={value.available}
+                ref={(link) => {
+                  if (
+                    link &&
+                    pendingFocus?.handle === product.handle &&
+                    pendingFocus.option === option.name &&
+                    pendingFocus.value === value.name
+                  ) {
+                    pendingFocus = null;
+                    link.focus({ preventScroll: true });
+                  }
+                }}
+                onNavigate={(event) => {
+                  if (value.handle !== product.handle) {
+                    pendingFocus = { handle: value.handle, option: option.name, value: value.name };
+                    return;
+                  }
+                  event.preventDefault();
+                  if (!value.selected)
+                    register("optionValue", { optionName: option.name, value: value.name }).onClick();
+                }}
+              >
+                {value.name}
+                {/*{!value.available && "（売り切れ）"}*/}
+              </Link>
             );
-          }
-          return (
-            <Link
-              key={value.name}
-              className={styles.value}
-              href={variantHref(product, value.selectedOptions, searchParams, value.handle)}
-              scroll={false}
-              prefetch={false}
-              aria-current={value.selected ? "true" : undefined}
-              data-available={value.available}
-              ref={(link) => {
-                if (
-                  link &&
-                  pendingFocus?.handle === product.handle &&
-                  pendingFocus.option === option.name &&
-                  pendingFocus.value === value.name
-                ) {
-                  pendingFocus = null;
-                  link.focus({ preventScroll: true });
-                }
-              }}
-              onNavigate={(event) => {
-                if (value.handle !== product.handle) {
-                  pendingFocus = { handle: value.handle, option: option.name, value: value.name };
-                  return;
-                }
-                event.preventDefault();
-                if (!value.selected) register("optionValue", { optionName: option.name, value: value.name }).onClick();
-              }}
-            >
-              {value.name}
-              {/*{!value.available && "（売り切れ）"}*/}
-            </Link>
-          );
-        })}
-      </div>
-    </fieldset>
+          })}
+        </div>
+      </fieldset>
+    </div>
   ));
 }
 
@@ -233,7 +237,9 @@ function PurchaseControls({ product, isSelecting }: Props & { isSelecting: boole
         {/*<p>{availability}</p>*/}
       </div>
       {options.some((option) => option.values.length > 1) && (
-        <VariantPicker product={product} options={options} register={register} />
+        <div className={styles.options}>
+          <VariantPicker product={product} options={options} register={register} />
+        </div>
       )}
       {form}
     </>

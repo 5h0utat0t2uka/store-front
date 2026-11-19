@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useId, useRef } from "react";
-import { CartContents } from "@/components/cart/contents";
+import { CartContents } from "@/components/header/cart/contents";
 import { useCart } from "@/lib/shopify/cart";
-import styles from "./cart.module.css";
+import styles from "./index.module.css";
 
 export function Cart() {
   const popoverId = useId();

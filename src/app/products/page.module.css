@@ -1,0 +1,20 @@
+.main {
+  inline-size: var(--content-inline);
+  margin-inline: auto;
+  display: grid;
+  align-content: start;
+  gap: var(--space);
+  overflow-wrap: anywhere;
+
+  > a,
+  .pagination a {
+    justify-self: start;
+    text-decoration: underline;
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+}

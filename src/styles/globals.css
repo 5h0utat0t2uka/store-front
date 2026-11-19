@@ -108,7 +108,7 @@ main {
   container-type: inline-size;
   container-name: main;
   margin-block-end: calc(var(--space) * 8);
-  padding-inline: var(--space);
+  padding-inline: calc(var(--space) + calc(env(safe-area-inset-left) / 2) + calc(env(safe-area-inset-right) / 2));
   padding-block: calc(var(--space) * 1);
 }
 footer {

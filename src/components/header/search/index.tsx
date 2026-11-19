@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { type MouseEvent as ReactMouseEvent, useEffect, useId, useRef } from "react";
 import { formatPrice } from "@/lib/shopify/money";
 import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, routeTemplates, SEARCH_PATH } from "@/lib/shopify/search";
-import styles from "./search.module.css";
+import styles from "./index.module.css";
 
 // 入力中の候補は /api/predictive-search から取得する。入力の間引き（既定で 150 ミリ秒）と、
 // 古い応答の破棄は Hydrogen のストアが処理する。商品と、キーワードの候補をそれぞれ 4 件まで受け取る。

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AddToCart } from "@/app/products/_components/add-to-cart";
@@ -59,12 +60,10 @@ async function getProduct(params: PageProps<"/products/[handle]">["params"]) {
 
 export async function generateMetadata({ params }: PageProps<"/products/[handle]">): Promise<Metadata> {
   const product = await getProduct(params);
-
   const title = product.seo.title?.trim() || product.title;
   const description = product.seo.description?.trim() || product.description.trim().slice(0, 160) || undefined;
   const url = `/products/${encodeURIComponent(product.handle)}`;
   const image = product.featuredImage ?? product.images.nodes[0];
-
   return {
     title,
     description,
@@ -176,26 +175,42 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         </section>
 
         <div className={styles.details}>
-          <h1>{product.title}</h1>
+          <hgroup className={styles.heading}>
+            <p>{product.category?.name ?? "Other"}</p>
+            <h1>{product.title}</h1>
+          </hgroup>
           <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
             <ProductPurchase product={product} searchParams={searchParams} />
           </Suspense>
-          <dl className={styles.attributes}>
+          {/*<dl className={styles.attributes}>
             <div>
               <dt>カテゴリ</dt>
               <dd>{product.category?.name ?? "カテゴリ未設定"}</dd>
             </div>
-            {/*{product.vendor.trim() && (
+            {product.vendor.trim() && (
               <div>
                 <dt>販売元</dt>
                 <dd>{product.vendor}</dd>
               </div>
-            )}*/}
-          </dl>
+            )}
+          </dl>*/}
           <section className={styles.descriptionSection}>
-            <h2>商品説明</h2>
+            {/*<h2>商品説明</h2>*/}
             <p className={styles.description}>{product.description.trim() || "商品説明はまだ登録されていません。"}</p>
           </section>
+          {product.tags.length > 0 && (
+            <nav aria-label="商品タグ" className={styles.tags}>
+              <ul className={styles.list} role="list">
+                {product.tags.map((tag) => (
+                  <li key={tag} className={styles.item}>
+                    <Link href={{ pathname: "/products", query: { tag } }} prefetch={false}>
+                      {tag}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
       </article>
     </main>

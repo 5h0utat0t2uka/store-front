@@ -31,7 +31,6 @@
       }
     }
     small {
-      font-size: clamp(0.75rem, 1vw, 1rem);
       color: var(--secondary);
     }
   }

@@ -1,25 +1,10 @@
 import type { Metadata } from "next";
 import Form from "next/form";
 import { Suspense, useId } from "react";
-import { ItemCard } from "@/components/card/item";
+import { ProductGrid } from "@/components/card/grid";
 import { MAX_SEARCH_TERM_LENGTH, SEARCH_PATH } from "@/lib/shopify/search";
 import { searchProducts } from "@/lib/shopify/search-server";
 import styles from "./page.module.css";
-
-export const metadata: Metadata = {
-  title: "Search",
-  robots: { index: false, follow: false },
-};
-
-// page.module.css の列数・余白と item.module.css のカード内余白・枠線に合わせる。
-const PRODUCT_IMAGE_SIZES = [
-  "(width >= 60rem) calc((min(100vw, 72rem) - clamp(2rem, 8vw, 6rem) - 2rem) / 3 - 3rem - 2px)",
-  "(width >= 40rem) calc((100vw - clamp(2rem, 8vw, 6rem) - 1rem) / 2 - 3rem - 2px)",
-  "calc(100vw - clamp(2rem, 8vw, 6rem) - 3rem - 2px)",
-].join(", ");
-
-// 一覧は最大3列。先頭行のどの画像もLCPになり得るため、先頭3枚は遅延しない。
-const EAGER_PRODUCT_IMAGE_COUNT = 3;
 
 type SearchParams = PageProps<"/search">["searchParams"];
 
@@ -27,6 +12,21 @@ type SearchParams = PageProps<"/search">["searchParams"];
 function readTerm(value: string | string[] | undefined): string {
   const first = Array.isArray(value) ? value[0] : value;
   return (first ?? "").trim().slice(0, MAX_SEARCH_TERM_LENGTH);
+}
+
+export async function generateMetadata({ searchParams }: PageProps<"/search">): Promise<Metadata> {
+  const term = readTerm((await searchParams).q);
+  return {
+    title: term ? `「${term}」の検索結果` : "Search",
+    description: term ? `「${term}」に一致する商品を検索した結果です。` : undefined,
+    alternates: { canonical: term ? `/search?q=${encodeURIComponent(term)}` : "/search" },
+    openGraph: {
+      type: "website",
+      title: term ? `「${term}」の検索結果` : "Search",
+      description: term ? `「${term}」に一致する商品を検索した結果です。` : undefined,
+      url: term ? `/search?q=${encodeURIComponent(term)}` : "/search",
+    },
+  };
 }
 
 // 送信は GET /search?q=… への遷移。JavaScript が読み込まれる前でも通常のフォームとして動く。
@@ -70,18 +70,7 @@ async function Results({ term }: { term: string }) {
         「{term}」の検索結果：
         {totalCount > products.length ? `${totalCount} 件中 ${products.length} 件を表示` : `${products.length} 件`}
       </p>
-      {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
-      <ul className={styles.products} role="list">
-        {products.map((product, index) => (
-          <li key={product.id}>
-            <ItemCard
-              product={product}
-              sizes={PRODUCT_IMAGE_SIZES}
-              loading={index < EAGER_PRODUCT_IMAGE_COUNT ? "eager" : "lazy"}
-            />
-          </li>
-        ))}
-      </ul>
+      <ProductGrid products={products} />
     </>
   );
 }

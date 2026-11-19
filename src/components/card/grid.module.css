@@ -1,0 +1,9 @@
+.products {
+  --card-min: 14rem;
+  --two-column-width: calc((100% - var(--space)) / 2);
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), var(--two-column-width)), 1fr));
+  gap: var(--space);
+  list-style: none;
+}
