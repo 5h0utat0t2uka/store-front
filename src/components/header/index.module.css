@@ -7,7 +7,7 @@
   background: color-mix(in oklch, var(--background) 90%, transparent);
   backdrop-filter: blur(20px);
   > .content {
-    inline-size: min(100%, 72rem);
+    inline-size: var(--content-inline);
     margin-inline: auto;
     padding-inline: calc(var(--space) * 2);
     display: flex;

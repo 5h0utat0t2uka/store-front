@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import Form from "next/form";
 import { Suspense, useId } from "react";
 import { ProductGrid } from "@/components/card/grid";
-import { MAX_SEARCH_TERM_LENGTH, SEARCH_PATH } from "@/lib/shopify/search";
+import { createPageMetadata } from "@/lib/metadata";
+import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, SEARCH_PATH } from "@/lib/shopify/search";
 import { searchProducts } from "@/lib/shopify/search-server";
 import styles from "./page.module.css";
 
@@ -14,19 +15,15 @@ function readTerm(value: string | string[] | undefined): string {
   return (first ?? "").trim().slice(0, MAX_SEARCH_TERM_LENGTH);
 }
 
-export async function generateMetadata({ searchParams }: PageProps<"/search">): Promise<Metadata> {
+export async function generateMetadata(
+  { searchParams }: PageProps<"/search">,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const term = readTerm((await searchParams).q);
-  return {
-    title: term ? `「${term}」の検索結果` : "Search",
-    description: term ? `「${term}」に一致する商品を検索した結果です。` : undefined,
-    alternates: { canonical: term ? `/search?q=${encodeURIComponent(term)}` : "/search" },
-    openGraph: {
-      type: "website",
-      title: term ? `「${term}」の検索結果` : "Search",
-      description: term ? `「${term}」に一致する商品を検索した結果です。` : undefined,
-      url: term ? `/search?q=${encodeURIComponent(term)}` : "/search",
-    },
-  };
+  const title = term ? `「${term}」の検索結果` : "Search";
+  const description = term ? `「${term}」に一致する商品を検索した結果です。` : undefined;
+  const url = term ? getSearchUrl(term) : SEARCH_PATH;
+  return createPageMetadata({ title, description, url }, parent);
 }
 
 // 送信は GET /search?q=… への遷移。JavaScript が読み込まれる前でも通常のフォームとして動く。
@@ -70,7 +67,7 @@ async function Results({ term }: { term: string }) {
         「{term}」の検索結果：
         {totalCount > products.length ? `${totalCount} 件中 ${products.length} 件を表示` : `${products.length} 件`}
       </p>
-      <ProductGrid products={products} />
+      <ProductGrid products={products} heading="h2" />
     </>
   );
 }

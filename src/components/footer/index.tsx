@@ -23,7 +23,7 @@ export function Footer({ name, policies = [] }: Props) {
             </ul>
           </nav>
         )}
-        <small>© 2016 {name}</small>
+        <p>© 2016 {name}</p>
       </div>
     </footer>
   );

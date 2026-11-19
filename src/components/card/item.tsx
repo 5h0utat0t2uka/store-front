@@ -1,16 +1,20 @@
 import Image from "next/image";
 import type { ProductSummary } from "@/lib/shopify";
 import { formatPriceRange } from "@/lib/shopify/money";
+import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
 import { ItemLink } from "./item-link";
 import styles from "./item.module.css";
 
+export type CardHeading = "h2" | "h3";
+
 type ItemCardProps = {
   product: ProductSummary;
+  heading: CardHeading;
   sizes: string;
   loading?: "eager" | "lazy";
 };
 
-export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
+export function ItemCard({ product, heading: Heading, sizes, loading = "lazy" }: ItemCardProps) {
   const { minVariantPrice, maxVariantPrice } = product.priceRange;
   const featuredImage = product.featuredImage;
   const imageSrc = featuredImage?.url ?? "/placehold.svg";
@@ -33,13 +37,13 @@ export function ItemCard({ product, sizes, loading = "lazy" }: ItemCardProps) {
         />
       </div>
       <div className={styles.details}>
-        <p className={styles.category}>{product.category?.name ?? "カテゴリ未設定"}</p>
-        <h3 className={styles.title}>
+        <p className={styles.category}>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</p>
+        <Heading className={styles.title}>
           {/* カード内のリンクはこの1つだけ。::after でカード全体をクリック可能にする。 */}
           <ItemLink className={styles.link} handle={product.handle}>
             {product.title}
           </ItemLink>
-        </h3>
+        </Heading>
         <p className={styles.price}>{price}</p>
       </div>
       <p className={styles.availability}>{product.availableForSale ? "販売中" : "現在購入できません"}</p>
