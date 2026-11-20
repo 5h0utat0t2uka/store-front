@@ -10,6 +10,12 @@ type Props = {
 export function Footer({ name, policies = [] }: Props) {
   return (
     <footer className={styles.footer}>
+      <div className={styles.subscribe}>
+        <div>
+          <p>Join our newsletter</p>
+          <span>Subscribe</span>
+        </div>
+      </div>
       <div className={styles.content}>
         {policies.length > 0 && (
           <nav aria-label="ポリシー">

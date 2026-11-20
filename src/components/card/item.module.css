@@ -57,6 +57,7 @@
 .category {
   font-size: 0.875rem;
   line-height: 1.5;
+  color: var(--secondary);
 }
 
 .title {
@@ -65,8 +66,8 @@
 }
 
 .link {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  /*text-decoration: underline;*/
+  /*text-underline-offset: 0.2em;*/
 
   /* 見出しのリンクのクリック領域をカード全体に広げる。 */
   &::after {
@@ -82,13 +83,14 @@
 }
 
 .price {
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.5;
+  /*font-size: 1.125rem;*/
+  font-size: 1rem;
+  /*font-weight: 600;*/
+  line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
-.availability {
+/*.availability {
   margin-block-start: auto;
   padding-block: 0.375rem;
   padding-inline: 0.75rem;
@@ -96,4 +98,4 @@
   background: color-mix(in oklch, currentColor 8%, transparent);
   font-size: 0.875rem;
   line-height: 1.5;
-}
+}*/

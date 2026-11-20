@@ -4,8 +4,8 @@
   inset-block-end: 0;
   inset-inline-start: 50%;
   /*translate: -50% -100%;*/
-  translate: -50% -50%;
-  block-size: var(--button-block);
+  translate: var(--menu-position);
+  block-size: var(--menu-block);
   /*background: color-mix(in srgb, var(--background) 90%, transparent);*/
   background: color-mix(in oklch, var(--foreground) 90%, transparent);
   backdrop-filter: blur(10px);
@@ -15,7 +15,8 @@
   place-content: center;
   /*padding: 1rem 2rem;*/
   /*padding: 0.8rem 1.6rem;*/
-  padding-inline: 1.6rem;
+  /*padding-inline: 1.6rem;*/
+  padding-inline: var(--space);
   border: 1px solid var(--border);
   border-radius: calc(infinity * 1px);
   display: grid;
@@ -62,18 +63,13 @@
   }
 }
 
-.nav {
-  /*inline-size: 90cqi;*/
-  /*block-size: 90cqb;*/
+/*.nav {
   inline-size: 100%;
   block-size: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: clamp(1rem, 4vw, 3rem);
-  /* 下部に固定した閉じるボタンに、末尾の内容が隠れないようにする。 */
   padding-block-end: 7rem;
-  /*border-radius: 1rem;*/
-  /*background: var(--background);*/
   background: color-mix(in oklch, var(--background) 90%, transparent);
   backdrop-filter: blur(20px);
   color: var(--foreground);
@@ -90,4 +86,4 @@
     line-height: 1.35;
     padding: 3rem;
   }
-}
+}*/

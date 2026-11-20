@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import "gen-interface-jp/400.css";
 import "gen-interface-jp/600.css";
@@ -51,7 +52,6 @@ async function ShopHeader() {
 }
 
 async function ShopFooter() {
-  // どちらもキャッシュした結果を使うため、静的なシェルに含まれる。
   const [shop, policies] = await Promise.all([getShopMetadata(), getShopPolicyLinks()]);
   return <Footer name={shop.name} policies={policies} />;
 }
@@ -76,25 +76,33 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <div id="root">
           <CartRoot cartData={cartData}>
-            <Suspense fallback={<Header name="" />}>
-              <ShopHeader />
-            </Suspense>
+            {/*<Suspense fallback={<Header name="" />}>*/}
+            <ShopHeader />
+            {/*</Suspense>*/}
             {children}
             <Suspense fallback={<Footer name="" />}>
               <ShopFooter />
             </Suspense>
           </CartRoot>
-          <Menu />
-          {/*<Menu>
-            <ul>
-              <li>Home</li>
-              <li>Product</li>
-              <li>Feature</li>
-              <li>Category</li>
-              <li>Blog</li>
-              <li>Contact</li>
-            </ul>
-          </Menu>*/}
+          {/*<Menu />*/}
+          <Menu>
+            <nav>
+              <ul>
+                <li>
+                  <Link href="/">Home</Link>
+                </li>
+                <li>
+                  <Link href="/products">Products</Link>
+                </li>
+                <li>Feature</li>
+                <li>Category</li>
+                <li>Blog</li>
+                <li>
+                  <Link href="/pages/contact">Contact</Link>
+                </li>
+              </ul>
+            </nav>
+          </Menu>
         </div>
       </body>
     </html>

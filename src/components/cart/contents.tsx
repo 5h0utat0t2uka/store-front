@@ -1,6 +1,5 @@
 "use client";
 
-import { sanitizeQuantity } from "@shopify/hydrogen";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useId } from "react";
@@ -93,6 +92,7 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
   const isPending = useCart((state) => state.pending.lines.has(line.id));
   const lineErrors = useCart((state) => state.errors.lines.get(line.id));
   const errorId = useId();
+  const actionsFormId = useId();
 
   const merchandise = line.merchandise;
   const title = merchandise?.product.title ?? "商品";
@@ -110,54 +110,100 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
         )}
       </div>
 
-      <div className={styles.lineDetails}>
-        <p className={styles.lineTitle}>
+      <div className={styles.details}>
+        <p className={styles.title}>
           {handle ? (
-            <Link href={`/products/${encodeURIComponent(handle)}`} onClick={onNavigate}>
+            <Link
+              href={{
+                pathname: `/products/${encodeURIComponent(handle)}`,
+                query: Object.fromEntries((merchandise?.selectedOptions ?? []).map(({ name, value }) => [name, value])),
+              }}
+              onNavigate={onNavigate}
+            >
               {title}
             </Link>
           ) : (
             title
           )}
         </p>
-        {variantTitle && <p>{variantTitle}</p>}
+        {variantTitle && <p className={styles.variant}>{variantTitle}</p>}
         <p className={styles.price} data-pending={isPending || undefined}>
           {formatPrice(line.cost.totalAmount)}
         </p>
 
-        {/* 数量の入力・増減・削除は Hydrogen のフォームの形に合わせる。JavaScript が無効でも送信できる。 */}
-        <form
-          className={styles.controls}
-          {...formProps({
-            beforeSubmit: (event) => {
-              const input = event.currentTarget.elements.namedItem("quantity");
-              if (input instanceof HTMLInputElement) {
-                input.value = String(sanitizeQuantity(input.value, { min: 0, max: MAX_QUANTITY }));
-              }
-            },
-          })}
-        >
+        {/* 増減・削除には行の数量を送る。通常の POST でも編集中の入力値を増減の基準にしない。 */}
+        <form id={actionsFormId} hidden {...formProps()}>
+          <input type="hidden" {...register("lineId", { value: line.id })} />
+          <input type="hidden" {...register("quantity", { value: line.quantity })} />
+        </form>
+        <form className={styles.controls} {...formProps()}>
           {/* 数量の入力欄で Enter を押したときに使われる、非表示の送信ボタン。 */}
           <button {...register("set")} />
           <input type="hidden" {...register("lineId", { value: line.id })} />
-          <button {...register("decrease")} aria-label="数量を減らす">
-            −
+
+          <div className={styles.quantities}>
+            <button form={actionsFormId} {...register("decrease")} aria-label="数量を減らす">
+              <svg role="img" aria-label="minus" width={24} height={24} viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth={2} d="M20 12H4"></path>
+              </svg>
+            </button>
+            <input
+              {...register("quantity", {
+                value: line.quantity,
+                interactive: true,
+              })}
+              className={styles.quantity}
+              required
+              pattern="0*[0-9]{1,2}"
+              title={`0から${MAX_QUANTITY}の整数を入力してください。0にするとこの商品を削除します。`}
+              onInput={(event) => {
+                const input = event.currentTarget;
+                if (/^\d+$/.test(input.value) && Number(input.value) > MAX_QUANTITY) {
+                  input.value = String(MAX_QUANTITY);
+                }
+              }}
+              onInvalid={(event) => {
+                // 空欄で確定したら required が送信を止める。Hydrogen に 0 として渡さず表示を戻す。
+                if (event.currentTarget.value.trim() === "") {
+                  event.preventDefault();
+                  event.currentTarget.value = String(line.quantity);
+                }
+              }}
+              aria-label={`${title}の数量`}
+              aria-invalid={hasError || undefined}
+              aria-describedby={hasError ? errorId : undefined}
+              data-pending={isPending || undefined}
+            />
+            <button
+              form={actionsFormId}
+              {...register("increase")}
+              disabled={line.quantity >= MAX_QUANTITY}
+              aria-label="数量を増やす"
+            >
+              <svg role="img" aria-label="plus" width={24} height={24} viewBox="0 0 24 24">
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth={2}
+                  d="M12 20v-8m0 0V4m0 8h8m-8 0H4"
+                ></path>
+              </svg>
+            </button>
+          </div>
+
+          <button form={actionsFormId} className={styles.remove} {...register("remove")}>
+            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M6 6v15h12V6M4 6h16M8 6V3h8v3m-6 4v7m4-7v7"
+              ></path>
+            </svg>
           </button>
-          <input
-            {...register("quantity", {
-              value: line.quantity,
-              interactive: true,
-            })}
-            className={styles.quantity}
-            aria-label={`${title}の数量`}
-            aria-invalid={hasError || undefined}
-            aria-describedby={hasError ? errorId : undefined}
-            data-pending={isPending || undefined}
-          />
-          <button {...register("increase")} aria-label="数量を増やす">
-            +
-          </button>
-          <button {...register("remove")}>削除</button>
         </form>
 
         {hasError && (

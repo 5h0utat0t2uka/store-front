@@ -11,7 +11,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type MouseEvent as ReactMouseEvent, useEffect, useId, useRef } from "react";
+import { type MouseEvent as ReactMouseEvent, useEffect, useId, useRef, useState } from "react";
 import { formatPrice } from "@/lib/shopify/money";
 import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, routeTemplates, SEARCH_PATH } from "@/lib/shopify/search";
 import styles from "./index.module.css";
@@ -31,6 +31,7 @@ export function Search() {
 function SearchDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [pointerFocus, setPointerFocus] = useState(false);
   // 背景の上で押し始めたかどうか。描画には使わない値なので、state ではなく ref で持つ。
   const pressedOnBackdropRef = useRef(false);
   const inputId = useId();
@@ -45,6 +46,8 @@ function SearchDialog() {
       return;
     }
     event.preventDefault();
+    // Enter など、クリック回数が 0 の起動ではフォーカス枠を表示する。
+    setPointerFocus(event.detail > 0);
     // showModal() で開くと、外側を操作できなくする処理、フォーカスの閉じ込め、
     // Esc で閉じる動作、閉じたあとのフォーカスの復帰までブラウザが処理する。
     dialogRef.current?.showModal();
@@ -109,19 +112,28 @@ function SearchDialog() {
         </svg>
       </Link>
 
-      <dialog ref={dialogRef} className={styles.dialog} aria-label="商品を検索" closedby="any" onClose={reset}>
+      <dialog
+        ref={dialogRef}
+        className={styles.dialog}
+        aria-label="商品を検索"
+        closedby="any"
+        onPointerDownCapture={() => setPointerFocus(true)}
+        onKeyDownCapture={() => setPointerFocus(false)}
+        onClose={reset}
+      >
         {/* 送信先は GET /search?q=…。JavaScript が動いているときはページを読み込み直さずに移動する。 */}
         {/* formProps() が返す onSubmit は既定では何もしないため、送信の処理は onSubmit で上書きする。 */}
         {/* ref を読む関数を描画中に formProps() へ渡すと、React Compiler がこのコンポーネントを最適化しない。 */}
         <form
           ref={formRef}
           className={styles.form}
+          data-pointer-focus={pointerFocus || undefined}
           {...formProps()}
           onSubmit={(event) => {
             event.preventDefault();
             const trimmed = readPredictiveSearchFormTerm(new FormData(event.currentTarget)).trim();
             if (!trimmed) return;
-            router.push(getSearchUrl(trimmed) as Route);
+            router.push(getSearchUrl(trimmed));
             close();
           }}
         >
@@ -259,7 +271,7 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
         </ul>
       )}
       {status !== "idle" && term && (
-        <Link className={styles.all} href={getSearchUrl(term) as Route} onClick={onNavigate}>
+        <Link className={styles.all} href={getSearchUrl(term)} onClick={onNavigate}>
           「{term}」の検索結果をすべて見る
         </Link>
       )}

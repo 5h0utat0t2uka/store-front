@@ -46,7 +46,7 @@ export function ItemCard({ product, heading: Heading, sizes, loading = "lazy" }:
         </Heading>
         <p className={styles.price}>{price}</p>
       </div>
-      <p className={styles.availability}>{product.availableForSale ? "販売中" : "現在購入できません"}</p>
+      {/*<p className={styles.availability}>{product.availableForSale ? "販売中" : "現在購入できません"}</p>*/}
     </article>
   );
 }

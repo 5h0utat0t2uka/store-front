@@ -1,6 +1,8 @@
 .contents {
+  --thumb-size: 200px;
+  container-type: inline-size;
   display: grid;
-  gap: 1.5rem;
+  /*gap: var(--space);*/
   line-height: 1.6;
   overflow-wrap: anywhere;
 
@@ -15,67 +17,119 @@
 
 .lines {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--space);
   list-style: none;
-}
-
-.line {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: start;
-}
-.thumb {
-  aspect-ratio: 1;
-  inline-size: 80px;
-  border-radius: 0.375rem;
-  &:is(:empty) {
-    background: color-mix(in oklch, currentColor 4%, transparent);
-  }
-  .image {
-    object-fit: contain;
-    background: color-mix(in oklch, currentColor 4%, transparent);
-  }
-}
-
-.lineDetails {
-  grid-column: -2 / -1;
-  display: grid;
-  gap: 0.25rem;
-}
-
-.lineTitle {
-  font-weight: 600;
-
-  a {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  margin-block-end: calc(var(--space) * 1.5);
+  padding-block-end: calc(var(--space) * 1.5);
+  .line {
+    display: grid;
+    /*grid-template-columns: auto minmax(0, 1fr);*/
+    grid-template-columns: max-content 1fr;
+    /*gap: 0.75rem;*/
+    gap: var(--space);
+    align-items: start;
+    > .thumb {
+      aspect-ratio: 1;
+      /*inline-size: 80px;*/
+      border-radius: 0.375rem;
+      inline-size: min(var(--thumb-size), 30cqi);
+      overflow: clip;
+      &:is(:empty) {
+        background: color-mix(in oklch, currentColor 4%, transparent);
+      }
+      .image {
+        inline-size: 100%;
+        object-fit: contain;
+        object-fit: cover;
+        background: color-mix(in oklch, currentColor 4%, transparent);
+      }
+    }
   }
 }
 
-.price {
-  font-variant-numeric: tabular-nums;
-}
-
-.controls {
+.details {
+  /*grid-column: -2 / -1;*/
+  /*display: grid;*/
+  /*gap: 0.25rem;*/
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.25rem;
+  block-size: stretch;
+  .title {
+    font-weight: normal;
+    a {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+  .variant {
+    color: var(--secondary);
+    font-size: 0.875rem;
+  }
+  .price {
+    font-variant-numeric: tabular-nums;
+    /*font-size: .875rem;*/
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-block-start: auto;
 
-  button {
-    min-inline-size: 2rem;
-    min-block-size: 2rem;
-    padding-inline: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: none;
-    color: inherit;
-    cursor: pointer;
+    > button {
+      /*min-inline-size: 2rem;
+      min-block-size: 2rem;
+      padding-inline: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;*/
+      background: none;
+      color: inherit;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      &:is(.remove) {
+        border: none;
+        color: var(--secondary);
+      }
+    }
+    > .quantities {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      > button {
+        min-block-size: 2rem;
+        display: grid;
+        place-content: center;
+        color: inherit;
+        cursor: pointer;
+        background: none;
+        border: none;
+        > svg {
+          block-size: 0.6em;
+          inline-size: 0.6em;
+          padding-inline: 0.5rem;
+          box-sizing: content-box;
+        }
+      }
+      > input {
+        inline-size: 3rem;
+        color: inherit;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        background: none;
+        border-inline: 1px solid var(--border);
+        border-block: none;
+      }
+    }
   }
 }
 
-.quantity {
+/*.quantity {
   inline-size: 3rem;
   min-block-size: 2rem;
   border: 1px solid var(--border);
@@ -84,13 +138,13 @@
   color: inherit;
   text-align: center;
   font-variant-numeric: tabular-nums;
-}
+}*/
 
 .summary {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding-block-start: 1.5rem;
+  padding-block: calc(var(--space) * 1.5);
   border-block-start: 1px solid var(--border);
   font-weight: 600;
   font-variant-numeric: tabular-nums;

@@ -20,7 +20,8 @@ function readListing(params: Awaited<ProductsProps["searchParams"]>) {
   const before = firstParam(params.before);
   if (after && before) notFound();
 
-  return { tag, after, before, title: tag ? `「${tag}」一覧` : "商品一覧" };
+  // return { tag, after, before, title: tag ? `「${tag}」一覧` : "商品一覧" };
+  return { tag, after, before, title: tag ? `「${tag}」` : "Products" };
 }
 
 export async function generateMetadata({ searchParams }: ProductsProps, parent: ResolvingMetadata): Promise<Metadata> {
