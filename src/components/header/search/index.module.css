@@ -35,7 +35,24 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
+  margin: 0.5rem;
   padding-inline: 1rem 0.5rem;
+  border-radius: 0.375rem;
+
+  &:has(> .input:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+
+    @media (forced-colors: none) {
+      &[data-pointer-focus] {
+        outline: none;
+      }
+    }
+
+    > .input {
+      outline: none;
+    }
+  }
 }
 
 .label {
@@ -66,14 +83,6 @@
      入力の消去は Esc（1 回目で消去、2 回目でダイアログを閉じる）でもできる。 */
   &::-webkit-search-cancel-button {
     display: none;
-  }
-
-  /* 入力欄はダイアログの幅いっぱいにあるため、輪は内側に描く。 */
-  &:focus-visible {
-    /*outline: 2px solid currentColor;*/
-    /*outline-offset: -4px;*/
-    /*border-radius: 0.5rem;*/
-    outline: none;
   }
 }
 

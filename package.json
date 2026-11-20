@@ -27,9 +27,9 @@
     "check:graphql": "hydrogen gql check --fail-on-warn"
   },
   "dependencies": {
-    "@shopify/hydrogen": "2026.10.2",
+    "@shopify/hydrogen": "2026.10.3",
     "gen-interface-jp": "0.8.0",
-    "next": "16.4.5",
+    "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

@@ -1,7 +1,81 @@
 .footer {
   display: grid;
-  padding-block-end: calc(var(--button-block) * 2 + env(safe-area-inset-bottom));
-  background: color-mix(in oklch, var(--foreground) 5%, transparent);
+  /*padding-block-end: calc(var(--menu-block) * 2 + env(safe-area-inset-bottom));*/
+  padding-block-end: calc(var(--space) * 2 + var(--menu-block) + env(safe-area-inset-bottom));
+  > .subscribe {
+    display: grid;
+    place-content: center;
+    background: color-mix(in oklch, var(--foreground) 5%, transparent);
+    aspect-ratio: 5/1;
+    margin-inline: auto;
+    margin-block-end: calc(var(--space) * 2 + var(--menu-block));
+    border-radius: 0.75rem;
+    /*inline-size: var(--content-inline);*/
+    inline-size: min(100%, 85rem);
+    max-inline-size: calc(100cqi - var(--space) - var(--space));
+    min-block-size: 240px;
+    background-image: light-dark(url("/bg-light.jpg.webp"), url("/bg-dark.jpg.webp"));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    overflow: clip;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(16px);
+      z-index: 0;
+      filter: brightness(1.2);
+      @media (prefers-color-scheme: dark) {
+        filter: brightness(0.8);
+      }
+    }
+
+    > div {
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      place-items: center;
+      > p {
+        /*font-size: clamp(2rem, 5vw, 3rem);*/
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 600;
+        letter-spacing: 0.03ch;
+        text-transform: uppercase;
+      }
+      > span {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.25rem;
+        align-items: center;
+        padding: 0.6rem 1.2rem;
+        /*border-radius: calc(1px * infinity);*/
+        border-radius: 0.375rem;
+        background: var(--foreground);
+        font-size: 0.875rem;
+        text-transform: capitalize;
+        color: var(--background);
+        &::after {
+          content: "";
+          mask-image: var(--icon-arrow);
+          aspect-ratio: 1;
+          background-color: currentColor;
+          place-self: center;
+          block-size: 0.8lh;
+          display: grid;
+        }
+        @media (any-hover: hover) {
+          transition: filter 0.2s;
+          &:hover {
+            filter: invert();
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
   > .content {
     display: grid;
     grid-template-columns: 1fr;
