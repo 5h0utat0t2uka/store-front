@@ -1,0 +1,71 @@
+.main {
+  display: grid;
+  align-content: start;
+  gap: var(--space);
+  overflow-wrap: anywhere;
+  > .hero {
+    position: relative;
+    display: grid;
+    place-content: center;
+    inline-size: 100cqi;
+    max-block-size: 300px;
+    aspect-ratio: 2;
+    margin-block-end: calc(var(--space) * 2);
+    overflow: clip;
+    border-radius: 0.75rem;
+    img {
+      object-fit: cover;
+    }
+    .heroContent {
+      z-index: 1;
+      display: grid;
+      gap: 1rem;
+      padding: 1rem;
+      text-align: center;
+      h1 {
+        font-weight: 600;
+      }
+    }
+    img + .heroContent {
+      mix-blend-mode: difference;
+    }
+  }
+  > a,
+  .pagination a {
+    justify-self: start;
+    text-decoration: underline;
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+}
+
+.collectionImage {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.collectionLinks {
+  display: grid;
+  gap: 0.5em;
+  padding-inline-start: 1.5em;
+  list-style-type: disc;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75em;
+    max-inline-size: 100%;
+    text-decoration: underline;
+  }
+
+  img {
+    flex: none;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.375rem;
+  }
+}

@@ -94,8 +94,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <li>
                   <Link href="/products">Products</Link>
                 </li>
-                <li>Feature</li>
-                <li>Category</li>
+                <li>Features</li>
+                <li>
+                  <Link href="/collections">Categories</Link>
+                </li>
                 <li>Blog</li>
                 <li>
                   <Link href="/pages/contact">Contact</Link>

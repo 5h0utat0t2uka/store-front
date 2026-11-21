@@ -217,9 +217,11 @@ function PurchaseControls({ product, isSelecting }: Props & { isSelecting: boole
         )}
         {addable ? "カートに追加" : availability}
       </button>
-      <p role="status" className={styles.status}>
-        {lineInCart && `カートに ${lineInCart.quantity} 点入っています`}
-      </p>
+      {lineInCart && (
+        <p role="status" className={styles.status}>
+          {`カートに ${lineInCart.quantity} 点入っています`}
+        </p>
+      )}
       {messages.length > 0 && (
         <div className={styles.error} id={errorId} role="alert">
           {messages.map((message) => (

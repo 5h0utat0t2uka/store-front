@@ -14,6 +14,23 @@ const SHOP_METADATA_QUERY = gql(`
   }
 `);
 
+const PRODUCT_PAGE_FRAGMENT = gql(
+  `
+  fragment ProductPageFields on ProductConnection {
+    pageInfo {
+      startCursor
+      endCursor
+      hasPreviousPage
+      hasNextPage
+    }
+    nodes {
+      ...ProductCardFields
+    }
+  }
+`,
+  [PRODUCT_CARD_FRAGMENT],
+);
+
 const PRODUCTS_QUERY = gql(
   `
   query CatalogProducts(
@@ -26,20 +43,72 @@ const PRODUCTS_QUERY = gql(
     $language: LanguageCode
   ) @inContext(country: $country, language: $language) {
     products(first: $first, after: $after, last: $last, before: $before, query: $query) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
+      ...ProductPageFields
+    }
+  }
+`,
+  [PRODUCT_PAGE_FRAGMENT],
+);
+
+const COLLECTION_QUERY = gql(
+  `
+  query CollectionPage(
+    $handle: String!
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      handle
+      title
+      isCampaign: metafield(namespace: "custom", key: "is_campaign") {
+        value
       }
-      nodes {
-        ...ProductCardFields
+      description
+      descriptionHtml
+      image {
+        url
+        altText
+        width
+        height
+      }
+      seo {
+        title
+        description
+      }
+      products(first: $first, after: $after, last: $last, before: $before) {
+        ...ProductPageFields
       }
     }
   }
 `,
-  [PRODUCT_CARD_FRAGMENT],
+  [PRODUCT_PAGE_FRAGMENT],
 );
+
+const COLLECTION_LIST_QUERY = gql(`
+  query CollectionList($first: Int!, $after: String, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    collections(first: $first, after: $after, sortKey: TITLE) {
+      nodes {
+        handle
+        title
+        isCampaign: metafield(namespace: "custom", key: "is_campaign") {
+          value
+        }
+        image {
+          url
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`);
 
 // requiresSellingPlan から adjacentVariants までは、Hydrogen の商品フォーム
 // （バリアントの解決とカートへの追加）が使う。
@@ -48,6 +117,7 @@ const PRODUCT_QUERY = gql(
   query ProductDetails(
     $handle: String!
     $selectedOptions: [SelectedOptionInput!]!
+    $includeRelatedProducts: Boolean!
     $country: CountryCode
     $language: LanguageCode
   ) @inContext(country: $country, language: $language) {
@@ -56,6 +126,19 @@ const PRODUCT_QUERY = gql(
       handle
       title
       description
+      descriptionHtml
+      relatedProducts: metafield(
+        namespace: "shopify--discovery--product_recommendation"
+        key: "related_products"
+      ) @include(if: $includeRelatedProducts) {
+        # list.product_reference の上限まで、選択された商品をまとめて取得する。
+        references(first: 128) {
+          nodes {
+            __typename
+            ...ProductCardFields
+          }
+        }
+      }
       tags
       vendor
       requiresSellingPlan
@@ -110,7 +193,7 @@ const PRODUCT_QUERY = gql(
     }
   }
 `,
-  [PRODUCT_VARIANT_FRAGMENT],
+  [PRODUCT_VARIANT_FRAGMENT, PRODUCT_CARD_FRAGMENT],
 );
 
 // オンラインストアの「ページ」（管理画面のオンラインストア → ページ）。body は HTML で返る。
@@ -249,15 +332,17 @@ export async function getShopMetadata(): Promise<ShopMetadata> {
 }
 
 export async function getHomeProducts(): Promise<ProductSummary[]> {
-  const products = await getProductPage({ pageSize: 6 });
+  const products = await getProductPage({ pageSize: 10 });
   return products.nodes;
 }
+
+const CATALOG_PAGE_SIZE = 24;
 
 export async function getProductPage({
   tag,
   after,
   before,
-  pageSize = 24, // 検索結果と同じ1ページあたりの件数。
+  pageSize = CATALOG_PAGE_SIZE,
 }: {
   tag?: string;
   after?: string;
@@ -287,6 +372,26 @@ export async function getProductPage({
   return products;
 }
 
+export async function getCollectionPage(handle: string, after?: string, before?: string) {
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(COLLECTION_QUERY, {
+    variables: {
+      handle,
+      ...(before ? { last: CATALOG_PAGE_SIZE, before } : { first: CATALOG_PAGE_SIZE, after }),
+    },
+  });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+  if (result.data?.collection === undefined) {
+    throw new Error("Failed to fetch collection from Shopify Storefront API: Invalid response format.");
+  }
+  return result.data.collection;
+}
+
 export async function getProductByHandle(
   handle: string,
   selectedOptions: SelectedOption[] = [],
@@ -296,7 +401,8 @@ export async function getProductByHandle(
 
   const storefront = createCatalogClient();
   const result = await storefront.graphql(PRODUCT_QUERY, {
-    variables: { handle, selectedOptions },
+    // バリアントの再取得時は、ページに表示済みの関連商品を取り直さない。
+    variables: { handle, selectedOptions, includeRelatedProducts: selectedOptions.length === 0 },
   });
   if (result.errors?.length) {
     throw new Error(result.errors.map((error) => error.message).join("\n"));
@@ -312,6 +418,40 @@ export async function getProductByHandle(
 
 // ビルド時に生成するページの上限。超えた分は最初のアクセスで生成される。
 const STATIC_PAGE_COUNT = 50;
+
+async function getCollectionListPage(after?: string) {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300, expire: 3_600 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(COLLECTION_LIST_QUERY, { variables: { first: STATIC_PAGE_COUNT, after } });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+
+  const collections = result.data?.collections;
+  if (!collections?.pageInfo || !Array.isArray(collections.nodes)) {
+    throw new Error("Failed to fetch collections from Shopify Storefront API: Invalid response format.");
+  }
+  return collections;
+}
+
+export async function getCollectionHandles() {
+  const { nodes } = await getCollectionListPage();
+  return nodes.map(({ handle }) => ({ handle }));
+}
+
+export async function getCollectionLinks() {
+  let page = await getCollectionListPage();
+  const links = [...page.nodes];
+  while (page.pageInfo.hasNextPage) {
+    const cursor = page.pageInfo.endCursor;
+    if (!cursor) throw new Error("Shopify returned a collection page without a continuation cursor.");
+    page = await getCollectionListPage(cursor);
+    links.push(...page.nodes);
+  }
+  return links.filter(({ isCampaign }) => isCampaign?.value !== "true");
+}
 
 export async function getPageHandles(): Promise<string[]> {
   "use cache";

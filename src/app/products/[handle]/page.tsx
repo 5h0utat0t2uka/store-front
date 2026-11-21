@@ -1,18 +1,16 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AddToCart } from "@/app/products/_components/add-to-cart";
-import { CarouselTrack } from "@/components/carousel/track";
+import { ProductGallery } from "@/app/products/_components/product-gallery";
+import { ProductGrid } from "@/components/card/grid";
+import { ContentBody } from "@/components/content";
 import { createPageMetadata } from "@/lib/metadata";
 import { getHomeProducts, getProductByHandle, type ProductDetail } from "@/lib/shopify";
 import { parseHandle } from "@/lib/shopify/handle";
-import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
-import { PRODUCT_GALLERY_SIZES, PRODUCT_HERO_SIZES } from "@/styles/image-sizes";
-import { cx } from "@/utils/class";
+// import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
 import styles from "./page.module.css";
-import carouselStyles from "@/components/carousel/index.module.css";
 
 // ビルド時に 1 件も生成できないとビルドが失敗するため、商品が 0 件のときに使う。
 // このハンドルの商品は存在しないので、404 のページとして生成される。
@@ -98,54 +96,31 @@ async function ProductPurchase({
 
 export default async function ProductPage({ params, searchParams }: PageProps<"/products/[handle]">) {
   const product = await getProduct(params);
+  const relatedProducts =
+    product.relatedProducts?.references?.nodes.filter((node) => node.__typename === "Product") ?? [];
   const primaryImage = product.featuredImage ?? product.images.nodes[0];
-  const imageSrc = primaryImage?.url ?? "/placehold.svg";
-  const imageAlt = primaryImage ? primaryImage.altText?.trim() || product.title : `${product.title}（商品画像なし）`;
-  const additionalImages = product.images.nodes.filter((image) => image.url !== primaryImage?.url);
-  const hasGallery = additionalImages.length > 0;
-  const hero = (
-    <Image
-      className={styles.image}
-      src={imageSrc}
-      alt={imageAlt}
-      fill
-      sizes={PRODUCT_HERO_SIZES}
-      loading="eager"
-      fetchPriority={primaryImage ? "high" : "auto"}
-      unoptimized={!primaryImage}
-    />
-  );
+  const images = primaryImage
+    ? [primaryImage, ...product.images.nodes.filter((image) => image.url !== primaryImage.url)]
+    : [];
 
   return (
     <main className={styles.main}>
       <article className={styles.product}>
-        <section className={cx(styles.images, hasGallery && carouselStyles.productGallery)} aria-label="商品画像">
-          {hasGallery ? (
-            <CarouselTrack key={product.id}>
-              <li className={styles.frame}>{hero}</li>
-              {additionalImages.map((image, index) => (
-                <li className={styles.frame} key={image.url}>
-                  <Image
-                    className={styles.image}
-                    src={image.url}
-                    alt={image.altText?.trim() || `${product.title}（画像 ${index + 2}）`}
-                    fill
-                    sizes={PRODUCT_GALLERY_SIZES}
-                    loading="lazy"
-                  />
-                </li>
-              ))}
-            </CarouselTrack>
-          ) : (
-            <div className={styles.frame}>{hero}</div>
-          )}
-        </section>
+        <ProductGallery
+          key={product.id}
+          title={product.title}
+          images={images.map(({ url, altText }, index) => ({
+            src: url,
+            alt: altText?.trim() || (index === 0 ? product.title : `${product.title}（画像 ${index + 1}）`),
+          }))}
+        />
 
         <div className={styles.details}>
-          <hgroup className={styles.heading}>
+          {/*<hgroup className={styles.heading}>
             <p>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</p>
             <h1>{product.title}</h1>
-          </hgroup>
+          </hgroup>*/}
+          <h1>{product.title}</h1>
           <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
             <ProductPurchase product={product} searchParams={searchParams} />
           </Suspense>
@@ -161,10 +136,11 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               </div>
             )}
           </dl>*/}
-          <section className={styles.descriptionSection}>
-            {/*<h2>商品説明</h2>*/}
-            <p className={styles.description}>{product.description.trim() || "商品説明はまだ登録されていません。"}</p>
-          </section>
+          {product.descriptionHtml && (
+            <section aria-label="商品説明" className={styles.description}>
+              <ContentBody html={product.descriptionHtml} />
+            </section>
+          )}
           {product.tags.length > 0 && (
             <nav aria-label="商品タグ" className={styles.tags}>
               <ul className={styles.list} role="list">
@@ -180,6 +156,12 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           )}
         </div>
       </article>
+      {relatedProducts.length > 0 && (
+        <section aria-labelledby="related-products-heading" className={styles.relatedProducts}>
+          <h2 id="related-products-heading">Related Products</h2>
+          <ProductGrid products={relatedProducts} prioritizeFirstRow={false} />
+        </section>
+      )}
     </main>
   );
 }
