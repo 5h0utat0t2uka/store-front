@@ -1,0 +1,4 @@
+.dialog::backdrop {
+  background: color-mix(in oklch, var(--background) 60%, transparent);
+  backdrop-filter: blur(8px);
+}

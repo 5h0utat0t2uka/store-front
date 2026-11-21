@@ -115,7 +115,7 @@ h3 {
     container-name: main;
     inline-size: var(--content-inline);
     margin-inline: auto;
-    margin-block-end: calc(var(--space) * 8);
+    margin-block-end: calc(var(--space) * 10);
     padding-inline: calc(var(--space) + calc(env(safe-area-inset-left) / 2) + calc(env(safe-area-inset-right) / 2));
     padding-block: calc(var(--space) * 1);
   }

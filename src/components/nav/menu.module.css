@@ -27,6 +27,7 @@
   font-size: 0.8rem;
   /*color: var(--foreground);*/
   color: var(--background);
+  z-index: 100;
   svg {
     block-size: 0.8lh;
     inline-size: 0.8lh;

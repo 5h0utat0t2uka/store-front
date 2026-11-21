@@ -1,0 +1,84 @@
+.images {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.75rem;
+  background: color-mix(in oklch, currentColor 4%, transparent);
+}
+
+.image {
+  object-fit: contain;
+  border-radius: inherit;
+}
+.zoom {
+  display: none;
+  @media (min-aspect-ratio: 0.8) {
+    display: block;
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+
+    @media (any-hover: hover) {
+      cursor: zoom-in;
+    }
+  }
+  /*@container (inline-size >= 48rem) {
+    display: block;
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    cursor: zoom-in;
+  }*/
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.dialog {
+  position: fixed;
+  inset: 50%;
+  translate: -50% -50%;
+  margin: 0;
+  inline-size: 80vmin;
+  block-size: auto;
+  aspect-ratio: 1;
+  border-radius: 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.close {
+  position: absolute;
+  inset-block-start: var(--space);
+  inset-inline-end: var(--space);
+
+  button {
+    /*padding: 0.5em 1em;*/
+    aspect-ratio: 1;
+    inline-size: 2.5rem;
+    display: grid;
+    place-content: center;
+    border: 1px solid currentColor;
+    /*border-radius: 0.375rem;*/
+    border-radius: 50%;
+    color: var(--foreground);
+    background: var(--background);
+  }
+}

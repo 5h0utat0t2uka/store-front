@@ -6,7 +6,13 @@ import styles from "./grid.module.css";
 // 最大幅72remのグリッドで先頭行を埋める枚数。
 const EAGER_PRODUCT_IMAGE_COUNT = 4;
 
-export function ProductGrid({ products, heading = "h3" }: { products: ProductSummary[]; heading?: CardHeading }) {
+type ProductGridProps = {
+  products: ProductSummary[];
+  heading?: CardHeading;
+  prioritizeFirstRow?: boolean;
+};
+
+export function ProductGrid({ products, heading = "h3", prioritizeFirstRow = true }: ProductGridProps) {
   return (
     // list-style: none による Safari のリスト認識の喪失を防ぐ。
     <ul className={styles.products} role="list">
@@ -16,7 +22,7 @@ export function ProductGrid({ products, heading = "h3" }: { products: ProductSum
             product={product}
             heading={heading}
             sizes={PRODUCT_CARD_SIZES}
-            loading={index < EAGER_PRODUCT_IMAGE_COUNT ? "eager" : "lazy"}
+            loading={prioritizeFirstRow && index < EAGER_PRODUCT_IMAGE_COUNT ? "eager" : "lazy"}
           />
         </li>
       ))}

@@ -6,22 +6,25 @@ type Props = {
   html: string;
 };
 
+export function ContentBody({ html }: { html: string }) {
+  // if (!html.trim()) return null;
+  return (
+    <div
+      className={styles.body}
+      // Shopify 管理画面で編集された HTML を表示するため。
+      // oxlint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: html }} // nosemgrep
+    />
+  );
+}
+
 // Shopify の「ページ」と「ポリシー」に共通の、見出しと本文の表示。
 export function Content({ title, html }: Props) {
   return (
     <main className={styles.main}>
       <article>
         <h1>{title}</h1>
-        {html.trim() ? (
-          <div
-            className={styles.body}
-            // Shopify 管理画面で編集された HTML を表示するため。
-            // oxlint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: html }} // nosemgrep
-          />
-        ) : (
-          <p className={styles.body}>本文はまだ登録されていません。</p>
-        )}
+        <ContentBody html={html} />
       </article>
     </main>
   );

@@ -11,7 +11,8 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type MouseEvent as ReactMouseEvent, useEffect, useId, useRef, useState } from "react";
+import { type MouseEvent as ReactMouseEvent, useId, useRef, useState } from "react";
+import { LightDismissDialog } from "@/components/dialog/light-dismiss";
 import { formatPrice } from "@/lib/shopify/money";
 import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, routeTemplates, SEARCH_PATH } from "@/lib/shopify/search";
 import styles from "./index.module.css";
@@ -32,8 +33,6 @@ function SearchDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [pointerFocus, setPointerFocus] = useState(false);
-  // 背景の上で押し始めたかどうか。描画には使わない値なので、state ではなく ref で持つ。
-  const pressedOnBackdropRef = useRef(false);
   const inputId = useId();
   const router = useRouter();
   const { clear } = usePredictiveSearchActions();
@@ -62,41 +61,6 @@ function SearchDialog() {
     clear();
   };
 
-  // 外側のクリックで閉じる動作は closedby="any" でブラウザが処理する。
-  // closedby に対応していないブラウザでだけ、同じ動作をここで補う。
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog || "closedBy" in HTMLDialogElement.prototype) return;
-
-    // 背景（::backdrop）のクリックは <dialog> 自身へのクリックとして届く。
-    // 枠線の上のクリックと区別するため、ダイアログの矩形の外かどうかも見る。
-    const isOnBackdrop = (event: MouseEvent | PointerEvent) => {
-      if (event.target !== dialog) return false;
-      const rect = dialog.getBoundingClientRect();
-      return (
-        event.clientX < rect.left ||
-        event.clientX > rect.right ||
-        event.clientY < rect.top ||
-        event.clientY > rect.bottom
-      );
-    };
-
-    // 入力欄の文字を選択しながら外側で離した操作では閉じないよう、押した位置も見る。
-    const trackPress = (event: PointerEvent) => {
-      pressedOnBackdropRef.current = isOnBackdrop(event);
-    };
-    const closeOnBackdropClick = (event: MouseEvent) => {
-      if (pressedOnBackdropRef.current && isOnBackdrop(event)) dialog.close();
-    };
-
-    dialog.addEventListener("pointerdown", trackPress);
-    dialog.addEventListener("click", closeOnBackdropClick);
-    return () => {
-      dialog.removeEventListener("pointerdown", trackPress);
-      dialog.removeEventListener("click", closeOnBackdropClick);
-    };
-  }, []);
-
   return (
     <>
       <Link className={styles.search} href={SEARCH_PATH} onClick={open} aria-label="検索" aria-haspopup="dialog">
@@ -112,11 +76,10 @@ function SearchDialog() {
         </svg>
       </Link>
 
-      <dialog
+      <LightDismissDialog
         ref={dialogRef}
         className={styles.dialog}
         aria-label="商品を検索"
-        closedby="any"
         onPointerDownCapture={() => setPointerFocus(true)}
         onKeyDownCapture={() => setPointerFocus(false)}
         onClose={reset}
@@ -171,7 +134,7 @@ function SearchDialog() {
           </button>
         </form>
         <Suggestions onNavigate={close} />
-      </dialog>
+      </LightDismissDialog>
     </>
   );
 }
