@@ -1,0 +1,19 @@
+.header {
+  display: grid;
+  gap: var(--space);
+  place-items: center;
+  text-align: center;
+  > h1 {
+    margin-block: 0.8em;
+  }
+  > img {
+    aspect-ratio: 16/11;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
+}
+.product {
+  display: grid;
+  gap: var(--space);
+  margin-block-start: var(--space);
+}

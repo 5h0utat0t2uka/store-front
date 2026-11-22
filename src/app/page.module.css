@@ -1,8 +1,103 @@
 .main {
-  h2 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    line-height: 1.2;
-    margin-block-end: 3rem;
+  > section {
+    &:not(:first-child) {
+      margin-block-start: calc(var(--space) * 4);
+    }
+    > h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      margin-block-end: 3rem;
+    }
+    > .link {
+      background: var(--foreground);
+      text-transform: capitalize;
+      color: var(--background);
+      text-indent: 0.4lh;
+      border-radius: 0.375rem;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.8rem 1rem;
+      font-size: 0.8rem;
+      display: grid;
+      inline-size: fit-content;
+      margin-block: 3rem;
+      &::after {
+        content: "";
+        mask-image: var(--icon-arrow);
+        aspect-ratio: 1;
+        background-color: currentColor;
+        place-self: center;
+        block-size: 0.8lh;
+        display: grid;
+      }
+    }
+
+    &:is([data-section="features"]) {
+      .cards {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space);
+        contain: content;
+        @media (min-aspect-ratio: 0.8) {
+          grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+          > .card:first-child {
+            grid-row: span 2;
+          }
+          > .card > .frame {
+            flex: 1 0 auto;
+          }
+        }
+        > .card {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          .frame {
+            position: relative;
+            inline-size: 100%;
+            aspect-ratio: 16 / 11;
+
+            > img {
+              position: absolute;
+              inset: 0;
+              inline-size: 100%;
+              block-size: 100%;
+              object-fit: cover;
+              border-radius: 0.375rem;
+            }
+          }
+
+          .meta {
+            display: grid;
+            gap: 0.5rem;
+            min-inline-size: 0;
+            overflow-wrap: anywhere;
+
+            > time {
+              font-size: 0.875rem;
+              color: var(--secondary);
+            }
+            > .title {
+              font-size: 1.125rem;
+              line-height: 1.4;
+              > .link {
+                &::after {
+                  content: "";
+                  position: absolute;
+                  inset: 0;
+                }
+
+                &:hover,
+                &:focus-visible {
+                  text-decoration: underline;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 

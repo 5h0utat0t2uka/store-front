@@ -50,6 +50,18 @@ const PRODUCTS_QUERY = gql(
   [PRODUCT_PAGE_FRAGMENT],
 );
 
+const PRODUCT_CARD_QUERY = gql(
+  `
+  query ProductCardByHandle($handle: String!, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    product(handle: $handle) {
+      ...ProductCardFields
+    }
+  }
+`,
+  [PRODUCT_CARD_FRAGMENT],
+);
+
 const COLLECTION_QUERY = gql(
   `
   query CollectionPage(
@@ -332,7 +344,7 @@ export async function getShopMetadata(): Promise<ShopMetadata> {
 }
 
 export async function getHomeProducts(): Promise<ProductSummary[]> {
-  const products = await getProductPage({ pageSize: 10 });
+  const products = await getProductPage({ pageSize: 4 });
   return products.nodes;
 }
 
@@ -390,6 +402,21 @@ export async function getCollectionPage(handle: string, after?: string, before?:
     throw new Error("Failed to fetch collection from Shopify Storefront API: Invalid response format.");
   }
   return result.data.collection;
+}
+
+export async function getProductCardByHandle(handle: string): Promise<ProductSummary | null> {
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+
+  const storefront = createCatalogClient();
+  const result = await storefront.graphql(PRODUCT_CARD_QUERY, { variables: { handle } });
+  if (result.errors?.length) {
+    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  }
+  if (result.data?.product === undefined) {
+    throw new Error("Failed to fetch product card from Shopify Storefront API: Invalid response format.");
+  }
+  return result.data.product;
 }
 
 export async function getProductByHandle(

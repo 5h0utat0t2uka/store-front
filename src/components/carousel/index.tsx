@@ -38,8 +38,8 @@ export function Carousel() {
         <li className={styles.item}>
           <Image src="/carousel/c3.webp" alt="" fill unoptimized loading="lazy" fetchPriority="auto" decoding="auto" />
           <div className={styles.caption}>
-            <h2 className={styles.heading}>2026 AW Collection</h2>
-            <p className={styles.description}>Introducing new outerwear from the 2026 Autumn Winter collection.</p>
+            <h2 className={styles.heading}>2026 AW COLLECTION</h2>
+            <p className={styles.description}>New outerwear from the 2026 Autumn Winter collection.</p>
             <Link className={styles.link} href="/collections/2026-aw-collection">
               Discover
             </Link>
