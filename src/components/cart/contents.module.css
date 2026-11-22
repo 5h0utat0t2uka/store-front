@@ -34,6 +34,7 @@
       border-radius: 0.375rem;
       inline-size: min(var(--thumb-size), 30cqi);
       overflow: clip;
+      contain: strict;
       &:is(:empty) {
         background: color-mix(in oklch, currentColor 4%, transparent);
       }

@@ -14,6 +14,7 @@
     inline-size: min(100%, 85rem);
     max-inline-size: calc(100cqi - var(--space) - var(--space));
     min-block-size: 240px;
+    contain: strict;
     background-image: light-dark(url("/bg-light.jpg.webp"), url("/bg-dark.jpg.webp"));
     background-position: center;
     background-repeat: no-repeat;

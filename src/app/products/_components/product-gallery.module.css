@@ -11,6 +11,7 @@
   aspect-ratio: 1;
   border-radius: 0.75rem;
   background: color-mix(in oklch, currentColor 4%, transparent);
+  contain: strict;
 }
 
 .image {
@@ -47,7 +48,7 @@
 
   &:focus-visible {
     outline: 2px solid currentColor;
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 }
 

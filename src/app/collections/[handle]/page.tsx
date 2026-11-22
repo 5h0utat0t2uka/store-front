@@ -43,13 +43,37 @@ export async function generateMetadata(props: CollectionProps, parent: Resolving
   return createPageMetadata({ title, description, url, images }, parent);
 }
 
+async function CampaignHero(props: CollectionProps) {
+  const { collection } = await readCollection(props);
+  if (collection.isCampaign?.value !== "true") return null;
+  const heroImage = collection.image;
+  if (!heroImage) return null;
+  return (
+    <div className={styles.hero}>
+      <Image
+        className={styles.collectionImage}
+        src={heroImage.url}
+        alt={heroImage.altText?.trim() ?? ""}
+        fill
+        sizes={MAIN_WIDTH}
+        loading="eager"
+        fetchPriority="high"
+      />
+      <hgroup className={styles.heroContent}>
+        <h1>{collection.title}</h1>
+        {collection.descriptionHtml && <ContentBody html={collection.descriptionHtml} />}
+      </hgroup>
+    </div>
+  );
+}
+
 async function CollectionResults(props: CollectionProps) {
   const { collection, pathname, after, before } = await readCollection(props);
   const isCampaign = collection.isCampaign?.value === "true";
   const heroImage = isCampaign ? collection.image : null;
   return (
     <>
-      {isCampaign ? (
+      {/*{isCampaign ? (
         <header className={styles.hero}>
           {heroImage && (
             <Image
@@ -69,8 +93,9 @@ async function CollectionResults(props: CollectionProps) {
         </header>
       ) : (
         <h1>{collection.title}</h1>
-      )}
-
+      )}*/}
+      {!isCampaign && <h1>{collection.title}</h1>}
+      {isCampaign && <h2>Collection Items</h2>}
       <PaginatedProducts
         page={collection.products}
         pathname={pathname}
@@ -84,10 +109,15 @@ async function CollectionResults(props: CollectionProps) {
 
 export default function CollectionPage(props: CollectionProps) {
   return (
-    <main className={styles.main}>
-      <Suspense fallback={<p role="status">商品を読み込んでいます…</p>}>
-        <CollectionResults {...props} />
+    <>
+      <Suspense fallback={null}>
+        <CampaignHero {...props} />
       </Suspense>
-    </main>
+      <main className={styles.main}>
+        <Suspense fallback={<p role="status">商品を読み込んでいます…</p>}>
+          <CollectionResults {...props} />
+        </Suspense>
+      </main>
+    </>
   );
 }
