@@ -10,7 +10,7 @@ type ProductsProps = PageProps<"/products">;
 
 export async function generateMetadata({ searchParams }: ProductsProps, parent: ResolvingMetadata): Promise<Metadata> {
   const { tag, after, before } = readListingParams(await searchParams);
-  const title = tag ? `「${tag}」` : "Products";
+  const title = tag ? `「${tag}」` : "All Products";
   const query = new URLSearchParams();
   if (tag) query.set("tag", tag);
   if (after) query.set("after", after);
@@ -26,7 +26,7 @@ async function ProductResults({ searchParams }: Pick<ProductsProps, "searchParam
 
   return (
     <>
-      <h1>{tag ? `${tag}` : "Products"}</h1>
+      <h1>{tag ? `${tag}` : "All Products"}</h1>
       <PaginatedProducts page={page} pathname="/products" tag={tag} after={after} before={before} />
       {tag && <Link href="/products">すべての商品を見る</Link>}
     </>
