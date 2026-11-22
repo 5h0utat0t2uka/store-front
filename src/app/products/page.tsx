@@ -26,7 +26,7 @@ async function ProductResults({ searchParams }: Pick<ProductsProps, "searchParam
 
   return (
     <>
-      <h1>{tag ? `「${tag}」` : "Products"}</h1>
+      <h1>{tag ? `${tag}` : "Products"}</h1>
       <PaginatedProducts page={page} pathname="/products" tag={tag} after={after} before={before} />
       {tag && <Link href="/products">すべての商品を見る</Link>}
     </>

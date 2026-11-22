@@ -109,19 +109,25 @@ h3 {
   > header {
     container-type: inline-size;
     container-name: header;
+    contain: strict;
   }
   > main {
     container-type: inline-size;
     container-name: main;
+    contain: content;
     inline-size: var(--content-inline);
     margin-inline: auto;
     margin-block-end: calc(var(--space) * 10);
     padding-inline: calc(var(--space) + calc(env(safe-area-inset-left) / 2) + calc(env(safe-area-inset-right) / 2));
-    padding-block: calc(var(--space) * 1);
+    /*padding-block: calc(var(--space) * 1);*/
+    > h1 {
+      margin-block: 0.8em;
+    }
   }
   > footer {
     container-type: inline-size;
     container-name: footer;
+    contain: content;
     margin-block-start: auto;
   }
   > dialog[aria-label="Menu"] {

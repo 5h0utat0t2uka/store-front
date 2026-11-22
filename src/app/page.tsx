@@ -32,7 +32,7 @@ export default function Home(_props: PageProps<"/">) {
       </section>*/}
       <Carousel />
       <main className={styles.main}>
-        <h2>Products</h2>
+        <h2>New Arrivals</h2>
         <Suspense
           fallback={
             <p className={styles.message} role="status">

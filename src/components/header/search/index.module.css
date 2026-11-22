@@ -186,6 +186,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 0.375rem;
+  contain: strict;
   background: color-mix(in oklch, currentColor 4%, transparent);
 
   img {
