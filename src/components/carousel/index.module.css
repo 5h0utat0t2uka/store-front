@@ -2,7 +2,7 @@
   container-type: inline-size;
   inline-size: min(100%, 85rem);
   margin-inline: auto;
-  margin-block-end: calc(var(--space) * 4);
+  margin-block-end: calc(var(--space) * 6);
   --slide-gap: var(--space);
   --slide-peek: 8%;
 }

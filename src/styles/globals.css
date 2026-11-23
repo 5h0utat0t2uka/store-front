@@ -42,7 +42,9 @@ body {
 
 /*html,
 body,*/
-
+html {
+  scroll-padding-block-start: var(--header-block);
+}
 body {
   /*min-block-size: 100%;*/
   /*display: flex;
