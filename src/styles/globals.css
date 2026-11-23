@@ -129,6 +129,10 @@ h3 {
     container-name: footer;
     contain: content;
     margin-block-start: auto;
+    padding-block-end: calc(var(--space) * 2 + var(--menu-block));
+    @media (min-aspect-ratio: 0.8) {
+      padding-block-end: calc(var(--menu-block) * 3);
+    }
   }
   > dialog[aria-label="Menu"] {
     :where(nav) {
@@ -180,4 +184,9 @@ h3 {
   syntax: "<url>";
   inherits: false;
   initial-value: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4L16 12L8 20" /></svg>');
+}
+@property --icon-tag {
+  syntax: "<url>";
+  inherits: false;
+  initial-value: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M4.616 19q-.667 0-1.141-.475T3 17.386V6.615q0-.666.475-1.14T4.615 5h10.212q.384 0 .727.167t.565.46L21 12l-4.88 6.373q-.223.294-.566.46t-.727.167z"/></svg>');
 }

@@ -2,11 +2,31 @@
   padding-block: clamp(2.5rem, 6vw, 5rem);
   line-height: 1.8;
 
-  h1 {
-    margin-block-end: 2rem;
-    font-size: clamp(2rem, 5vw, 3rem);
-    line-height: 1.2;
-    text-wrap: balance;
+  > article {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: calc(var(--space) * 2);
+    align-items: baseline;
+    > h1 {
+      position: static;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+  }
+
+  @media (min-aspect-ratio: 0.8) {
+    > article {
+      display: grid;
+      grid-template-columns: minmax(25rem, auto) 1fr;
+      gap: calc(var(--space) * 2);
+      align-items: baseline;
+      > h1 {
+        position: sticky;
+        top: calc(var(--header-block) + var(--space));
+      }
+    }
   }
 }
 
@@ -14,7 +34,7 @@
    globals.css が全要素の margin と padding を 0 にしているので、要素の間隔はここで付け直す。 */
 .body {
   /* 1 行が長くなりすぎないようにする。日本語の全角でおよそ 45 文字。 */
-  max-inline-size: 45rem;
+  /*max-inline-size: 45rem;*/
   text-wrap: pretty;
 
   > * + * {

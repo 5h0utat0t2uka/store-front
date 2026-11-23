@@ -19,6 +19,12 @@
   @media (any-hover: hover) {
     &:has(.link:hover) {
       border-color: currentColor;
+      &:hover {
+        .title {
+          text-decoration: underline;
+          text-underline-offset: 0.2em;
+        }
+      }
     }
   }
 
@@ -67,9 +73,6 @@
 }
 
 .link {
-  /*text-decoration: underline;*/
-  /*text-underline-offset: 0.2em;*/
-
   /* 見出しのリンクのクリック領域をカード全体に広げる。 */
   &::after {
     content: "";

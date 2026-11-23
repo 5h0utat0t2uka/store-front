@@ -28,9 +28,9 @@ export function Carousel() {
         <li className={styles.item}>
           <Image src="/carousel/c2.webp" alt="" fill unoptimized loading="lazy" fetchPriority="auto" decoding="auto" />
           <div className={styles.caption}>
-            <h2 className={styles.heading}>The Complete Snowboard</h2>
-            <p className={styles.description}>This Premiun snowboard is so awesome.</p>
-            <Link className={styles.link} href="/products/the-complete-snowboard">
+            <h2 className={styles.heading}>Fleece Jacket</h2>
+            <p className={styles.description}>Modern update of the ECWCS Gen3 Level3 Fleece Jacket</p>
+            <Link className={styles.link} href="/products/essential-fleece-jacker-level3">
               View Item
             </Link>
           </div>
@@ -38,8 +38,8 @@ export function Carousel() {
         <li className={styles.item}>
           <Image src="/carousel/c3.webp" alt="" fill unoptimized loading="lazy" fetchPriority="auto" decoding="auto" />
           <div className={styles.caption}>
-            <h2 className={styles.heading}>2026 AW COLLECTION</h2>
-            <p className={styles.description}>New outerwear from the 2026 Autumn Winter collection.</p>
+            <h2 className={styles.heading}>2026 AW</h2>
+            <p className={styles.description}>New gear and outerwear from the 2026 Autumn Winter collection.</p>
             <Link className={styles.link} href="/collections/2026-aw-collection">
               Discover
             </Link>

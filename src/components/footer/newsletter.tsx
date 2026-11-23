@@ -1,0 +1,51 @@
+"use client";
+
+import { useActionState, useId } from "react";
+import { type NewsletterState, subscribeToNewsletter } from "./subscribe";
+
+const messages = {
+  idle: "",
+  invalid: "メールアドレスの形式を確認してください。",
+  error: "登録を受け付けられませんでした。時間をおいてもう一度お試しください。",
+  accepted: "メールマガジンのお申し込みを受け付けました。",
+};
+
+const initialState: NewsletterState = { status: "idle" };
+
+export function NewsletterForm() {
+  const [state, action, pending] = useActionState(subscribeToNewsletter, initialState);
+  const statusId = useId();
+
+  return (
+    <>
+      <form action={action} aria-label="メールマガジン登録">
+        <input
+          type="email"
+          name="email"
+          aria-label="メールアドレス"
+          placeholder="メールアドレス"
+          autoComplete="email"
+          required
+          maxLength={254}
+          defaultValue={state.email ?? ""}
+          aria-describedby={statusId}
+        />
+        <button type="submit" aria-label="メールマガジンに登録する" title="メールマガジンに登録する" disabled={pending}>
+          <svg aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 12h16m-7-7l7 7l-7 7"
+            />
+          </svg>
+        </button>
+      </form>
+      <p id={statusId} role="status">
+        {pending ? "登録を受け付けています…" : messages[state.status]}
+      </p>
+    </>
+  );
+}

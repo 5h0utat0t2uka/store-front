@@ -6,7 +6,7 @@
     > h2 {
       font-size: clamp(2rem, 5vw, 3rem);
       line-height: 1.2;
-      margin-block-end: 3rem;
+      margin-block-end: 2rem;
     }
     > .link {
       background: var(--foreground);
@@ -32,7 +32,76 @@
         display: grid;
       }
     }
-
+    &:is([data-section="information"]) {
+      > div {
+        .list {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--space);
+          > .item {
+            position: relative;
+            display: grid;
+            gap: var(--space);
+            padding: var(--space);
+            border-radius: 0.75rem;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas:
+              "date arrow"
+              "body .";
+            > time {
+              grid-area: date;
+              font-size: 1rem;
+              color: var(--secondary);
+              white-space: nowrap;
+            }
+            > div {
+              grid-area: body;
+              display: grid;
+              grid-template-columns: minmax(0, 1fr);
+              overflow-wrap: anywhere;
+              gap: 0.5em;
+              > h3 {
+                text-box: trim-both;
+                font-size: 1.3rem;
+                > a::after {
+                  content: "";
+                  position: absolute;
+                  inset: 0;
+                }
+              }
+              > p {
+                font-size: 1.1rem;
+                white-space: pre-line;
+              }
+            }
+            &::after {
+              content: "";
+              display: grid;
+              grid-area: arrow;
+              mask-image: var(--icon-arrow);
+              aspect-ratio: 1;
+              place-self: start;
+              background-color: color-mix(in oklch, currentColor 16%, transparent);
+              pointer-events: none;
+              block-size: 1lh;
+            }
+            &:has(a)::after {
+              background-color: currentColor;
+            }
+          }
+          @media (min-aspect-ratio: 0.8) {
+            > .item {
+              grid-template-columns: max-content minmax(0, 1fr) auto;
+              grid-template-areas: "date body arrow";
+              align-items: baseline;
+              &:hover {
+                background: color-mix(in oklch, currentColor 4%, transparent);
+              }
+            }
+          }
+        }
+      }
+    }
     &:is([data-section="features"]) {
       .cards {
         display: grid;
@@ -64,7 +133,7 @@
               inline-size: 100%;
               block-size: 100%;
               object-fit: cover;
-              border-radius: 0.375rem;
+              border-radius: 0.75rem;
             }
           }
 
@@ -72,6 +141,7 @@
             display: grid;
             gap: 0.5rem;
             min-inline-size: 0;
+            padding-inline: calc(0.75rem / 2);
             overflow-wrap: anywhere;
 
             > time {
