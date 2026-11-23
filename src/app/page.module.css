@@ -1,7 +1,7 @@
 .main {
   > section {
     &:not(:first-child) {
-      margin-block-start: calc(var(--space) * 4);
+      margin-block-start: calc(var(--space) * 5);
     }
     > h2 {
       font-size: clamp(2rem, 5vw, 3rem);
@@ -70,7 +70,7 @@
                 }
               }
               > p {
-                font-size: 1.1rem;
+                font-size: 1rem;
                 white-space: pre-line;
               }
             }
@@ -121,7 +121,7 @@
           position: relative;
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: calc(var(--space) / 2);
           .frame {
             position: relative;
             inline-size: 100%;
@@ -146,6 +146,8 @@
 
             > time {
               font-size: 0.875rem;
+              font-variant-numeric: tabular-nums;
+              text-box: trim-both cap alphabetic;
               color: var(--secondary);
             }
             > .title {
