@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
 import { Carousel } from "@/components/carousel";
 import { getHomeProducts } from "@/lib/shopify";
+import { getInformationEntries } from "@/lib/shopify/information";
 import { features } from "./features/_data";
 import styles from "./page.module.css";
 
@@ -13,6 +14,30 @@ export const metadata: Metadata = {
   // canonical はレイアウトに置くと未指定の子ページへ継承されるため、ページごとに指定する。
   alternates: { canonical: "/" },
 };
+
+async function Information() {
+  const entries = await getInformationEntries();
+  if (!entries.length) return null;
+
+  return (
+    <section data-section="information">
+      <h2>Information</h2>
+      <div>
+        <ul className={styles.list}>
+          {entries.map(({ id, publishedAt, displayDate, title, summary, pageHandle }) => (
+            <li key={id} className={styles.item}>
+              <time dateTime={publishedAt}>{displayDate}</time>
+              <div>
+                <h3>{pageHandle ? <Link href={`/pages/${encodeURIComponent(pageHandle)}`}>{title}</Link> : title}</h3>
+                <p>{summary}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
 
 async function Products() {
   // キャッシュした結果をビルド時に静的シェルへ含め、cacheLife の間隔で再検証する。
@@ -35,6 +60,9 @@ export default function Home(_props: PageProps<"/">) {
       </section>*/}
       <Carousel />
       <main className={styles.main}>
+        <Suspense fallback={null}>
+          <Information />
+        </Suspense>
         <section data-section="features">
           <h2>Features</h2>
           <ul className={styles.cards}>

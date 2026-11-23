@@ -181,6 +181,9 @@ importers:
       react-dom:
         specifier: 19.3.1
         version: 19.3.1(react@19.3.1)
+      temporal-polyfill-lite:
+        specifier: ^1.0.2
+        version: 1.0.2
     devDependencies:
       '@shopify/cli':
         specifier: 5.0.1
@@ -1001,6 +1004,9 @@ packages:
     resolution: {integrity: sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA==}
     engines: {node: '>=18'}
 
+  temporal-polyfill-lite@1.0.2:
+    resolution: {integrity: sha512-mR0ENWxg98cBOcU/+xGfh5tARaNTD6Q4qQhKM57ZmFMKuUk0L1iBFB4oEJJgB+dpo8nXH6yGt45swggIROEHeQ==}
+
   tslib@2.9.1:
     resolution: {integrity: sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA==}
 
@@ -1641,6 +1647,8 @@ snapshots:
       react: 19.3.1
 
   system-architecture@0.1.0: {}
+
+  temporal-polyfill-lite@1.0.2: {}
 
   tslib@2.9.1: {}
 
