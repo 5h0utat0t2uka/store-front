@@ -7,7 +7,7 @@
     margin-block: 0.8em;
   }
   > img {
-    aspect-ratio: 16/11;
+    aspect-ratio: 6 / 4;
     object-fit: cover;
     border-radius: 0.75rem;
   }

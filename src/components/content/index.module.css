@@ -11,20 +11,23 @@
       position: static;
       margin: 0;
       font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.2;
-      text-wrap: balance;
+      line-height: 1.5;
+      /*text-wrap: balance;*/
+      text-wrap: pretty;
     }
   }
 
   @media (min-aspect-ratio: 0.8) {
     > article {
       display: grid;
-      grid-template-columns: minmax(25rem, auto) 1fr;
+      /*grid-template-columns: minmax(25rem, auto) 1fr;*/
+      grid-template-columns: 20rem 1fr;
       gap: calc(var(--space) * 2);
       align-items: baseline;
       > h1 {
         position: sticky;
         top: calc(var(--header-block) + var(--space));
+        font-size: clamp(1.5rem, 4vw, 2rem);
       }
     }
   }

@@ -33,7 +33,7 @@
 }
 @media (min-aspect-ratio: 0.8) {
   .hero {
-    aspect-ratio: 16 / 11;
+    aspect-ratio: 6 / 4;
   }
 }
 

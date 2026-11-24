@@ -19,7 +19,7 @@ export function ProductGallery({ images, title }: { images: GalleryImage[]; titl
 
   useEffect(() => {
     if (!selection) return;
-    // コンテナクエリで起動ボタンが非表示になったら、拡大表示も終了する。
+    // レイアウトの切り替えで起動ボタンが非表示になったら、拡大表示も終了する。
     const observer = new ResizeObserver(([entry]) => {
       if (entry.contentRect.width === 0) dialogRef.current?.close();
     });

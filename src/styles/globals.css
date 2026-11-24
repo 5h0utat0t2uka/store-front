@@ -116,7 +116,7 @@ h3 {
   > main {
     container-type: inline-size;
     container-name: main;
-    contain: content;
+    /*contain: content;*/
     inline-size: var(--content-inline);
     margin-inline: auto;
     margin-block-end: calc(var(--space) * 10);

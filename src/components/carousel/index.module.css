@@ -50,46 +50,65 @@
        端まで進むと自動で無効にする。未対応のブラウザでは何も表示されない。
        content をここに書くと上下方向のボタンまで生成されるため、content は向きごとの規則に書く。
        ビルド時に「valid pseudo-element ではない」という警告が出るが、出力される CSS には影響しない。 */
-    &::scroll-button(*) {
+    /* 円と矢印はトラックの同じ端に、同じ大きさのボックスとして配置する。 */
+    &::scroll-button(*),
+    &::before,
+    &::after {
       position: absolute;
       position-anchor: --carousel-track;
       position-area: center;
       align-self: center;
+      inline-size: 2.5rem;
+      /*block-size: 2.5rem;*/
+      aspect-ratio: 1;
+      /*margin-inline: 0.75rem;*/
+      margin-inline: var(--space);
+    }
+    &::scroll-button(inline-start),
+    &::before {
+      justify-self: start;
+      rotate: 0.5turn;
+    }
+    &::scroll-button(inline-end),
+    &::after {
+      justify-self: end;
+    }
+    &::scroll-button(*) {
       /* スライド内の .caption（z-index: 1）より前面に出す。 */
       z-index: 2;
-      /* 押せる範囲。見えるのは mask で切り抜いたアイコンの部分だけ。 */
-      inline-size: 2.75rem;
-      block-size: 2.75rem;
-      margin-inline: 0.75rem;
-      background: var(--foreground);
+      appearance: none;
+      box-sizing: border-box;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      color: var(--foreground);
+      background: color-mix(in oklch, var(--background) 50%, transparent);
+      backdrop-filter: blur(10px);
       cursor: pointer;
-      /* mask は既定で繰り返すため、1 つだけ中央に置く。 */
-      mask-image: var(--icon-angle);
-      mask-repeat: no-repeat;
-      mask-position: center;
-      mask-size: 1.5rem;
-      mix-blend-mode: difference;
+    }
+    &::scroll-button(*):focus-visible {
+      outline: 2px solid var(--foreground);
+      outline-offset: -4px;
     }
     &::scroll-button(*):disabled {
       opacity: 0.3;
       cursor: default;
     }
-    /* mask を掛けた要素では outline も切り抜かれて見えないため、
-       フォーカスの輪は mask の 2 枚目として外周に描く。 */
-    &::scroll-button(*):focus-visible {
-      mask-image:
-        var(--icon-angle), radial-gradient(circle closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-      mask-size: 1.5rem, 100%;
-    }
     /* content の / 以降は読み上げ用の名前。 */
     &::scroll-button(inline-start) {
-      content: "" / "Prev slide";
-      justify-self: start;
-      rotate: 0.5turn;
+      content: var(--carousel-chevron, "❯") / "Prev slide";
     }
     &::scroll-button(inline-end) {
-      content: "" / "Next slide";
-      justify-self: end;
+      content: var(--carousel-chevron, "❯") / "Next slide";
+    }
+    @media (forced-colors: active) {
+      &::scroll-button(*) {
+        font: 1.5rem / 1 system-ui;
+      }
+      &::scroll-button(*):disabled {
+        color: GrayText;
+        opacity: 1;
+      }
     }
 
     /* 画像の多い商品ではマーカーを折り返す。 */
@@ -101,6 +120,7 @@
       gap: 0;
       min-block-size: 1.5rem;
       margin-block-start: 1rem;
+      margin-block-start: var(--space);
     }
 
     > li {
@@ -199,7 +219,37 @@
     }
     @media (min-aspect-ratio: 0.8) {
       > .item {
-        aspect-ratio: 16 / 11;
+        aspect-ratio: 6 / 4;
+      }
+    }
+  }
+}
+
+@supports selector(::scroll-button(inline-end)) and (container-type: scroll-state) and (position-area: center) {
+  @media (forced-colors: none) {
+    .list {
+      container-type: scroll-state;
+      --carousel-chevron: "";
+
+      /* ボタンと同寸のボックスの中央に、1rem の SVG を描く。 */
+      &::before,
+      &::after {
+        content: "";
+        z-index: 3;
+        pointer-events: none;
+        background-color: var(--foreground);
+        mask: var(--icon-angle) center / 1.2rem no-repeat;
+        opacity: 0.3;
+      }
+      @container scroll-state(scrollable: inline-start) {
+        &::before {
+          opacity: 1;
+        }
+      }
+      @container scroll-state(scrollable: inline-end) {
+        &::after {
+          opacity: 1;
+        }
       }
     }
   }
@@ -217,7 +267,7 @@
     justify-content: center;
     /*gap: 0.25rem;*/
     gap: 0;
-    margin-block-start: 1rem;
+    margin-block-start: var(--space);
   }
 
   .marker {
@@ -284,9 +334,10 @@
   }
 }
 
-/* 商品詳細の2カラム時は、同じ画像を先頭全幅・以降3列で並べる。判定基準は main。 */
-@container (inline-size >= 48rem) {
+/* 商品詳細が2カラムになると、先頭画像をギャラリー全幅、残りを3列で表示する。 */
+@media (min-aspect-ratio: 0.8) {
   .productGallery > .list {
+    container-type: normal;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space);
@@ -299,7 +350,9 @@
       grid-column: 1 / -1;
     }
     &::scroll-button(inline-start),
-    &::scroll-button(inline-end) {
+    &::scroll-button(inline-end),
+    &::before,
+    &::after {
       content: none;
     }
     > li::scroll-marker {
