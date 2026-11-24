@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Pagination } from "@/components/pagination";
 import { createPageMetadata } from "@/lib/metadata";
 import { features } from "./_data";
 import styles from "./page.module.css";
@@ -38,23 +39,27 @@ async function FeatureResults({ searchParams }: Pick<FeaturesProps, "searchParam
       <ul className={styles.entries}>
         {features.slice(start, start + PAGE_SIZE).map(({ date, title, href, image }, index) => (
           <li key={href} className={styles.entry}>
-            <Image {...image} alt="" unoptimized loading={index === 0 ? "eager" : "lazy"} />
-            <time dateTime={date}>{date}</time>
-            <h2>
-              <Link href={href}>{title}</Link>
-            </h2>
+            <div className={styles.frame}>
+              <Image {...image} alt="" unoptimized loading={index === 0 ? "eager" : "lazy"} />
+            </div>
+            <div className={styles.meta}>
+              <time dateTime={date}>{date}</time>
+              <h3 className={styles.title}>
+                <Link href={href} className={styles.link}>
+                  {title}
+                </Link>
+              </h3>
+            </div>
           </li>
         ))}
       </ul>
-      {PAGE_COUNT > 1 && (
-        <nav className={styles.pagination} aria-label="特集一覧のページ送り">
-          {page > 1 && <Link href={getPageUrl(page - 1)}>前のページ</Link>}
-          <span aria-current="page">
-            {page} / {PAGE_COUNT}
-          </span>
-          {page < PAGE_COUNT && <Link href={getPageUrl(page + 1)}>次のページ</Link>}
-        </nav>
-      )}
+      <Pagination
+        label="特集一覧のページ送り"
+        previousHref={page > 1 ? getPageUrl(page - 1) : undefined}
+        nextHref={page < PAGE_COUNT ? getPageUrl(page + 1) : undefined}
+        page={{ current: page, total: PAGE_COUNT }}
+        prefetch
+      />
     </>
   );
 }

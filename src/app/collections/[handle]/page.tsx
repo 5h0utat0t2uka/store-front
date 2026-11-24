@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PaginatedProducts, readListingParams } from "@/components/card/listing";
@@ -103,6 +104,7 @@ async function CollectionResults(props: CollectionProps) {
         before={before}
         prioritizeFirstRow={!heroImage}
       />
+      <Link href="/products">All Products</Link>
     </>
   );
 }

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Pagination } from "@/components/pagination";
 import type { getProductPage } from "@/lib/shopify";
 import { ProductGrid } from "./grid";
-import styles from "./listing.module.css";
 
 function firstParam(value: string | string[] | undefined) {
   return (Array.isArray(value) ? value[0] : value) || undefined;
@@ -16,8 +16,10 @@ export function readListingParams(params: Record<string, string | string[] | und
   return { tag: firstParam(params.tag), after, before };
 }
 
+type CatalogPage = Awaited<ReturnType<typeof getProductPage>>;
+
 type ListingProps = {
-  page: Awaited<ReturnType<typeof getProductPage>>;
+  page: Pick<CatalogPage, "nodes" | "pageInfo"> & { pagination?: CatalogPage["pagination"] };
   pathname: "/products" | `/collections/${string}`;
   tag?: string;
   after?: string;
@@ -26,7 +28,7 @@ type ListingProps = {
 };
 
 export function PaginatedProducts({
-  page: { nodes, pageInfo },
+  page: { nodes, pageInfo, pagination },
   pathname,
   tag,
   after,
@@ -44,17 +46,17 @@ export function PaginatedProducts({
       <p>該当する商品はありません。</p>
     );
   }
-  const previous = (after || pageInfo.hasPreviousPage) && pageInfo.startCursor;
-  const next = (before || pageInfo.hasNextPage) && pageInfo.endCursor;
+  const previous = (pageInfo.hasPreviousPage || (!pagination && after)) && pageInfo.startCursor;
+  const next = (pageInfo.hasNextPage || (!pagination && before)) && pageInfo.endCursor;
   return (
     <>
       <ProductGrid products={nodes} heading="h2" prioritizeFirstRow={prioritizeFirstRow} />
-      {(previous || next) && (
-        <nav className={styles.pagination} aria-label="商品一覧のページ送り">
-          {previous && <Link href={{ pathname, query: { ...filter, before: previous } }}>前のページ</Link>}
-          {next && <Link href={{ pathname, query: { ...filter, after: next } }}>次のページ</Link>}
-        </nav>
-      )}
+      <Pagination
+        label="商品一覧のページ送り"
+        page={pagination}
+        previousHref={previous ? { pathname, query: { ...filter, before: previous } } : undefined}
+        nextHref={next ? { pathname, query: { ...filter, after: next } } : undefined}
+      />
     </>
   );
 }
