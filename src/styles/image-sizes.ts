@@ -9,12 +9,12 @@ export const PRODUCT_CARD_SIZES = [
   `calc((100vw - 3 * ${SPACE}) / 2)`,
 ].join(", ");
 
-// main の内幅 48rem に左右の余白を足した画面幅。2カラム時はギャラリーが内幅の58%を占める。
-const TWO_COLUMN_GALLERY = "(min-width: 51.5rem)";
+// 商品詳細の2カラム時は、ギャラリーが main の内幅の58%を占める。
+const TWO_COLUMN_GALLERY = "(min-aspect-ratio: 0.8)";
 const GALLERY_WIDTH = `calc(${MAIN_WIDTH} * 0.58)`;
 export const PRODUCT_HERO_SIZES = `${TWO_COLUMN_GALLERY} ${GALLERY_WIDTH}, ${MAIN_WIDTH}`;
 export const PRODUCT_GALLERY_SIZES = [
   "auto",
-  `${TWO_COLUMN_GALLERY} calc((${GALLERY_WIDTH} - 2 * 1.75rem) / 3)`,
+  `${TWO_COLUMN_GALLERY} calc((${GALLERY_WIDTH} - 2 * ${SPACE}) / 3)`,
   MAIN_WIDTH,
 ].join(", ");

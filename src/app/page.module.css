@@ -51,6 +51,7 @@
             > time {
               grid-area: date;
               font-size: 1rem;
+              font-variant-numeric: tabular-nums;
               color: var(--secondary);
               white-space: nowrap;
             }
@@ -93,7 +94,7 @@
             > .item {
               grid-template-columns: max-content minmax(0, 1fr) auto;
               grid-template-areas: "date body arrow";
-              align-items: baseline;
+              /*align-items: baseline;*/
               &:hover {
                 background: color-mix(in oklch, currentColor 4%, transparent);
               }
@@ -125,7 +126,7 @@
           .frame {
             position: relative;
             inline-size: 100%;
-            aspect-ratio: 16 / 11;
+            aspect-ratio: 6 / 4;
 
             > img {
               position: absolute;
@@ -147,23 +148,33 @@
             > time {
               font-size: 0.875rem;
               font-variant-numeric: tabular-nums;
-              text-box: trim-both cap alphabetic;
+              /*text-box: trim-both cap alphabetic;*/
               color: var(--secondary);
             }
             > .title {
               font-size: 1.125rem;
               line-height: 1.4;
               > .link {
+                &:focus-visible {
+                  outline-offset: 0px;
+                }
                 &::after {
                   content: "";
                   position: absolute;
                   inset: 0;
                 }
+                @media (any-hover: hover) {
+                  &:hover,
+                  &:focus-visible {
+                    text-decoration: underline;
+                    text-underline-offset: 0.2em;
+                  }
+                }
 
-                &:hover,
+                /*&:hover,
                 &:focus-visible {
                   text-decoration: underline;
-                }
+                }*/
               }
             }
           }
