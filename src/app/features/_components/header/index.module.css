@@ -1,0 +1,20 @@
+.header {
+  display: grid;
+  gap: var(--space);
+  place-items: center;
+  text-align: center;
+  margin-block: calc(var(--space) * 2);
+  > h1 {
+    text-box: cap alphabetic trim-both;
+  }
+  > time {
+    color: var(--secondary);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.875rem;
+  }
+  > img {
+    aspect-ratio: 6 / 4;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
+}

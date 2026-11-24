@@ -1,17 +1,22 @@
-.header {
+/*.header {
   display: grid;
   gap: var(--space);
   place-items: center;
   text-align: center;
+  margin-block: calc(var(--space) * 2);
   > h1 {
-    margin-block: 0.8em;
+    text-box: cap alphabetic trim-both;
+  }
+  > time {
+    color: var(--secondary);
+    font-size: .875rem;
   }
   > img {
     aspect-ratio: 6 / 4;
     object-fit: cover;
     border-radius: 0.75rem;
   }
-}
+}*/
 .product {
   display: grid;
   gap: var(--space);

@@ -1,6 +1,39 @@
 .images {
+  position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-inline-size: 0;
+}
+
+/* 商品詳細が2カラムになると、先頭画像をギャラリー全幅、残りを3列で表示する。 */
+@media (min-aspect-ratio: 0.8) {
+  .images > .track {
+    container-type: normal;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space);
+    padding-inline: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    scroll-marker-group: none;
+
+    > :first-child {
+      grid-column: 1 / -1;
+    }
+    &::scroll-button(inline-start),
+    &::scroll-button(inline-end),
+    &::before,
+    &::after {
+      content: none;
+    }
+    > li::scroll-marker {
+      content: none;
+    }
+  }
+
+  .images > .markers {
+    display: none;
+  }
 }
 
 .frame {

@@ -1,6 +1,6 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import { createPageMetadata } from "@/lib/metadata";
+import Header from "../_components/header";
 import { getFeatureByHref } from "../_data";
 
 const pathname = "/features/2026-09-06";
@@ -13,8 +13,7 @@ export function generateMetadata(_props: PageProps<typeof pathname>, parent: Res
 export default function Page() {
   return (
     <main>
-      <h1>{feature.title}</h1>
-      <Image src={feature.image.src} alt="" width={feature.image.width} height={feature.image.height} loading="eager" />
+      <Header feature={feature} />
     </main>
   );
 }

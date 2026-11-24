@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
-import { Carousel } from "@/components/carousel";
 import { getHomeProducts } from "@/lib/shopify";
 import { getInformationEntries } from "@/lib/shopify/information";
+import { HomeCarousel } from "./_components/home-carousel";
 import { features } from "./features/_data";
 import styles from "./page.module.css";
 
@@ -58,7 +58,7 @@ export default function Home(_props: PageProps<"/">) {
           <p>This is a Shopify Storefront application built with Next.js and Hydrogen.</p>
         </hgroup>
       </section>*/}
-      <Carousel />
+      <HomeCarousel />
       <main className={styles.main}>
         <Suspense fallback={null}>
           <Information />

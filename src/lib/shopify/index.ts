@@ -31,23 +31,39 @@ const PRODUCT_PAGE_FRAGMENT = gql(
   [PRODUCT_CARD_FRAGMENT],
 );
 
-const PRODUCTS_QUERY = gql(
+const HOME_PRODUCTS_QUERY = gql(
   `
-  query CatalogProducts(
-    $first: Int
-    $after: String
-    $last: Int
-    $before: String
-    $query: String
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext(country: $country, language: $language) {
-    products(first: $first, after: $after, last: $last, before: $before, query: $query) {
-      ...ProductPageFields
+  query HomeProducts($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    products(first: 4) {
+      nodes { ...ProductCardFields }
     }
   }
 `,
-  [PRODUCT_PAGE_FRAGMENT],
+  [PRODUCT_CARD_FRAGMENT],
+);
+
+const CATALOG_INDEX_QUERY = gql(`
+  query CatalogIndex($after: String, $query: String, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    products(first: 250, after: $after, query: $query) {
+      edges { cursor node { id } }
+      pageInfo { hasNextPage endCursor }
+    }
+  }
+`);
+
+const PRODUCT_CARDS_BY_ID_QUERY = gql(
+  `
+  query ProductCardsById($ids: [ID!]!, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    nodes(ids: $ids) {
+      __typename
+      ...ProductCardFields
+    }
+  }
+`,
+  [PRODUCT_CARD_FRAGMENT],
 );
 
 const PRODUCT_CARD_QUERY = gql(
@@ -282,7 +298,7 @@ const SHOP_POLICIES_QUERY = gql(
   [SHOP_POLICY_FRAGMENT],
 );
 
-export type ProductSummary = StorefrontApi.ResultOf<typeof PRODUCTS_QUERY>["products"]["nodes"][number];
+export type ProductSummary = StorefrontApi.ResultOf<typeof HOME_PRODUCTS_QUERY>["products"]["nodes"][number];
 
 export type ShopMetadata = {
   name: string;
@@ -344,11 +360,29 @@ export async function getShopMetadata(): Promise<ShopMetadata> {
 }
 
 export async function getHomeProducts(): Promise<ProductSummary[]> {
-  const products = await getProductPage({ pageSize: 4 });
-  return products.nodes;
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+
+  const result = await createCatalogClient().graphql(HOME_PRODUCTS_QUERY);
+  if (result.errors?.length) throw new Error(result.errors.map((error) => error.message).join("\n"));
+  const nodes = result.data?.products?.nodes;
+  if (!nodes) throw new Error("Missing home products in Shopify response.");
+  return nodes;
 }
 
-const CATALOG_PAGE_SIZE = 24;
+// const CATALOG_PAGE_SIZE = 24;
+const CATALOG_PAGE_SIZE = 8;
+
+async function getCatalogIndexBatch(query?: string, after?: string) {
+  "use cache";
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+
+  const result = await createCatalogClient().graphql(CATALOG_INDEX_QUERY, { variables: { query, after } });
+  if (result.errors?.length) throw new Error(result.errors.map((error) => error.message).join("\n"));
+  const products = result.data?.products;
+  if (!products) throw new Error("Missing catalog index in Shopify response.");
+  return products;
+}
 
 export async function getProductPage({
   tag,
@@ -364,24 +398,46 @@ export async function getProductPage({
   "use cache";
   cacheLife({ stale: 60, revalidate: 60, expire: 300 });
 
-  const storefront = createCatalogClient();
   // タグ全体を1つの検索値として渡す。空白、引用符、* などを検索演算子として扱わせない。
   const query = tag ? `tag:"${tag.replace(/[\\":()*]/g, "\\$&")}"` : undefined;
-  const result = await storefront.graphql(PRODUCTS_QUERY, {
-    variables: {
-      query,
-      ...(before ? { last: pageSize, before } : { first: pageSize, after }),
-    },
-  });
-  if (result.errors?.length) {
-    throw new Error(result.errors.map((error) => error.message).join("\n"));
+  // ProductConnection は総件数を返さない。カードの並びとページ数を同じ索引から決める。
+  let batch = await getCatalogIndexBatch(query);
+  const entries = [...batch.edges];
+  while (batch.pageInfo.hasNextPage) {
+    const cursor = batch.pageInfo.endCursor;
+    if (!cursor) throw new Error("Missing catalog continuation cursor.");
+    batch = await getCatalogIndexBatch(query, cursor);
+    if (batch.pageInfo.endCursor === cursor) throw new Error("Shopify did not advance the catalog cursor.");
+    entries.push(...batch.edges);
   }
 
-  const products = result.data?.products;
-  if (!products || !Array.isArray(products.nodes)) {
-    throw new Error("Failed to fetch products from Shopify Storefront API: Invalid response format.");
+  const cursor = before ?? after;
+  const boundary = cursor ? entries.findIndex((entry) => entry.cursor === cursor) : 0;
+  // 件数が変わった古いリンクでも、移動先の商品を含むページの先頭から表示する。
+  const target = boundary + (before ? -1 : after ? 1 : 0);
+  const hasPage = boundary >= 0 && target >= 0 && target < entries.length;
+  const start = Math.floor(target / pageSize) * pageSize;
+  const visible = hasPage ? entries.slice(start, start + pageSize) : [];
+  const nodes: ProductSummary[] = [];
+  if (visible.length) {
+    const ids = visible.map(({ node }) => node.id);
+    const result = await createCatalogClient().graphql(PRODUCT_CARDS_BY_ID_QUERY, { variables: { ids } });
+    if (result.errors?.length) throw new Error(result.errors.map((error) => error.message).join("\n"));
+    if (!result.data?.nodes) throw new Error("Missing product cards in Shopify response.");
+    for (const node of result.data.nodes) {
+      if (node?.__typename === "Product") nodes.push(node);
+    }
   }
-  return products;
+  return {
+    nodes,
+    pageInfo: {
+      startCursor: visible.at(0)?.cursor ?? null,
+      endCursor: visible.at(-1)?.cursor ?? null,
+      hasPreviousPage: hasPage && start > 0,
+      hasNextPage: hasPage && start + visible.length < entries.length,
+    },
+    pagination: hasPage ? { current: start / pageSize + 1, total: Math.ceil(entries.length / pageSize) } : undefined,
+  };
 }
 
 export async function getCollectionPage(handle: string, after?: string, before?: string) {

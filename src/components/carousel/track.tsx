@@ -1,7 +1,8 @@
 "use client";
 
 import { Children, type ReactNode, useEffect, useId, useRef, useState } from "react";
-import styles from "./index.module.css";
+import { cx } from "@/utils/class";
+import styles from "./track.module.css";
 
 function offsetFromCenter(track: HTMLElement, slide: Element) {
   const trackRect = track.getBoundingClientRect();
@@ -9,7 +10,13 @@ function offsetFromCenter(track: HTMLElement, slide: Element) {
   return slideRect.left + slideRect.width / 2 - (trackRect.left + trackRect.width / 2);
 }
 
-export function CarouselTrack({ children }: { children: ReactNode }) {
+type CarouselTrackProps = {
+  children: ReactNode;
+  className?: string;
+  markersClassName?: string;
+};
+
+export function CarouselTrack({ children, className, markersClassName }: CarouselTrackProps) {
   const trackId = useId();
   const trackRef = useRef<HTMLUListElement>(null);
   const pendingTarget = useRef<number | null>(null);
@@ -120,10 +127,10 @@ export function CarouselTrack({ children }: { children: ReactNode }) {
   return (
     <>
       {/* list-style: none による Safari のリスト認識の喪失を防ぐ。 */}
-      <ul ref={trackRef} id={trackId} className={styles.list} role="list">
+      <ul ref={trackRef} id={trackId} className={cx(styles.list, className)} role="list">
         {children}
       </ul>
-      <div className={styles.markers} role="group" aria-label="表示するスライドを選択">
+      <div className={cx(styles.markers, markersClassName)} role="group" aria-label="表示するスライドを選択">
         {Children.map(children, (_, index) => (
           <button
             className={styles.marker}

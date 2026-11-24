@@ -43,17 +43,10 @@
   gap: var(--space);
   overflow-wrap: anywhere;
 
-  > a,
-  .pagination a {
+  > a {
     justify-self: start;
     text-decoration: underline;
   }
-}
-
-.pagination {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space);
 }
 
 .collectionImage {

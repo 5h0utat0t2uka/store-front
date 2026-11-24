@@ -17,11 +17,15 @@ const nextConfig: NextConfig = {
     // 対応したら外す
     ignoreIssue: [
       {
-        path: "**/src/components/carousel/index.module.css",
+        path: "**/src/components/carousel/track.module.css",
         description: /is not recognized as a valid pseudo-element/,
       },
       {
-        path: "**/src/components/carousel/index.module.css",
+        path: "**/src/app/products/_components/product-gallery.module.css",
+        description: /is not recognized as a valid pseudo-element/,
+      },
+      {
+        path: "**/src/components/carousel/track.module.css",
         description: /is not recognized as a valid pseudo-class/,
       },
     ],

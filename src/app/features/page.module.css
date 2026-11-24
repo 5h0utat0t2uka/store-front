@@ -2,52 +2,67 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   gap: var(--space);
-}
+  margin-block-end: calc(var(--space) * 4);
+  > .entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--space) / 2);
+    .frame {
+      position: relative;
+      inline-size: 100%;
+      aspect-ratio: 6 / 4;
 
-.pagination {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space);
-  margin-block-start: var(--space);
+      > img {
+        position: absolute;
+        inset: 0;
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        border-radius: 0.375rem;
+      }
+    }
 
-  a {
-    text-decoration: underline;
-  }
-}
+    .meta {
+      display: grid;
+      gap: 0.5rem;
+      min-inline-size: 0;
+      padding-inline: calc(0.375rem / 2);
+      overflow-wrap: anywhere;
 
-.entry {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 0.5rem;
-  overflow-wrap: anywhere;
+      > time {
+        font-size: 0.875rem;
+        font-variant-numeric: tabular-nums;
+        /*text-box: trim-both cap alphabetic;*/
+        color: var(--secondary);
+      }
+      > .title {
+        font-size: 1.125rem;
+        line-height: 1.4;
+        > .link {
+          &:focus-visible {
+            outline-offset: 0px;
+          }
+          &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+          }
+          @media (any-hover: hover) {
+            &:hover,
+            &:focus-visible {
+              text-decoration: underline;
+              text-underline-offset: 0.2em;
+            }
+          }
 
-  > img {
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 6 / 4;
-    object-fit: cover;
-    border-radius: 0.375rem;
-  }
-
-  > time {
-    font-size: 0.875rem;
-    color: var(--secondary);
-  }
-
-  > h2 {
-    font-size: 1.125rem;
-    line-height: 1.4;
-  }
-
-  a {
-    text-decoration: underline;
-
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
+          /*&:hover,
+          &:focus-visible {
+            text-decoration: underline;
+          }*/
+        }
+      }
     }
   }
 }

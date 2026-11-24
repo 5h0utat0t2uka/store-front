@@ -5,9 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { CarouselTrack } from "@/components/carousel/track";
 import { LightDismissDialog } from "@/components/dialog/light-dismiss";
 import { PRODUCT_GALLERY_SIZES, PRODUCT_HERO_SIZES } from "@/styles/image-sizes";
-import { cx } from "@/utils/class";
 import styles from "./product-gallery.module.css";
-import carouselStyles from "@/components/carousel/index.module.css";
 
 type GalleryImage = { src: string; alt: string };
 type Selection = { image: GalleryImage; trigger: HTMLButtonElement };
@@ -62,9 +60,9 @@ export function ProductGallery({ images, title }: { images: GalleryImage[]; titl
   }
 
   return (
-    <section className={cx(styles.images, hasGallery && carouselStyles.productGallery)} aria-label="商品画像">
+    <section className={styles.images} aria-label="商品画像">
       {hasGallery ? (
-        <CarouselTrack>
+        <CarouselTrack className={styles.track} markersClassName={styles.markers}>
           {images.map((image, index) => (
             <li className={styles.frame} key={image.src}>
               {renderImage(image, index)}

@@ -1,10 +1,12 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import { createPageMetadata } from "@/lib/metadata";
+import Header from "../_components/header";
 import { getFeatureByHref } from "../_data";
 
 const pathname = "/features/2026-10-03";
 const feature = getFeatureByHref(pathname);
+const relatedFeatures = feature.related.map((href) => getFeatureByHref(href));
+console.log("relatedFeatures", relatedFeatures.length !== 0 ? relatedFeatures : "no related features");
 
 export function generateMetadata(_props: PageProps<typeof pathname>, parent: ResolvingMetadata): Promise<Metadata> {
   return createPageMetadata({ title: feature.title, url: feature.href }, parent);
@@ -13,8 +15,7 @@ export function generateMetadata(_props: PageProps<typeof pathname>, parent: Res
 export default function Page() {
   return (
     <main>
-      <h1>{feature.title}</h1>
-      <Image src={feature.image.src} alt="" width={feature.image.width} height={feature.image.height} loading="eager" />
+      <Header feature={feature} />
     </main>
   );
 }
