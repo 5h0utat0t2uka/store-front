@@ -42,7 +42,8 @@
     /*block-size: 2.5rem;*/
     aspect-ratio: 1;
     /*margin-inline: 0.75rem;*/
-    margin-inline: var(--space);
+    /*margin-inline: var(--space);*/
+    margin-inline: calc(var(--space) / 2);
   }
   &::scroll-button(inline-start),
   &::before {

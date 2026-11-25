@@ -185,9 +185,10 @@ function PurchaseControls({ product, isSelecting }: Props & { isSelecting: boole
         {...register("addToCart", {})}
         className={styles.button}
         disabled={!addable || pending}
+        aria-busy={pending}
         aria-describedby={messages.length > 0 ? errorId : undefined}
       >
-        {pending ? (
+        {/*{pending ? (
           <svg role="img" aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
             <path
               fill="currentColor"
@@ -214,7 +215,7 @@ function PurchaseControls({ product, isSelecting }: Props & { isSelecting: boole
               <path d="M16 11V6a4 4 0 0 0-4-4v0a4 4 0 0 0-4 4v5"></path>
             </g>
           </svg>
-        )}
+        )}*/}
         {addable ? "カートに追加" : availability}
       </button>
       {lineInCart && (

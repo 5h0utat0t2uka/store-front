@@ -1,5 +1,6 @@
 "use server";
 
+import { EMAIL_MAX_LENGTH, isValidEmail } from "@/lib/email";
 import { adminGraphql } from "@/lib/shopify/admin";
 
 export type NewsletterState = { status: "idle" | "invalid" | "error" | "accepted"; email?: string };
@@ -9,10 +10,6 @@ type ExistingCustomer = {
   id: string;
   defaultEmailAddress: { emailAddress: string; marketingState: string } | null;
 };
-
-// HTML の input[type=email] と同じ形式を、直接送信されたリクエストにも適用する。
-const EMAIL_PATTERN =
-  /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i;
 
 async function subscribeEmail(email: string) {
   const consent = {
@@ -64,8 +61,8 @@ async function subscribeEmail(email: string) {
 export async function subscribeToNewsletter(_previous: NewsletterState, formData: FormData): Promise<NewsletterState> {
   const value = formData.get("email");
   const email = typeof value === "string" ? value.trim() : "";
-  if (email.length > 254 || !EMAIL_PATTERN.test(email)) {
-    return { status: "invalid", email: email.slice(0, 254) };
+  if (!isValidEmail(email)) {
+    return { status: "invalid", email: email.slice(0, EMAIL_MAX_LENGTH) };
   }
   try {
     await subscribeEmail(email);

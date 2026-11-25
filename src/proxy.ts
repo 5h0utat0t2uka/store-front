@@ -59,6 +59,8 @@ export function proxy(request: NextRequest) {
 
   const credentials = readCredentials(request);
   if (credentials && isEqual(credentials, `${username}:${password}`)) {
+    // /__shopify/ などが Shopify に転送するヘッダーから、このサイト専用の認証情報を除く。
+    request.headers.delete("authorization");
     return handleStorefront(request);
   }
 

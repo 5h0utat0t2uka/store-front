@@ -30,9 +30,9 @@
         gap: calc(var(--space) / 2);
         > .heading {
           font-size: 1rem;
-          font-weight: 600;
-          letter-spacing: 0.03ch;
-          text-transform: uppercase;
+          font-weight: normal;
+          /*letter-spacing: 0.03ch;*/
+          /*text-transform: uppercase;*/
           color: var(--secondary);
         }
       }
@@ -46,50 +46,14 @@
         > [role="status"]:empty {
           position: absolute;
         }
-        p {
-          font-size: 0.875rem;
-          padding: 0.5em;
+        > .logo {
+          margin-block-end: calc(var(--space) / 2);
+          font-size: 1.2rem;
         }
-        form {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          background: var(--background);
-          /*inline-size: fit-content;*/
-          inline-size: 100%;
-          min-inline-size: max-content;
-          border: 1px solid var(--border);
-          padding: 0.4rem 0.4rem 0.4rem 1.4rem;
-          border-radius: 9999px;
-          &:has(input:focus-visible),
-          button:focus-visible {
-            outline: 2px solid currentColor;
-            outline-offset: 3px;
-          }
-          input {
-            border: none;
-            outline: none;
-            background: transparent;
-          }
-          button {
-            aspect-ratio: 1;
-            display: grid;
-            place-content: center;
-            border: none;
-            outline: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: none;
-            outline: none;
-            background: var(--foreground);
-            border-radius: 50%;
-            padding: 0.8rem;
-            svg {
-              color: var(--background);
-              block-size: 0.6lh;
-              inline-size: 0.6lh;
-              aspect-ratio: 1;
-            }
-          }
+        > p {
+          font-size: 0.875rem;
+          padding-inline: 0.5ch;
+          color: var(--secondary);
         }
       }
       > .subscribe {
@@ -158,20 +122,25 @@
         ul {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem 1rem;
+          gap: 1em;
           list-style: none;
-          a {
+          li {
             font-size: 0.875rem;
-            @media (any-hover: hover) {
-              &:hover {
-                text-decoration: underline;
-                text-underline-offset: 0.2em;
+            text-box: cap alphabetic trim-both;
+            a {
+              font-size: 0.875rem;
+              @media (any-hover: hover) {
+                &:hover {
+                  text-decoration: underline;
+                  text-underline-offset: 0.2em;
+                  text-decoration-thickness: 1.5px;
+                }
               }
-            }
-            &:focus-visible {
-              outline: 2px solid currentColor;
-              outline-offset: 4px;
-              border-radius: 0.125rem;
+              &:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 4px;
+                border-radius: 0.125rem;
+              }
             }
           }
         }
@@ -180,20 +149,25 @@
         ul {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem 1rem;
+          gap: 1em;
           list-style: none;
-          a {
+          li {
             font-size: 0.875rem;
-            @media (any-hover: hover) {
-              &:hover {
-                text-decoration: underline;
-                text-underline-offset: 0.2em;
+            text-box: cap alphabetic trim-both;
+            a {
+              font-size: 0.875rem;
+              @media (any-hover: hover) {
+                &:hover {
+                  text-decoration: underline;
+                  text-underline-offset: 0.2em;
+                  text-decoration-thickness: 1.5px;
+                }
               }
-            }
-            &:focus-visible {
-              outline: 2px solid currentColor;
-              outline-offset: 4px;
-              border-radius: 0.125rem;
+              &:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 4px;
+                border-radius: 0.125rem;
+              }
             }
           }
         }

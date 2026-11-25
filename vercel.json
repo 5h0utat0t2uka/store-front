@@ -1,4 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm exec next build"
+  "buildCommand": "pnpm exec next build",
+  "regions": ["hnd1"]
 }

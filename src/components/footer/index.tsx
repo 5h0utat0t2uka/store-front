@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { NewsletterForm } from "./newsletter";
+import { Logo } from "@/components/header";
+import { NewsletterForm } from "@/components/newsletter";
 import styles from "./index.module.css";
 
 type Props = {
@@ -20,9 +21,9 @@ export function Footer({ name, policies = [] }: Props) {
       <div>
         <div className={styles.content}>
           <section className={styles.newsletter}>
-            <h4 className={styles.heading}>Newsletter</h4>
-            <p>Subscribe to our weekly newsletter for updates on our latest products.</p>
+            <Logo name={name} className={styles.logo} />
             <NewsletterForm />
+            <p>Subscribe to our weekly newsletter for updates on our latest products.</p>
           </section>
           <section className={styles.legal}>
             <h4 className={styles.heading}>Legal</h4>
