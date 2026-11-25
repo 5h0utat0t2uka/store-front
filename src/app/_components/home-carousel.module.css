@@ -6,7 +6,7 @@
   inline-size: min(100%, 85rem);
   margin-inline: auto;
   margin-block-end: calc(var(--space) * 6);
-  --slide-peek: 8%;
+  --slide-peek: 7%;
 }
 
 .item {

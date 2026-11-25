@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
+// import { NewsletterForm } from "@/components/newsletter";
 import { getHomeProducts } from "@/lib/shopify";
 import { getInformationEntries } from "@/lib/shopify/information";
 import { HomeCarousel } from "./_components/home-carousel";
@@ -102,6 +103,15 @@ export default function Home(_props: PageProps<"/">) {
             View All
           </Link>
         </section>
+
+        {/*<section data-section="newsletter">
+          <Image src="/bg.webp" width={1600} height={1067} alt="" unoptimized loading="lazy" />
+          <div className={styles.form}>
+            <h2>Newsletter</h2>
+            <p>Subscribe to our weekly newsletter for updates on our latest products.</p>
+            <NewsletterForm />
+          </div>
+        </section>*/}
       </main>
     </>
   );

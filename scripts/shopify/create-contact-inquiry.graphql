@@ -1,0 +1,17 @@
+mutation CreateContactInquiryDefinition {
+  metaobjectDefinitionCreate(definition: {
+    type: "contact_inquiry"
+    name: "お問い合わせ"
+    displayNameKey: "subject"
+    access: { storefront: NONE, customerAccount: NONE }
+    fieldDefinitions: [
+      { key: "subject", name: "件名", type: "single_line_text_field", required: true }
+      { key: "email", name: "受付時のメールアドレス", type: "single_line_text_field", required: true }
+      { key: "body", name: "本文", type: "multi_line_text_field", required: true }
+      { key: "customer", name: "返信先のお客様", type: "customer_reference", required: true }
+    ]
+  }) {
+    metaobjectDefinition { id type access { storefront customerAccount } }
+    userErrors { field message }
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useActionState, useId } from "react";
 import { type NewsletterState, subscribeToNewsletter } from "./subscribe";
+import styles from "./index.module.css";
 
 const messages = {
   idle: "",
@@ -18,12 +19,12 @@ export function NewsletterForm() {
 
   return (
     <>
-      <form action={action} aria-label="メールマガジン登録">
+      <form action={action} aria-label="メールマガジン登録" className={styles.form}>
         <input
           type="email"
           name="email"
-          aria-label="メールアドレス"
-          placeholder="メールアドレス"
+          aria-label="Email address"
+          placeholder="Email address"
           autoComplete="email"
           required
           maxLength={254}

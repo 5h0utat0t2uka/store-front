@@ -114,7 +114,7 @@
 
           a {
             text-decoration: underline;
-            text-underline-offset: 0.15em;
+            text-underline-offset: 0.2em;
           }
         }
 
@@ -199,16 +199,23 @@
     color: var(--background);
     font-weight: 600;
     cursor: pointer;
-
+    &::before {
+      content: "";
+      mask-image: var(--icon-bag);
+      aspect-ratio: 1;
+      background-color: currentColor;
+      place-self: center;
+      block-size: 0.65lh;
+      display: grid;
+    }
     &:disabled {
       opacity: 0.4;
       cursor: not-allowed;
-    }
-    svg {
-      block-size: 0.65lh;
-      inline-size: 0.65lh;
-      aspect-ratio: 1;
-      /*animation: spinner 0.75s linear infinite;*/
+      &[aria-busy="true"] {
+        &::before {
+          mask-image: var(--icon-spinner);
+        }
+      }
     }
   }
   > .status[role="status"] {

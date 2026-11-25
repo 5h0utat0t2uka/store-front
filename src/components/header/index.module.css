@@ -6,28 +6,49 @@
   z-index: 10;
   background: color-mix(in oklch, var(--background) 90%, transparent);
   backdrop-filter: blur(20px);
+
+  block-size: var(--header-block);
+  inline-size: var(--content-inline);
+  /*max-inline-size: calc(100cqi - var(--space) - var(--space) * 2);*/
+  max-inline-size: calc(100cqi - var(--space));
+  margin-inline: auto;
+  margin-block-end: calc(var(--space) * 1.5);
+  /*border: 1px solid var(--border);*/
+  border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--background) 80%, transparent);
+  backdrop-filter: blur(20px);
+  top: calc(var(--space) / 2);
+
   > .content {
     inline-size: var(--content-inline);
     margin-inline: auto;
-    padding-inline: calc(var(--space) * 2);
+    padding-inline: calc(var(--space) * 1.5);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /*padding-inline: 1rem;*/
-    /* カートのパネル内のリンクに当たらないよう、直下のリンクだけを対象にする。 */
-    > a {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.5rem;
-      align-items: center;
-      inline-size: fit-content;
-      min-block-size: 1lh;
-    }
     > div {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
       align-items: center;
     }
+  }
+}
+
+.logo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  inline-size: fit-content;
+  min-block-size: 1lh;
+  letter-spacing: -0.1ch;
+  font-weight: 600;
+  font-size: 1rem;
+  svg {
+    block-size: 1lh;
+    inline-size: 1lh;
+    aspect-ratio: 1;
   }
 }

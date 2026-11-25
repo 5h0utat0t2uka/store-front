@@ -181,6 +181,44 @@
         }
       }
     }
+    /*&:is([data-section="newsletter"]) {
+      position: relative;
+      display: grid;
+      aspect-ratio: 1;
+      clip-path: inset(0 round .75rem);
+      > * {
+        grid-area: 1 / -1;
+      }
+      img {
+        object-fit: cover;
+        inline-size: 100%;
+        block-size: 100%;
+        overflow: hidden;
+        transform: scaleX(-1);
+      }
+
+      > .form {
+        margin: var(--space);
+        inline-size: 100%;
+        display: grid;
+        place-content: center;
+        padding: var(--space);
+        gap: calc(var(--space) / 2);
+        background: color-mix(in oklch, var(--background) 50%, transparent);
+        backdrop-filter: blur(20px);
+        border-radius: .375rem;
+        > p {
+          padding-inline: 0.5ch;
+          color: var(--secondary);
+        }
+      }
+      @media (min-aspect-ratio: 0.8) {
+        aspect-ratio: 16/6;
+        > .form {
+          inline-size: 50%;
+        }
+      }
+    }*/
   }
 }
 
