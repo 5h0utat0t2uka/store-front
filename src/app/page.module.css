@@ -127,14 +127,14 @@
             position: relative;
             inline-size: 100%;
             aspect-ratio: 6 / 4;
-
+            clip-path: inset(0 round 0.75rem);
             > img {
               position: absolute;
               inset: 0;
               inline-size: 100%;
               block-size: 100%;
               object-fit: cover;
-              border-radius: 0.75rem;
+              /*border-radius: 0.75rem;*/
             }
           }
 
