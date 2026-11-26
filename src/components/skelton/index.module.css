@@ -1,0 +1,14 @@
+.skelton {
+  min-block-size: calc(100svb - var(--header-block) - calc(var(--space) * 1.5));
+  display: grid;
+  place-content: center;
+  &::after {
+    content: "";
+    mask-image: var(--icon-spinner);
+    aspect-ratio: 1;
+    background-color: currentColor;
+    place-self: center;
+    block-size: 3rem;
+    display: grid;
+  }
+}

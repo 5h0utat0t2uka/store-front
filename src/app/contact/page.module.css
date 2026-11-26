@@ -1,5 +1,5 @@
 .main {
-  padding-block: clamp(2.5rem, 6vw, 5rem);
+  padding-block: var(--space);
   line-height: 1.8;
 
   > article {
@@ -7,12 +7,15 @@
     grid-template-columns: 1fr;
     gap: calc(var(--space) * 2);
     align-items: baseline;
-    > h1 {
+    hgroup {
       position: static;
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.5;
-      text-wrap: pretty;
+      h1 {
+        margin: 0;
+        margin-block-end: 0.5rem;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.5;
+        text-wrap: pretty;
+      }
     }
   }
 
@@ -20,10 +23,12 @@
     @container main (inline-size >= 40rem) {
       > article {
         grid-template-columns: 20rem minmax(0, 1fr);
-        > h1 {
+        hgroup {
           position: sticky;
           top: calc(var(--header-block) + calc(var(--space) * 1.5));
-          font-size: clamp(1.5rem, 4vw, 2rem);
+          h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+          }
         }
       }
     }

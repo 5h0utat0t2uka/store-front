@@ -28,7 +28,7 @@ export function ContactForm() {
         }
       }}
     >
-      <p>お問い合わせいただいた内容は、確認後3営業日以内に入力されたメールアドレス宛に返信します。</p>
+      {/*<p>お問い合わせいただいた内容は、確認後3営業日以内に入力されたメールアドレス宛に返信します。</p>*/}
       <input ref={requestId} type="hidden" name="requestId" defaultValue={state.requestId ?? ""} />
       <div hidden>
         <label data-required="必須" htmlFor="contact-website">

@@ -12,8 +12,13 @@ export const metadata: Metadata = {
 export default function CartPage() {
   return (
     <main className={styles.main}>
-      <h1>Cart</h1>
-      <CartContents />
+      <article>
+        <hgroup>
+          <h1>Cart</h1>
+          <p>税金と送料はチェックアウト時に計算されます。</p>
+        </hgroup>
+        <CartContents />
+      </article>
     </main>
   );
 }

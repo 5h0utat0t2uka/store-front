@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { ProductSummary } from "@/lib/shopify";
 import { formatPriceRange } from "@/lib/shopify/money";
 import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
-import { ItemLink } from "./item-link";
+import { ItemLink } from "./link";
 import styles from "./item.module.css";
 
 export type CardHeading = "h2" | "h3";

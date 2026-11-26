@@ -2,12 +2,10 @@ import styles from "./index.module.css";
 
 type Props = {
   title: string;
-  // Shopify の管理画面で編集した本文の HTML。
   html: string;
 };
 
 export function ContentBody({ html }: { html: string }) {
-  // if (!html.trim()) return null;
   return (
     <div
       className={styles.body}
@@ -18,7 +16,6 @@ export function ContentBody({ html }: { html: string }) {
   );
 }
 
-// Shopify の「ページ」と「ポリシー」に共通の、見出しと本文の表示。
 export function Content({ title, html }: Props) {
   return (
     <main className={styles.main}>
@@ -26,15 +23,6 @@ export function Content({ title, html }: Props) {
         <h1>{title}</h1>
         <ContentBody html={html} />
       </article>
-    </main>
-  );
-}
-
-// 動的なパスで、内容が届くまで先に表示する。
-export function ContentLoading() {
-  return (
-    <main className={styles.main}>
-      <p role="status">読み込んでいます…</p>
     </main>
   );
 }

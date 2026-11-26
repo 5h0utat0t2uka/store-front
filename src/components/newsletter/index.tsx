@@ -31,18 +31,12 @@ export function NewsletterForm() {
           defaultValue={state.email ?? ""}
           aria-describedby={statusId}
         />
-        <button type="submit" aria-label="メールマガジンに登録する" title="メールマガジンに登録する" disabled={pending}>
-          <svg aria-hidden="true" width={24} height={24} viewBox="0 0 24 24">
-            <path
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 12h16m-7-7l7 7l-7 7"
-            />
-          </svg>
-        </button>
+        <button
+          type="submit"
+          aria-label="メールマガジンに登録する"
+          title="メールマガジンに登録する"
+          disabled={pending}
+        />
       </form>
       <p id={statusId} role="status">
         {pending ? "登録を受け付けています…" : messages[state.status]}

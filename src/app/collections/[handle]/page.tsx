@@ -3,13 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { PaginatedProducts, readListingParams } from "@/components/card/listing";
+import { ProductGrid } from "@/components/card/grid";
 import { ContentBody } from "@/components/content";
+import { Pagination } from "@/components/pagination";
 import { createPageMetadata } from "@/lib/metadata";
 import { getCollectionHandles, getCollectionPage } from "@/lib/shopify";
 import { parseHandle } from "@/lib/shopify/handle";
+import { getListingLinks, readListingParams } from "@/lib/shopify/listing";
 import { MAIN_WIDTH } from "@/styles/image-sizes";
-import styles from "@/components/card/listing.module.css";
+import styles from "./page.module.css";
 
 type CollectionProps = PageProps<"/collections/[handle]">;
 
@@ -72,38 +74,22 @@ async function CollectionResults(props: CollectionProps) {
   const { collection, pathname, after, before } = await readCollection(props);
   const isCampaign = collection.isCampaign?.value === "true";
   const heroImage = isCampaign ? collection.image : null;
+  const { firstHref, previousHref, nextHref } = getListingLinks({ pathname, page: collection.products, after, before });
   return (
     <>
-      {/*{isCampaign ? (
-        <header className={styles.hero}>
-          {heroImage && (
-            <Image
-              className={styles.collectionImage}
-              src={heroImage.url}
-              alt={heroImage.altText?.trim() ?? ""}
-              fill
-              sizes={MAIN_WIDTH}
-              loading="eager"
-              fetchPriority="high"
-            />
-          )}
-          <div className={styles.heroContent}>
-            <h1>{collection.title}</h1>
-            {collection.descriptionHtml && <ContentBody html={collection.descriptionHtml} />}
-          </div>
-        </header>
-      ) : (
-        <h1>{collection.title}</h1>
-      )}*/}
       {!isCampaign && <h1>{collection.title}</h1>}
       {isCampaign && <h2>Collection Items</h2>}
-      <PaginatedProducts
-        page={collection.products}
-        pathname={pathname}
-        after={after}
-        before={before}
-        prioritizeFirstRow={!heroImage}
-      />
+      {collection.products.nodes.length > 0 ? (
+        <>
+          <ProductGrid products={collection.products.nodes} heading="h2" prioritizeFirstRow={!heroImage} />
+          <Pagination label="商品一覧のページ送り" previousHref={previousHref} nextHref={nextHref} />
+        </>
+      ) : (
+        <>
+          <p>{after || before ? "このページには商品がありません。" : "該当する商品はありません。"}</p>
+          {(after || before) && <Link href={firstHref}>最初のページへ</Link>}
+        </>
+      )}
       <Link href="/products">All Products</Link>
     </>
   );
