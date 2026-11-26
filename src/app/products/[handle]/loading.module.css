@@ -1,0 +1,29 @@
+.main {
+  > .product {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 2rem;
+    @media (min-aspect-ratio: 0.8) {
+      grid-template-columns: 58% auto;
+    }
+    > .images {
+      display: grid;
+      place-content: center;
+      aspect-ratio: 1 / 1;
+      clip-path: inset(0 round 0.75rem);
+      background: color-mix(in oklch, currentColor 6%, transparent);
+      &::after {
+        content: "";
+        mask-image: var(--icon-loading);
+        aspect-ratio: 1;
+        background-color: currentColor;
+        place-self: center;
+        block-size: 3rem;
+        display: grid;
+      }
+    }
+    > .details {
+    }
+  }
+}

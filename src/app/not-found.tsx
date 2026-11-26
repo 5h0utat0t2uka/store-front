@@ -12,8 +12,8 @@ export default function NotFound() {
     <main className={styles.main}>
       <h1>ページが見つかりません</h1>
       <p>お探しのページは削除されたか、現在公開されていない可能性があります。</p>
-      <Link className={styles.backLink} href="/">
-        トップページへ戻る
+      <Link className={styles.link} href="/">
+        Home
       </Link>
     </main>
   );

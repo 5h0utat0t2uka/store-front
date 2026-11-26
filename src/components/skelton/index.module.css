@@ -4,7 +4,7 @@
   place-content: center;
   &::after {
     content: "";
-    mask-image: var(--icon-spinner);
+    mask-image: var(--icon-loading);
     aspect-ratio: 1;
     background-color: currentColor;
     place-self: center;

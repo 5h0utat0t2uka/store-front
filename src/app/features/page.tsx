@@ -66,7 +66,7 @@ async function FeatureResults({ searchParams }: Pick<FeaturesProps, "searchParam
 
 export default function FeaturesPage({ searchParams }: FeaturesProps) {
   return (
-    <main>
+    <main className={styles.main}>
       <h1>Features</h1>
       <Suspense fallback={<p role="status">特集を読み込んでいます…</p>}>
         <FeatureResults searchParams={searchParams} />

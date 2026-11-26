@@ -1,10 +1,56 @@
 .main {
-  display: grid;
   align-content: start;
   gap: var(--space);
   overflow-wrap: anywhere;
+  display: grid;
+  > h1 {
+    text-wrap: balance;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  > .list {
+    --card-min: 14rem;
+    --two-column-width: calc((100% - var(--space)) / 2);
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), var(--two-column-width)), 1fr));
+    gap: var(--space);
+    min-inline-size: 0;
+    list-style: none;
+    display: grid;
+    > .item {
+      position: relative;
+      aspect-ratio: 1;
+      > .link {
+        display: grid;
+        gap: calc(var(--space) / 2);
+        text-align: center;
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+        }
+        @media (any-hover: hover) {
+          &:hover,
+          &:focus-visible {
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+          }
+        }
+        h2 {
+          font-size: 1.125rem;
+          line-height: 1.6;
+        }
+        img {
+          inline-size: 100%;
+          block-size: 100%;
+          object-fit: cover;
+          border-radius: 0.375rem;
+        }
+      }
+    }
+  }
 }
-
+/*
 .list {
   display: grid;
   gap: 0.5em;
@@ -25,4 +71,4 @@
     object-fit: cover;
     border-radius: 0.375rem;
   }
-}
+}*/
