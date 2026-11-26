@@ -124,18 +124,6 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
             <ProductPurchase product={product} searchParams={searchParams} />
           </Suspense>
-          {/*<dl className={styles.attributes}>
-            <div>
-              <dt>カテゴリ</dt>
-              <dd>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</dd>
-            </div>
-            {product.vendor.trim() && (
-              <div>
-                <dt>販売元</dt>
-                <dd>{product.vendor}</dd>
-              </div>
-            )}
-          </dl>*/}
           {product.descriptionHtml && (
             <section aria-label="商品説明" className={styles.description}>
               <ContentBody html={product.descriptionHtml} />

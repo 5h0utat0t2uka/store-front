@@ -2,7 +2,7 @@
   display: grid;
   justify-items: start;
   gap: 1.25rem;
-  /*padding-block: clamp(2.5rem, 6vw, 5rem);*/
+  /*padding-block: var(--space);*/
   line-height: 1.8;
 
   h1 {

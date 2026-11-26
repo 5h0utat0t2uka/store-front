@@ -1,0 +1,35 @@
+.main {
+  display: grid;
+  align-content: start;
+  gap: var(--space);
+  overflow-wrap: anywhere;
+
+  /*> a {
+    justify-self: start;
+    text-decoration: underline;
+  }*/
+  > .link {
+    background: var(--foreground);
+    text-transform: capitalize;
+    color: var(--background);
+    text-indent: 0.4lh;
+    border-radius: 0.375rem;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.25rem;
+    inline-size: fit-content;
+    margin-block: 3rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    display: grid;
+    &::after {
+      content: "";
+      mask-image: var(--icon-arrow);
+      aspect-ratio: 1;
+      background-color: currentColor;
+      place-self: center;
+      block-size: 0.8lh;
+      display: grid;
+    }
+  }
+}

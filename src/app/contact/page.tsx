@@ -11,7 +11,10 @@ export default function ContactPage() {
   return (
     <main className={styles.main}>
       <article>
-        <h1 id="contact-heading">Contact</h1>
+        <hgroup>
+          <h1 id="contact-heading">Contact</h1>
+          <p>お問い合わせいただいた内容は、確認後3営業日以内に入力されたメールアドレス宛に返信します。</p>
+        </hgroup>
         <ContactForm />
       </article>
     </main>

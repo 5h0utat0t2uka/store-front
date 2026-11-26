@@ -44,13 +44,13 @@ export function Footer({ name, policies = [] }: Props) {
             <h4 className={styles.heading}>Social</h4>
             <ul>
               <li>
-                <Link href={`/`}>TikTok</Link>
-              </li>
-              <li>
                 <Link href={`/`}>Instagram</Link>
               </li>
               <li>
                 <Link href={`/`}>Facebook</Link>
+              </li>
+              <li>
+                <Link href={`/`}>X</Link>
               </li>
             </ul>
           </section>

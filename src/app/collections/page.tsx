@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { createPageMetadata } from "@/lib/metadata";
 import { getCollectionLinks } from "@/lib/shopify";
-import styles from "@/components/card/listing.module.css";
+import styles from "./page.module.css";
 
 const TITLE = "Categories";
 
@@ -17,7 +17,7 @@ async function CollectionLinks() {
   if (!collections.length) return <p>現在、一覧に表示するコレクションはありません。</p>;
 
   return (
-    <ul className={styles.collectionLinks}>
+    <ul className={styles.list}>
       {collections.map(({ handle, title, image }) => (
         <li key={handle}>
           <Link href={`/collections/${encodeURIComponent(handle)}`}>

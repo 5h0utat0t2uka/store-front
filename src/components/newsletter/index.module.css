@@ -36,12 +36,28 @@
     border-radius: 0.375rem;
     /*border-radius: 50%;*/
     padding: 0.8rem;
-    svg {
-      /*color: var(--background);*/
+    &:disabled {
+      opacity: 0.4;
+      cursor: progress;
+      &::after {
+        mask-image: var(--icon-spinner);
+      }
+    }
+    &::after {
+      content: "";
+      mask-image: var(--icon-arrow);
+      aspect-ratio: 1;
+      background-color: currentColor;
+      place-self: center;
+      block-size: 0.8lh;
+      display: grid;
+    }
+
+    /*svg {
       color: var(--foreground);
       block-size: 0.6lh;
       inline-size: 0.6lh;
       aspect-ratio: 1;
-    }
+    }*/
   }
 }
