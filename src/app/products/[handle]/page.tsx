@@ -116,10 +116,6 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         />
 
         <div className={styles.details}>
-          {/*<hgroup className={styles.heading}>
-            <p>{product.category?.name ?? UNASSIGNED_CATEGORY_LABEL}</p>
-            <h1>{product.title}</h1>
-          </hgroup>*/}
           <h1>{product.title}</h1>
           <Suspense fallback={<p role="status">購入オプションを読み込んでいます…</p>}>
             <ProductPurchase product={product} searchParams={searchParams} />

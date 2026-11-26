@@ -19,10 +19,10 @@ async function CollectionLinks() {
   return (
     <ul className={styles.list}>
       {collections.map(({ handle, title, image }) => (
-        <li key={handle}>
-          <Link href={`/collections/${encodeURIComponent(handle)}`}>
+        <li key={handle} className={styles.item}>
+          <Link href={`/collections/${encodeURIComponent(handle)}`} className={styles.link}>
             {image && <Image src={image.url} alt="" width={80} height={80} />}
-            <span>{title}</span>
+            <h2>{title}</h2>
           </Link>
         </li>
       ))}

@@ -90,7 +90,7 @@ async function CollectionResults(props: CollectionProps) {
           {(after || before) && <Link href={firstHref}>最初のページへ</Link>}
         </>
       )}
-      <Link href="/products">All Products</Link>
+      {/*<Link href="/products">All Products</Link>*/}
     </>
   );
 }

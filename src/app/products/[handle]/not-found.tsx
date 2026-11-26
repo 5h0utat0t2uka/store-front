@@ -6,8 +6,8 @@ export default function ProductNotFound() {
     <main className={styles.main}>
       <h1>商品が見つかりません</h1>
       <p>商品が削除されたか、現在公開されていない可能性があります。</p>
-      <Link className={styles.backLink} href="/">
-        トップページへ戻る
+      <Link className={styles.link} href="/">
+        Home
       </Link>
     </main>
   );
