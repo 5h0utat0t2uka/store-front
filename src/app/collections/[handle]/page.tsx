@@ -1,10 +1,11 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
 import { ContentBody } from "@/components/content";
+import { ShopifyImage } from "@/components/image/shopify";
+import { Loading } from "@/components/loading";
 import { Pagination } from "@/components/pagination";
 import { createPageMetadata } from "@/lib/metadata";
 import { getCollectionHandles, getCollectionPage } from "@/lib/shopify";
@@ -53,7 +54,7 @@ async function CampaignHero(props: CollectionProps) {
   if (!heroImage) return null;
   return (
     <div className={styles.hero}>
-      <Image
+      <ShopifyImage
         className={styles.collectionImage}
         src={heroImage.url}
         alt={heroImage.altText?.trim() ?? ""}
@@ -98,14 +99,24 @@ async function CollectionResults(props: CollectionProps) {
 export default function CollectionPage(props: CollectionProps) {
   return (
     <>
-      <Suspense fallback={null}>
+      <Suspense fallback={<Loading />}>
         <CampaignHero {...props} />
-      </Suspense>
-      <main className={styles.main}>
-        <Suspense fallback={<p role="status">商品を読み込んでいます…</p>}>
+        <main className={styles.main}>
           <CollectionResults {...props} />
-        </Suspense>
-      </main>
+        </main>
+      </Suspense>
     </>
   );
+  // return (
+  //   <>
+  //     <Suspense fallback={null}>
+  //       <CampaignHero {...props} />
+  //     </Suspense>
+  //     <main className={styles.main}>
+  //       <Suspense fallback={<p role="status">商品を読み込んでいます…</p>}>
+  //         <CollectionResults {...props} />
+  //       </Suspense>
+  //     </main>
+  //   </>
+  // );
 }

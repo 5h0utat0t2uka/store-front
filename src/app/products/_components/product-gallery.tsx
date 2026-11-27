@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CarouselTrack } from "@/components/carousel/track";
 import { LightDismissDialog } from "@/components/dialog/light-dismiss";
-import { PRODUCT_GALLERY_SIZES, PRODUCT_HERO_SIZES } from "@/styles/image-sizes";
+import { ShopifyImage } from "@/components/image/shopify";
+import { PRODUCT_HERO_SIZES } from "@/styles/image-sizes";
 import styles from "./product-gallery.module.css";
 
 type GalleryImage = { src: string; alt: string };
@@ -36,15 +36,14 @@ export function ProductGallery({ images, title }: { images: GalleryImage[]; titl
     const isMain = index === 0;
     return (
       <>
-        <Image
+        <ShopifyImage
           className={styles.image}
           src={image?.src ?? "/placehold.svg"}
           alt={image?.alt ?? `${title}（商品画像なし）`}
           fill
-          sizes={isMain ? PRODUCT_HERO_SIZES : PRODUCT_GALLERY_SIZES}
+          sizes={isMain ? PRODUCT_HERO_SIZES : "auto"}
           loading={isMain ? "eager" : "lazy"}
           fetchPriority={isMain && image ? "high" : "auto"}
-          unoptimized={!image}
         />
         {image && (
           <button
@@ -81,7 +80,9 @@ export function ProductGallery({ images, title }: { images: GalleryImage[]; titl
             if (!event.currentTarget.open) setSelection(null);
           }}
         >
-          {selection && <Image className={styles.image} {...selection.image} fill sizes="80vmin" loading="eager" />}
+          {selection && (
+            <ShopifyImage className={styles.image} {...selection.image} fill sizes="80vmin" loading="eager" />
+          )}
           <form method="dialog" className={styles.close}>
             {/*<button type="submit">閉じる</button>*/}
             <button type="submit" aria-label="閉じる">

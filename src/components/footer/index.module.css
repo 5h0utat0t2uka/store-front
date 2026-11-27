@@ -1,5 +1,59 @@
 .footer {
-  > div {
+  > .newsletter {
+    position: relative;
+    display: grid;
+    place-items: center;
+    /*aspect-ratio: 5/1;*/
+    margin-inline: auto;
+    margin-block-end: calc(var(--space) * 4);
+    /*border-radius: 0.75rem;*/
+    clip-path: inset(0 round 0.75rem);
+    /*inline-size: var(--content-inline);*/
+    inline-size: var(--content-inline);
+    max-inline-size: calc(100cqi - var(--space) - var(--space));
+    /*min-block-size: 220px;*/
+    padding: calc(var(--space) * 2);
+    /*background: color-mix(in oklch, var(--foreground) 6%, transparent);*/
+
+    contain: content;
+
+    > img {
+      position: absolute;
+      inset: 0;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.5;
+      @media (prefers-reduced-transparency) {
+        opacity: 1;
+      }
+    }
+    > section {
+      display: grid;
+      place-items: center;
+      gap: var(--space);
+      > hgroup {
+        display: grid;
+        place-items: center;
+        gap: 0.5em;
+        text-align: center;
+        text-wrap: pretty;
+        letter-spacing: -0.08ch;
+        > h2 {
+          /*font-size: clamp(1.5rem, 4vw, 2.5rem);*/
+          font-size: clamp(2rem, 5vw, 3rem);
+          font-weight: 600;
+        }
+        > p {
+          /*font-size: 0.875rem;*/
+          line-height: 1.4;
+          color: var(--secondary);
+        }
+      }
+    }
+  }
+  > .common {
     display: flex;
     flex-direction: column;
     gap: calc(var(--space) * 2);
@@ -9,7 +63,7 @@
     padding-inline: calc(var(--space) * 2);
     padding-block: calc(var(--space) * 2) calc(var(--space) * 2 + env(safe-area-inset-bottom));
     border-radius: 0.75rem;
-    background: color-mix(in oklch, var(--foreground) 6%, transparent);
+    /*background: color-mix(in oklch, var(--foreground) 6%, transparent);*/
 
     > .content {
       display: flex;
@@ -36,25 +90,29 @@
           color: var(--secondary);
         }
       }
-      > .newsletter {
+      > .store {
         border-block-end: 0.5px solid var(--border);
         padding-block-end: calc(var(--space) * 2);
         @media (min-aspect-ratio: 0.8) {
           border: none;
           padding: 0;
-          max-inline-size: 35%;
+          max-inline-size: 50%;
         }
         > [role="status"]:empty {
           position: absolute;
         }
         > .logo {
-          margin-block-end: calc(var(--space) / 2);
+          /*margin-block-end: calc(var(--space) / 2);*/
           font-size: 1.2rem;
         }
-        > p {
-          font-size: 0.875rem;
-          padding-inline: 0.5ch;
-          color: var(--secondary);
+        > address {
+          display: grid;
+          gap: 0.5rem;
+          /*> p {
+            font-size: 0.875rem;
+            padding-inline: 0.5ch;
+            color: var(--secondary);
+          }*/
         }
       }
       > .subscribe {
@@ -123,7 +181,7 @@
         ul {
           display: flex;
           flex-wrap: wrap;
-          flex-direction: column;
+          /*flex-direction: column;*/
           gap: 1em;
           list-style: none;
           li {
@@ -151,7 +209,7 @@
         ul {
           display: flex;
           flex-wrap: wrap;
-          flex-direction: column;
+          /*flex-direction: column;*/
           gap: 1em;
           list-style: none;
           li {
@@ -175,7 +233,8 @@
           }
         }
       }
-      > .store {
+
+      /*> .store {
         white-space: nowrap;
         > address {
           display: flex;
@@ -183,7 +242,7 @@
           gap: 0.5rem;
           font-size: 0.875rem;
         }
-      }
+      }*/
     }
     > .copy {
       border-block-start: 0.5px solid var(--border);

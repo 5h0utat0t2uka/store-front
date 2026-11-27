@@ -7,11 +7,9 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   reactCompiler: true,
   poweredByHeader: false,
-  images: {
-    // 商品画像は Shopify CDN がリサイズするため、Next.js の画像最適化は使わない。
-    loader: "custom",
-    loaderFile: "./src/lib/shopify/image-loader.ts",
-  },
+  // images: {
+  //   localPatterns: [{ pathname: "/feature/*.webp", search: "" }],
+  // },
   turbopack: {
     // ::scroll-button(*), ::scroll-marker:target-current などをパーサーがまだ認識しないため暫定的に追加
     // 対応したら外す

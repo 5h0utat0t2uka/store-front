@@ -13,7 +13,7 @@
   display: grid;
 
   /*aspect-ratio: 5 / 8;*/
-  aspect-ratio: 8 / 12;
+  aspect-ratio: 9 / 13;
   contain: strict;
   position: relative;
   clip-path: inset(0 round 0.75rem);

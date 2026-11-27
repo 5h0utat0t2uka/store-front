@@ -1,15 +1,15 @@
 "use client";
 
-// import Link from "next/link";
-import { type ReactNode, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 import styles from "./menu.module.css";
 
-type Props = {
-  children?: ReactNode;
-};
+// type Props = {
+//   children?: ReactNode;
+// };
 
 // export function Menu({ children }: Props) { })
-export function Menu({ children }: Props) {
+export function Menu() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   // パネルの外側で押し始めたかどうか。描画には使わない値なので、state ではなく ref で持つ。
   const pressedOutsideRef = useRef(false);
@@ -75,24 +75,26 @@ export function Menu({ children }: Props) {
             <span className={styles.label}>Menu</span>
           </button>
         </form>
-        {children}
-        {/*<nav className={styles.nav}>
-          <ul className={styles.list}>
+        <nav>
+          <ul>
             <li>
               <Link href="/">Home</Link>
             </li>
             <li>
               <Link href="/products">Products</Link>
             </li>
-            <li>Feature</li>
-            <li>Category</li>
+            <li>
+              <Link href="/features">Features</Link>
+            </li>
+            <li>
+              <Link href="/collections">Categories</Link>
+            </li>
             <li>Blog</li>
             <li>
-              <Link href="/pages/contact">Contact</Link>
+              <Link href="/contact">Contact</Link>
             </li>
           </ul>
-        </nav>*/}
-        {/*<div className={styles.panel}>{children}</div>*/}
+        </nav>
       </dialog>
     </>
   );

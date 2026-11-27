@@ -1,4 +1,4 @@
-.skelton {
+.loading {
   min-block-size: calc(100svb - var(--header-block) - calc(var(--space) * 1.5));
   display: grid;
   place-content: center;

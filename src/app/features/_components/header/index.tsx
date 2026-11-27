@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { MAIN_WIDTH } from "@/styles/image-sizes";
 import type { Feature } from "../../_data";
 import styles from "./index.module.css";
 
@@ -11,7 +12,7 @@ export default function Header({ feature }: Props) {
     <header className={styles.header}>
       <h1>{feature.title}</h1>
       <time dateTime={feature.date}>Published {feature.date}</time>
-      <Image src={feature.image.src} alt="" width={feature.image.width} height={feature.image.height} loading="eager" />
+      <Image {...feature.image} alt="" sizes={MAIN_WIDTH} loading="eager" />
     </header>
   );
 }
