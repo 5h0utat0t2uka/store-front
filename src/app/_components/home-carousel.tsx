@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CarouselTrack } from "@/components/carousel/track";
+import { ShopifyImage } from "@/components/image/shopify";
 import { getHomeCarouselSlides } from "@/lib/shopify/carousel";
 import styles from "./home-carousel.module.css";
 
@@ -13,11 +13,12 @@ export async function HomeCarousel() {
       <CarouselTrack>
         {slides.map(({ id, title, description, image, link, linkLabel }, index) => (
           <li key={id} className={styles.item}>
-            <Image
+            <ShopifyImage
               src={image.url}
               alt={image.altText ?? ""}
               fill
-              sizes="(min-width: 85rem) 71.4rem, 84vw"
+              // sizes={index === 0 ? "calc(min(100vw, 85rem) * 0.86)" : "auto"}
+              sizes={"calc(min(100vw, 85rem) * 0.86)"}
               loading={index === 0 ? "eager" : "lazy"}
               fetchPriority={index === 0 ? "high" : "auto"}
               decoding={index === 0 ? "sync" : "auto"}

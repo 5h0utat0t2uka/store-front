@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Logo } from "@/components/header";
-import { NewsletterForm } from "@/components/newsletter";
+import { NewsletterForm } from "@/components/newsletter/form";
 import styles from "./index.module.css";
 
 type Props = {
@@ -12,18 +13,34 @@ type Props = {
 export function Footer({ name, policies = [] }: Props) {
   return (
     <footer className={styles.footer}>
+      <div className={styles.newsletter}>
+        <Image src="/bg.webp" width={1600} height={1067} alt="" loading="lazy" />
+        <section className={styles.form}>
+          <hgroup>
+            <h2>Subscribe to our Newsletter</h2>
+            <p>Stay in the loop with drops, events, and in-stock alerts.</p>
+          </hgroup>
+          <NewsletterForm />
+        </section>
+      </div>
       {/*<div className={styles.subscribe}>
         <div>
           <p>Join our newsletter</p>
           <span>Subscribe</span>
         </div>
       </div>*/}
-      <div>
+      <div className={styles.common}>
         <div className={styles.content}>
-          <section className={styles.newsletter}>
+          <section className={styles.store}>
             <Logo name={name} className={styles.logo} />
-            <NewsletterForm />
-            <p>Subscribe to our weekly newsletter for updates on our latest products.</p>
+            <address>
+              <p>
+                Mozilla Foundation
+                <br />
+                331 E Evelyn Ave Mountain View, CA 94041 USA
+              </p>
+              <p>+1 (415) 555‑0132</p>
+            </address>
           </section>
           <section className={styles.legal}>
             <h4 className={styles.heading}>Legal</h4>
@@ -50,27 +67,12 @@ export function Footer({ name, policies = [] }: Props) {
                 <Link href={`/`}>Facebook</Link>
               </li>
               <li>
-                <Link href={`/`}>X</Link>
+                <Link href={`/`}>Discord</Link>
               </li>
             </ul>
           </section>
-          <section className={styles.store}>
-            <h4 className={styles.heading}>Store</h4>
-            <address>
-              <p>
-                Mozilla Foundation
-                <br />
-                331 E Evelyn Ave
-                <br />
-                Mountain View, CA 94041
-                <br />
-                USA
-              </p>
-              <p>+1 (415) 555‑0132</p>
-            </address>
-          </section>
         </div>
-        <small className={styles.copy}>© 2016 {name}</small>
+        <small className={styles.copy}>© 2026 {name}</small>
       </div>
     </footer>
   );

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ShopifyImage } from "@/components/image/shopify";
 import type { ProductSummary } from "@/lib/shopify";
 import { formatPriceRange } from "@/lib/shopify/money";
 import { UNASSIGNED_CATEGORY_LABEL } from "@/lib/shopify/product";
@@ -25,15 +25,13 @@ export function ItemCard({ product, heading: Heading, sizes, loading = "lazy" }:
   return (
     <article className={styles.card}>
       <div className={styles.frame}>
-        <Image
+        <ShopifyImage
           className={styles.image}
           src={imageSrc}
           alt={imageAlt}
           fill
-          sizes={loading === "lazy" ? `auto, ${sizes}` : sizes}
+          sizes={loading === "eager" ? sizes : "auto"}
           loading={loading}
-          // ローカルの代替画像は Shopify CDN のリサイズ対象外。
-          unoptimized={!featuredImage}
         />
       </div>
       <div className={styles.details}>

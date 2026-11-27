@@ -7,8 +7,8 @@ import { predictiveSearchHandlers } from "@/lib/shopify/search-handlers";
 
 export const config: ProxyConfig = {
   matcher: [
-    // ビルド時に生成される公開アセットだけを除外する。
-    "/((?!_next/static|_next/image).*)",
+    // Next.js のアセットと、画像拡張子で終わるパスを除外する（拡張子の大文字・小文字は区別しない）。
+    "/((?!_next/static|_next/image|.*\\.(?:[wW][eE][bB][pP]|[aA]?[pP][nN][gG]|[jJ][pP][eE]?[gG]|[sS][vV][gG][zZ]?|[gG][iI][fF]|[aA][vV][iI][fF]|[iI][cC][oO]|[bB][mM][pP]|[tT][iI][fF][fF]?)$).*)",
   ],
 };
 

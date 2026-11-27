@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useId } from "react";
+import { ShopifyImage } from "@/components/image/shopify";
 import { useCart, useCartForm, useSuspenseCart } from "@/lib/shopify/cart";
 import type { CartLine } from "@/lib/shopify/cart-handlers";
 import { formatPrice } from "@/lib/shopify/money";
@@ -106,7 +106,15 @@ function Line({ line, onNavigate }: Props & { line: CartLine }) {
       <div className={styles.thumb}>
         {merchandise?.image && (
           // 隣に商品名があるため、画像は装飾として扱う。
-          <Image className={styles.image} src={merchandise.image.url} alt="" width={80} height={80} />
+          <ShopifyImage
+            className={styles.image}
+            src={merchandise.image.url}
+            alt=""
+            width={80}
+            height={80}
+            loading="lazy"
+            sizes="auto"
+          />
         )}
       </div>
 

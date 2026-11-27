@@ -1,5 +1,5 @@
-import { Skelton } from "@/components/skelton";
+import { Loading } from "@/components/loading";
 
 export default function PageLoading() {
-  return <Skelton />;
+  return <Loading />;
 }

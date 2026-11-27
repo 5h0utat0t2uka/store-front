@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
-// import { NewsletterForm } from "@/components/newsletter";
 import { getHomeProducts } from "@/lib/shopify";
 import { getInformationEntries } from "@/lib/shopify/information";
 import { HomeCarousel } from "./_components/home-carousel";
@@ -53,13 +52,8 @@ async function Products() {
 export default function Home(_props: PageProps<"/">) {
   return (
     <>
-      {/*<section>
-        <hgroup>
-          <h1>Shopify Online Store with Next.js</h1>
-          <p>This is a Shopify Storefront application built with Next.js and Hydrogen.</p>
-        </hgroup>
-      </section>*/}
       <HomeCarousel />
+
       <main className={styles.main}>
         <Suspense fallback={null}>
           <Information />
@@ -70,7 +64,7 @@ export default function Home(_props: PageProps<"/">) {
             {features.slice(0, 3).map(({ date, title, href, image }) => (
               <li key={href} className={styles.card}>
                 <div className={styles.frame}>
-                  <Image {...image} alt="" unoptimized loading="lazy" />
+                  <Image {...image} alt="" sizes="auto" loading="lazy" />
                 </div>
                 <div className={styles.meta}>
                   <time dateTime={date}>{date}</time>

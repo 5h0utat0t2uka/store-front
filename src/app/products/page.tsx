@@ -2,8 +2,8 @@ import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ProductGrid } from "@/components/card/grid";
+import { Loading } from "@/components/loading";
 import { Pagination } from "@/components/pagination";
-import { Skelton } from "@/components/skelton";
 import { createPageMetadata } from "@/lib/metadata";
 import { getProductPage } from "@/lib/shopify";
 import { getListingLinks, readListingParams } from "@/lib/shopify/listing";
@@ -58,7 +58,7 @@ async function ProductResults({ searchParams }: Pick<ProductsProps, "searchParam
 
 export default function ProductsPage({ searchParams }: ProductsProps) {
   return (
-    <Suspense fallback={<Skelton />}>
+    <Suspense fallback={<Loading />}>
       <ProductResults searchParams={searchParams} />
     </Suspense>
   );

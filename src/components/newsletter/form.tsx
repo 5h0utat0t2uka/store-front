@@ -2,7 +2,7 @@
 
 import { useActionState, useId } from "react";
 import { type NewsletterState, subscribeToNewsletter } from "./subscribe";
-import styles from "./index.module.css";
+import styles from "./form.module.css";
 
 const messages = {
   idle: "",

@@ -1,4 +1,6 @@
 .main {
+  --card-min: 14rem;
+  --two-column-width: calc((100% - var(--space)) / 2);
   align-content: start;
   gap: var(--space);
   overflow-wrap: anywhere;
@@ -10,8 +12,6 @@
     line-height: 1.2;
   }
   > .list {
-    --card-min: 14rem;
-    --two-column-width: calc((100% - var(--space)) / 2);
     grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), var(--two-column-width)), 1fr));
     gap: var(--space);
     min-inline-size: 0;
@@ -46,6 +46,34 @@
           object-fit: cover;
           border-radius: 0.375rem;
         }
+      }
+    }
+  }
+  > .skelton {
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--card-min), var(--two-column-width)), 1fr));
+    gap: var(--space);
+    min-inline-size: 0;
+    list-style: none;
+    display: grid;
+    > .item {
+      display: grid;
+      gap: calc(var(--space) / 2);
+      text-align: center;
+      > div {
+        aspect-ratio: 1;
+        inline-size: 100%;
+        block-size: 100%;
+        background: color-mix(in oklch, currentColor 4%, transparent);
+        border-radius: 0.375rem;
+      }
+      > p {
+        inline-size: 50%;
+        block-size: 1lh;
+        margin-inline: auto;
+        font-size: 1.125rem;
+        line-height: 1.6;
+        background: color-mix(in oklch, currentColor 4%, transparent);
+        border-radius: 0.375rem;
       }
     }
   }

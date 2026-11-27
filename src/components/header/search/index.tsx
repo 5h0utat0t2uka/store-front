@@ -8,11 +8,11 @@ import {
   usePredictiveSearchForm,
 } from "@shopify/hydrogen/react";
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type MouseEvent as ReactMouseEvent, useId, useRef, useState } from "react";
 import { LightDismissDialog } from "@/components/dialog/light-dismiss";
+import { ShopifyImage } from "@/components/image/shopify";
 import { formatPrice } from "@/lib/shopify/money";
 import { getSearchUrl, MAX_SEARCH_TERM_LENGTH, routeTemplates, SEARCH_PATH } from "@/lib/shopify/search";
 import styles from "./index.module.css";
@@ -216,13 +216,13 @@ function Suggestions({ onNavigate }: SuggestionsProps) {
                 >
                   <span className={styles.thumbnail}>
                     {/* 商品名を隣に表示するため、画像は装飾として扱う。 */}
-                    <Image
+                    <ShopifyImage
                       src={image?.url ?? "/placehold.svg"}
                       alt=""
                       width={56}
                       height={56}
-                      // ローカルの代替画像は Shopify CDN のリサイズ対象外。
-                      unoptimized={!image}
+                      loading="lazy"
+                      sizes="auto"
                     />
                   </span>
                   <span className={styles.title}>{product.title}</span>

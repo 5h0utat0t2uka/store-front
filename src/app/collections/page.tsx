@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { ShopifyImage } from "@/components/image/shopify";
 import { createPageMetadata } from "@/lib/metadata";
 import { getCollectionLinks } from "@/lib/shopify";
 import styles from "./page.module.css";
@@ -21,9 +21,22 @@ async function CollectionLinks() {
       {collections.map(({ handle, title, image }) => (
         <li key={handle} className={styles.item}>
           <Link href={`/collections/${encodeURIComponent(handle)}`} className={styles.link}>
-            {image && <Image src={image.url} alt="" width={80} height={80} />}
+            {image && <ShopifyImage src={image.url} alt="" width={80} height={80} loading="lazy" sizes="auto" />}
             <h2>{title}</h2>
           </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Skelton() {
+  return (
+    <ul className={styles.skelton}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <li key={i} className={styles.item}>
+          <div></div>
+          <p></p>
         </li>
       ))}
     </ul>
@@ -34,7 +47,7 @@ export default function CollectionsPage() {
   return (
     <main className={styles.main}>
       <h1>{TITLE}</h1>
-      <Suspense fallback={<p role="status">コレクションを読み込んでいます…</p>}>
+      <Suspense fallback={<Skelton />}>
         <CollectionLinks />
       </Suspense>
     </main>

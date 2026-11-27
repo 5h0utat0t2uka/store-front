@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
+// import Link from "next/link";
 // import Image from "next/image";
 // import { Suspense } from "react";
 import "gen-interface-jp/400.css";
@@ -77,38 +77,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <div id="root">
           <CartRoot cartData={cartData}>
-            {/*<Suspense fallback={<Header name="" />}>*/}
             <ShopHeader />
-            {/*</Suspense>*/}
             {children}
-            {/*<Suspense fallback={<Footer name="" />}>
-              <ShopFooter />
-            </Suspense>*/}
             <ShopFooter />
           </CartRoot>
-          {/*<Menu />*/}
-          <Menu>
-            <nav>
-              <ul>
-                <li>
-                  <Link href="/">Home</Link>
-                </li>
-                <li>
-                  <Link href="/products">Products</Link>
-                </li>
-                <li>
-                  <Link href="/features">Features</Link>
-                </li>
-                <li>
-                  <Link href="/collections">Categories</Link>
-                </li>
-                <li>Blog</li>
-                <li>
-                  <Link href="/contact">Contact</Link>
-                </li>
-              </ul>
-            </nav>
-          </Menu>
+          <Menu />
         </div>
       </body>
     </html>

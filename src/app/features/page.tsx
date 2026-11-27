@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Pagination } from "@/components/pagination";
 import { createPageMetadata } from "@/lib/metadata";
+import { FEATURE_LIST_SIZES } from "@/styles/image-sizes";
 import { features } from "./_data";
 import styles from "./page.module.css";
 
@@ -40,7 +41,12 @@ async function FeatureResults({ searchParams }: Pick<FeaturesProps, "searchParam
         {features.slice(start, start + PAGE_SIZE).map(({ date, title, href, image }, index) => (
           <li key={href} className={styles.entry}>
             <div className={styles.frame}>
-              <Image {...image} alt="" unoptimized loading={index === 0 ? "eager" : "lazy"} />
+              <Image
+                {...image}
+                alt=""
+                sizes={index === 0 ? FEATURE_LIST_SIZES : "auto"}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
             </div>
             <div className={styles.meta}>
               <time dateTime={date}>{date}</time>
